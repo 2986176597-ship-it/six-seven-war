@@ -412,7 +412,7 @@ body { height: 100dvh; display: flex; flex-direction: column; overflow: hidden; 
         <ol>
           <li>双方开局各在战场一端，拥有一座基地和一名建筑师。准备阶段可切换难度、放置蓝图和安排生产队列。点击「开始对战」后，时间、收入、施工和生产开始推进。</li>
           <li>开局金币可以同时预订工厂、采矿机和第二名建筑师。优先建工厂就能尽早造兵，先开矿则能更快补充资金。准备好后派兵争夺中部梗矿。</li>
-          <li>敌方用自己的金币开矿、盖工厂和生产部队。进攻取决于难度、库存、战场压力和敌方战术。简单的准备时间最长，中等逐步施压，困难出击更频繁，开战 100 秒后偶尔会派出空地混编小队。</li>
+          <li>敌方用自己的金币开矿、盖工厂和生产部队。进攻取决于难度、库存、战场压力和敌方战术。简单留出最长准备时间。中等可短暂集结两支部队一同出击，困难后期最多集结三支。AI 会根据我方火炮、蛛丝和讲解石调整配兵，守军会优先应对威胁产线的部队。中等和困难还会用金币升级矿机。</li>
           <li>摧毁敌方所有可生产的基地和工厂，并清除所有还能建造的单位即可获胜。我方失去同样的能力即战败；两边在同一时刻失去这些能力判为平局。在场且完工的建筑师、机械师和 MJ 都计为建造者。</li>
           <li>首次进入先打开这份规则。对战结束后，胜负、用时、难度与击破数写入当前浏览器，本机首页可查看战绩和最近 12 局。</li>
         </ol>
@@ -512,8 +512,8 @@ body { height: 100dvh; display: flex; flex-direction: column; overflow: hidden; 
         <div class="difficulty" id="difficulty" role="group" aria-label="敌方难度">
           <span>难度</span>
           <button class="minor" type="button" id="difficulty-easy" aria-pressed="false" title="准备时间最长，敌方进攻最疏">简单</button>
-          <button class="minor" type="button" id="difficulty-medium" aria-pressed="true" title="准备时间适中，敌方稳步进攻">中等</button>
-          <button class="minor" type="button" id="difficulty-hard" aria-pressed="false" title="敌方准备较快，可同时投入更多兵力">困难</button>
+          <button class="minor" type="button" id="difficulty-medium" aria-pressed="true" title="准备时间适中，敌方可集结两支部队进攻">中等</button>
+          <button class="minor" type="button" id="difficulty-hard" aria-pressed="false" title="敌方准备较快，后期最多集结三支部队并加强守家">困难</button>
         </div>
         <button class="primary" type="button" id="advance">开始对战 <span aria-hidden="true">▸</span></button>
         <div class="live" id="live" hidden><i></i><span id="difficulty-live">中等 · 对战中</span></div>
@@ -733,19 +733,23 @@ const DIFFICULTIES = {
     attackLimit: 3, reserve: 3, baseIncome: 33,
     garrisonEvery: 8, defenseThreshold: 4, sentryLimit: 1, sentryBudget: Infinity,
     secondFactoryBudget: Infinity, extraArchitectAt: 73, bossSavingsAt: 170,
+    packAfter: 145, packWait: 4, defenseReach: 350, homeGuard: 1, counterWeight: .35,
   },
   medium: {
-    label: '中等', firstAttack: 51, dispatchGap: 12, variation: 4, recovery: 17,
-    attackLimit: 5, reserve: 4, baseIncome: 40.5,
+    label: '中等', firstAttack: 51, dispatchGap: 11, variation: 4, recovery: 17,
+    attackLimit: 6, reserve: 4, baseIncome: 40.5,
     garrisonEvery: 5, defenseThreshold: 2, sentryLimit: 2, sentryBudget: 2600,
-    secondFactoryBudget: 3550, extraArchitectAt: 45, bossSavingsAt: 92,
+    secondFactoryBudget: 3450, extraArchitectAt: 45, bossSavingsAt: 92,
+    packAfter: 70, packWait: 6, defenseReach: 465, homeGuard: 2, counterWeight: .8,
+    mineUpgradeAt: 100, mineUpgradeLimit: 1,
   },
   hard: {
-    label: '困难', firstAttack: 39, dispatchGap: 8.5, variation: 3, recovery: 10,
-    attackLimit: 7, reserve: 5, baseIncome: 49.5,
+    label: '困难', firstAttack: 39, dispatchGap: 8.1, variation: 3, recovery: 10,
+    attackLimit: 8, reserve: 5, baseIncome: 49.5,
     garrisonEvery: 3, defenseThreshold: 1, sentryLimit: 2, sentryBudget: 1550,
-    secondFactoryBudget: 2800, extraArchitectAt: 34, bossSavingsAt: 72,
-    escortAfter: 100, escortGap: 34,
+    secondFactoryBudget: 2700, extraArchitectAt: 33, bossSavingsAt: 72,
+    packAfter: 57, tripleAfter: 115, packWait: 5, defenseReach: 545, homeGuard: 3, counterWeight: 1.2,
+    mineUpgradeAt: 78, mineUpgradeLimit: 2,
   },
 };
 const ENEMY_TACTICS = [
@@ -898,6 +902,8 @@ class Battle {
     this.nextBrain = 0;
     this.enemyProduced = 0;
     this.enemyRecruit = null;
+    this.enemyDefenseTargets = new Set();
+    this.enemyReserve = new Set();
     this.create('architect', 195, 331, true);
     this.create('architect', 1405, 331, false);
     this.create('base', 116, 334, true);
@@ -938,7 +944,6 @@ class Battle {
     this.difficulty = key;
     this.pace = DIFFICULTIES[key];
     this.nextDispatch = this.pace.firstAttack + this.openingVariation * (this.pace.variation + 4);
-    this.nextEscort = this.pace.escortAfter ?? Infinity;
     return true;
   }
 
@@ -1308,35 +1313,46 @@ class Battle {
   }
 
   sendEnemy() {
-    if (this.time < this.nextDispatch) return;
+    const t = this.time, pace = this.pace;
+    if (t < this.nextDispatch) return;
     const troops = this.enemies.filter(unit => alive(unit) && unit.staging);
-    const remainingSlots = this.pace.attackLimit - troops.filter(unit => unit.onRaid).length;
+    const remainingSlots = pace.attackLimit - troops.filter(unit => unit.onRaid).length;
     if (remainingSlots <= 0) return;
-    const ready = troops.filter(unit => !unit.onRaid && !unit.defender);
+    const ready = troops.filter(unit => !unit.onRaid && !unit.defender && !this.enemyReserve.has(unit));
+    if (!ready.length) return;
+    const size = t >= (pace.tripleAfter ?? Infinity) ? 3 : t >= pace.packAfter ? 2 : 1;
+    const desired = Math.min(remainingSlots, size);
     const silo = this.silo;
-    const vulnerableSilo = silo && active(silo.loadedAt, this.time) && !active(silo.rearmAt, this.time);
-    const recruits = ready.slice(0, 3);
-    const recruit = ready.find(unit => unit.type === 'boss') ||
-      (vulnerableSilo && ready.find(unit => unit.raider)) ||
-      recruits[Math.floor(this.random() * recruits.length)];
-    if (!recruit) return;
-    const group = [recruit];
-    if (this.time >= this.nextEscort && ready.length >= 3 && remainingSlots >= 2 && recruit.type !== 'boss') {
-      const escort = ready.find(unit => unit !== recruit && unit.type !== 'boss' &&
-        !!unit.spec.air !== !!recruit.spec.air);
-      if (escort) {
-        escort.lane = lerp(escort.lane, recruit.lane, .55);
-        group.push(escort);
-        this.nextEscort = this.time + this.pace.escortGap;
-      }
+    const vulnerableSilo = silo && active(silo.loadedAt, t) && !active(silo.rearmAt, t);
+    const urgent = ready.find(unit => unit.type === 'boss') ||
+      (vulnerableSilo && ready.find(unit => unit.raider));
+    if (!urgent && ready.length < desired && t < this.nextDispatch + pace.packWait) return;
+
+    const lead = urgent || ready[Math.floor(this.random() * Math.min(3, ready.length))];
+    const group = [lead];
+    const candidates = ready.filter(unit => unit !== lead);
+    while (group.length < desired && candidates.length) {
+      const fit = unit => {
+        const newLayer = !group.some(member => !!member.spec.air === !!unit.spec.air);
+        const frontLine = lead.spec.range > 100 ? unit.spec.heavy : unit.spec.range > 100;
+        return (newLayer ? 3 : 0) + (frontLine ? 1.2 : 0) - distance(lead, unit) / 220;
+      };
+      candidates.sort((a,b) => fit(b)-fit(a));
+      group.push(candidates.shift());
     }
-    for (const unit of group) {
+
+    for (const [index, unit] of group.entries()) {
       unit.onRaid = true;
       unit.target = null;
-      unit.thinkAt = this.time;
-      if (unit.type === 'boss') unit.pulseAt = this.time + 15;
+      unit.thinkAt = t;
+      if (group.length > 1) {
+        unit.raidGroup = group;
+        unit.lane = clamp(lerp(unit.lane, lead.lane, .8) + (index % 2 ? 22 : -11) * index,
+          WORLD.top, WORLD.bottom);
+      }
+      if (unit.type === 'boss') unit.pulseAt = t + 15;
     }
-    this.nextDispatch = this.time + this.pace.dispatchGap + this.random() * this.pace.variation;
+    this.nextDispatch = t + pace.dispatchGap + this.random() * pace.variation;
   }
 
   enemyTurn() {
@@ -1355,28 +1371,49 @@ class Battle {
     const unfinished = buildings.filter(u => !completed(u, this.time));
     const miners = [...this.friends, ...buildings].filter(u => alive(u) && u.type === 'miner');
     const combat = this.enemies.filter(u => alive(u) && !u.spec.fixed && !u.spec.builder);
-    const theirTroops = this.friends.filter(u => alive(u) && u.spec.damage && !u.spec.fixed);
+    const fielded = this.friends.filter(u => alive(u) && completed(u,this.time));
+    const theirTroops = fielded.filter(u => u.spec.damage && !u.spec.fixed);
     const theirFront = theirTroops.filter(u => u.x > 887);
+    const keySites = buildings.filter(u => u.spec.production || u.type === 'miner');
+    const siege = fielded.filter(u => ['frogLauncher','webTower','stone'].includes(u.type) &&
+      keySites.some(site => distance(u, site) <= (u.spec.music?.radius ?? u.spec.range)));
+    this.enemyDefenseTargets = new Set([...siege, ...theirFront]);
+    const pressure = theirFront.length + siege.length;
+    const underAttack = pressure >= pace.defenseThreshold || siege.length > 0;
+    const previousReserve = this.enemyReserve;
+    const reserve = new Set();
+    if (underAttack) {
+      const home = combat.filter(unit => unit.staging && !unit.onRaid);
+      const missing = Math.max(0, pace.homeGuard - home.filter(unit => unit.defender).length);
+      const point = siege[0] || theirFront[0];
+      const ready = home.filter(unit => !unit.defender && unit.type !== 'boss')
+        .sort((a,b) => distance(a,point)-distance(b,point));
+      for (const unit of ready.slice(0,missing)) reserve.add(unit);
+    }
+    this.enemyReserve = reserve;
+    for (const unit of combat) {
+      if (previousReserve.has(unit) !== reserve.has(unit)) unit.thinkAt = this.time;
+    }
     const mineSites = miners.filter(u => !u.player).length < 3 ? GOLD_MINES.filter(mine =>
       !nearest(mine, miners, 3) && !nearest(mine, theirTroops, 170)) : [];
     const workFree = workers.some(u => !u.blueprints.some(b => alive(b) && !completed(b, this.time)));
-    const wantsSentry = theirFront.length >= pace.defenseThreshold ||
-      (this.time > 54 && this.enemyGold >= pace.sentryBudget && combat.length > 3);
+    const wantsSentry = underAttack || (this.time > 54 && this.enemyGold >= pace.sentryBudget && combat.length > 3);
+    const sentrySites = [{ x: 1204, y: 437 }, { x: 1255, y: 192 }, { x: 1320, y: 480 }];
 
     if (workFree) {
       const abandoned = unfinished.find(u => !workers.some(worker => worker.blueprints.includes(u)));
       if (abandoned) this.assignBuild(abandoned);
       if (!this.factories(false, false).length) {
         this.enemyBuild('factory', [{ x: 1340, y: 340 }, { x: 1240, y: 360 }, { x: 1180, y: 440 }, { x: 1180, y: 210 }]);
-      } else if (!abandoned && mineSites.length && (this.time < 27 || theirFront.length < 4)) {
-        const home = workers[0];
-        this.enemyBuild('miner', mineSites.sort((a,b) => distance(home,a) - distance(home,b)));
-      } else if (!abandoned && !unfinished.some(u => u.type === 'sentry') &&
-          buildings.filter(u => u.type === 'sentry').length < pace.sentryLimit && wantsSentry) {
-        this.enemyBuild('sentry', [{ x: 1253, y: 338 }, { x: 1204, y: 437 }, { x: 1255, y: 192 }]);
-      } else if (!abandoned && factories.length === this.factories(false, false).length && factories.length < 2 &&
-          this.enemyGold >= pace.secondFactoryBudget && combat.length >= 3 && this.goldRate(false) > 90) {
-        this.enemyBuild('factory', [{ x: 1120, y: 488 }, { x: 1250, y: 486 }, { x: 1450, y: 446 }]);
+      } else if (!abandoned) {
+        const fortified = wantsSentry && !unfinished.some(u => u.type === 'sentry') &&
+          buildings.filter(u => u.type === 'sentry').length < pace.sentryLimit && this.enemyBuild('sentry', sentrySites);
+        const expanded = !fortified && mineSites.length && (this.time < 27 || pressure < 4) &&
+          this.enemyBuild('miner', mineSites.sort((a,b) => distance(workers[0],a) - distance(workers[0],b)));
+        if (!fortified && !expanded && factories.length === this.factories(false, false).length && factories.length < 2 &&
+            this.enemyGold >= pace.secondFactoryBudget && combat.length >= 3 && this.goldRate(false) > 90) {
+          this.enemyBuild('factory', [{ x: 1120, y: 488 }, { x: 1250, y: 486 }, { x: 1450, y: 446 }]);
+        }
       }
     }
 
@@ -1390,6 +1427,13 @@ class Battle {
     if (workers.length + workerJobs < (this.time > pace.extraArchitectAt ? 2 : 1)) {
       const producer = stations.find(u => u.type === 'base' && !u.job) || factories.find(u => !u.job);
       if (producer) this.train('architect', false, producer);
+    }
+    const mineWork = buildings.filter(unit => unit.type === 'miner' && completed(unit,this.time));
+    if (!underAttack && this.time >= (pace.mineUpgradeAt ?? Infinity) && combat.length >= 3 &&
+        factories.length && this.enemyGold >= MINER.upgrade.cost[0] + ENEMIES.archer.cost[0] &&
+        mineWork.filter(unit => unit.level === 2 || unit.upgradeJob).length < pace.mineUpgradeLimit) {
+      const mine = mineWork.find(unit => unit.level === 1 && !unit.upgradeJob);
+      if (mine) this.upgrade([mine], false);
     }
     const availability = factories.filter(u => !u.job);
     if (!availability.length) return;
@@ -1407,30 +1451,37 @@ class Battle {
     }
     // A healthy force can save for a Titan. Falling back to regular production answers a push.
     const saving = !this.boss && !waiting && this.goldRate(false) >= 120 &&
-      this.time >= pace.bossSavingsAt && theirFront.length <= 2 && (combat.length >= 2 || theirFront.length === 0);
+      this.time >= pace.bossSavingsAt && !underAttack && (combat.length >= 2 || pressure === 0);
     if (saving) return;
 
-    const airDefenseCount = this.friends.filter(u => alive(u) && u.type === 'airDefense').length;
-    const antiAirCount = this.friends.filter(u => alive(u) && u.spec.aa).length;
-    const playerGround = this.friends.filter(u => alive(u) && ['frog','rat','frogMech'].includes(u.type)).length;
+    const antiAir = fielded.filter(u => u.spec.aa);
+    const airDefenseCount = antiAir.filter(u => u.type === 'airDefense').length;
+    const antiAirCount = antiAir.length;
+    const playerGround = fielded.filter(u => ['frog','rat','frogMech'].includes(u.type)).length;
+    const answer = this.time >= pace.firstAttack ? pace.counterWeight : 0;
+    const openArtillery = Math.min(3, fielded.filter(gun => gun.type === 'frogLauncher' &&
+      !antiAir.some(guard => distance(gun, guard) < guard.spec.range + 60)).length);
+    const webs = Math.min(3, fielded.filter(u => u.spec.web).length);
+    const stones = Math.min(2, fielded.filter(u => u.type === 'stone').length);
+    const heavyGround = Math.min(3, fielded.filter(u => u.type === 'frogMech' || u.type === 'rat').length);
     const have = type => combat.filter(u => u.type === type).length +
       combatJobs.filter(factory => factory.job.type === type).length;
     const opening = this.time < pace.firstAttack + 18;
     const airPressure = this.difficulty === 'easy' && opening ? .54 : 1;
     const tactic = ENEMY_TACTICS[this.tactic].weight;
     const choices = [
-      ['foot', 3.5 - .78 * have('foot') + .36 * Math.min(4, playerGround)],
-      ['archer', 3.12 - .89 * have('archer') + .36 * Math.min(5, airDefenseCount)],
-      ['shield', 1.02 + 1.2 * Math.min(3, airDefenseCount) - 1.05 * have('shield')],
-      ['zombie', 2.25 - 1.05 * have('zombie') + .45 * Math.min(4, playerGround)],
-      ['airFoot', (antiAirCount < 2 ? 3.25 : 2.35) - 1.25 * have('airFoot')],
-      ['airBow', 1.81 + .43 * Math.min(4, airDefenseCount) - 1.12 * have('airBow')],
+      ['foot', 3.5 - .78 * have('foot') + .36 * Math.min(4, playerGround) - .38 * answer * openArtillery],
+      ['archer', 3.12 - .89 * have('archer') + .36 * Math.min(5, airDefenseCount) + .66 * answer * heavyGround],
+      ['shield', 1.02 + 1.2 * Math.min(3, airDefenseCount) - 1.05 * have('shield') + 1.03 * answer * webs],
+      ['zombie', 2.25 - 1.05 * have('zombie') + .45 * Math.min(4, playerGround) + 1.6 * answer * stones],
+      ['airFoot', (antiAirCount < 2 ? 3.25 : 2.35) - 1.25 * have('airFoot') + 1.3 * answer * openArtillery],
+      ['airBow', 1.81 + .43 * Math.min(4, airDefenseCount) - 1.12 * have('airBow') + .76 * answer * openArtillery],
       ['airShield', (have('airBow') + have('airFoot') >= 1 ? 2.46 : .65) + .31 * Math.min(4, antiAirCount) - 1.74 * have('airShield')],
     ].map(([type, score]) => {
       const weight = Math.max(.13, score) * (tactic[type] || 1) * (ENEMIES[type].air ? airPressure : 1);
       return [type, weight];
     });
-    const saveSeconds = theirFront.length < 2 && (combat.length >= 2 || this.time < pace.firstAttack - 14)
+    const saveSeconds = !underAttack && pressure < 2 && (combat.length >= 2 || this.time < pace.firstAttack - 14)
       ? (opening ? 7 : 4) : 0;
     if (!saveSeconds) this.enemyRecruit = null;
     for (const factory of availability) {
@@ -2010,6 +2061,11 @@ class Battle {
     const silo = this.silo;
     if (unit.spec.fixed) return nearest(unit, options, unit.spec.range + 32);
     if (unit.staging && !unit.onRaid) {
+      if (unit.defender || this.enemyReserve.has(unit)) {
+        const threat = nearest(unit, options.filter(friend => this.enemyDefenseTargets.has(friend)),
+          this.pace.defenseReach);
+        if (threat) return threat;
+      }
       return nearest(unit, options.filter(friend => friend.x >= unit.staging.x - 154),
         Math.max(200, unit.spec.range + 25));
     }
@@ -2175,6 +2231,11 @@ class Battle {
     const rooted = active(unit.rooted, t);
     let speed = (spec.speed || 0) * (active(unit.guardUntil, t) ? (unit.guardSpeed ?? STONE_MUSIC.guardSpeed) : 1);
     if (unit.rained) speed *= unit.rainSpeed ?? RAIN_SLOW;
+    if (unit.raidGroup && unit.x > 835) {
+      for (const mate of unit.raidGroup) {
+        if (alive(mate) && mate.onRaid && mate.x > unit.x + 30) speed = Math.min(speed, mate.spec.speed * .9);
+      }
+    }
     if (active(unit.confused, t)) {
       if (!rooted) this.move(unit, { x: unit.x + Math.cos(unit.confuseFrom + Math.sin(t * 13 + unit.id) * 1.25) * 80,
         y: unit.y + Math.sin(unit.confuseFrom + Math.sin(t * 13 + unit.id) * 1.25) * 80 }, speed * .75, dt);
@@ -3455,7 +3516,7 @@ const enemyGuide = {
   base: '开局自带，持续训练建筑师。摧毁基地可切断这条产线。',
   architect: '能重建工厂，按 AI 计划建采矿机或哨戒塔。敌方没有基地和工厂后，还要清除幸存的建筑师。',
   factory: '敌军消耗金币在这里生产地面和空中单位。金币充足时可能扩建第二座。',
-  miner: '完工后每秒替敌方增加 '+MINE_RATE+' 金币。袭击采矿机可以拖慢敌军补充兵力。',
+  miner: '完工后每秒替敌方增加 '+MINE_RATE+' 金币。中等和困难的 AI 会择机升级采矿机。袭击矿机可以拖慢敌军补充兵力。',
   sentry: '被动向附近我方地面部队和建筑发射炮弹，不能攻击空中。奶蛙火炮射程更远。',
   foot: '普通弹丸对奶蛙额外增伤，也会受到奶蛙的额外反击伤害。成群出现时可以用机甲喷火或火炮溅射。',
   shield: '刀盾狗拥有 63% 装甲，近战不会被激光拦截。免疫普通蛛丝和小蜘蛛的攻击，捕网仍能定身。可以用机甲、老鼠滚动或棍母导弹应对，也能被苦行山变成王警卫。',
