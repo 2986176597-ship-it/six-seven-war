@@ -364,10 +364,10 @@ body { height: 100dvh; display: flex; flex-direction: column; overflow: hidden; 
       <h1 id="rules-title">《Six Seven War》规则</h1>
       <p>单人即时战略。选择 AI 难度，指挥地图左侧的部队。</p>
       <div class="rule-grid">
-        <div><h2>开矿和建造</h2><p>双方开局都有基地和建筑师。用建筑师在己方部署区建工厂，在金矿上建采矿机，提升每秒金币收入。</p></div>
+        <div><h2>开矿和建造</h2><p>点击建筑师打开建造窗口。先建工厂，再在金矿上建采矿机，提高每秒金币收入。</p></div>
         <div><h2>生产和指挥</h2><p>点基地可排队生产建筑师，点工厂可排队生产各类部队。双击工厂可全选；双击机动单位选中附近同类，再点「移动」下令。</p></div>
         <div><h2>协同施工与维修</h2><p>双击附近同类建造者或修复湾，右键受损友军或蓝图。触屏可点「维修」再选目标。建筑师修建筑，机械师修友军并能现场造兵，修复湾在覆盖范围内提供支援。</p></div>
-        <div><h2>梗矿和技能</h2><p>占领梗矿或击败敌军可赚取 67 指数。讲解石自动播放苦行山，雨爱和 MJ 的小蜘蛛需手动释放。MJ 可建蛛丝塔，棍母只打击圈内敌军。</p></div>
+        <div><h2>梗矿和技能</h2><p>占领梗矿或击败敌军可赚取 67 指数。讲解石自动播放苦行山，雨爱和 MJ 的小蜘蛛需手动释放。MJ 可建蛛丝重机枪。棍母与奶蛙炮弹只打击敌方，奶蛙炮弹只打地面。</p></div>
         <div><h2>胜负条件</h2><p>摧毁敌方所有基地和工厂，并清除能建造的单位即获胜。我方失去全部生产与建造能力时战败。</p></div>
       </div>
       <div class="lobby-actions">
@@ -467,7 +467,7 @@ body { height: 100dvh; display: flex; flex-direction: column; overflow: hidden; 
             <button class="minor" type="button" id="move-order" title="选择目的地 [M]" disabled>移动 <kbd>M</kbd></button>
             <button class="minor" type="button" id="repair-order" title="选择受损建筑或未完工蓝图 [R]" hidden>维修 <kbd>R</kbd></button>
             <button class="minor" type="button" id="field-train" hidden>现场造兵</button>
-            <button class="minor" type="button" id="build-web" hidden>建造蛛丝塔</button>
+            <button class="minor" type="button" id="build-web" hidden>建造蛛丝重机枪</button>
             <button class="minor" type="button" id="hold-order" title="停止移动并原地还击 [H]" disabled>驻守 <kbd>H</kbd></button>
           </div>
           <div class="abilities" id="abilities" hidden>
@@ -482,7 +482,11 @@ body { height: 100dvh; display: flex; flex-direction: column; overflow: hidden; 
         <div class="cards troops" id="troop-cards"></div>
       </section>
       <section class="float-window" id="build-panel" aria-labelledby="build-title" hidden>
-        <div class="window-head"><h2 id="build-title">阵地建造</h2><button class="close-window" type="button" aria-label="关闭建造窗口" data-close-panel>×</button></div>
+        <div class="window-head">
+          <h2 id="build-title">阵地建造</h2>
+          <button class="minor" type="button" id="build-repair" title="指定维修目标 [R]" hidden>维修 <kbd>R</kbd></button>
+          <button class="close-window" type="button" aria-label="关闭建造窗口" data-close-panel>×</button>
+        </div>
         <div class="cards structures" id="building-cards"></div>
       </section>
       <div id="end-layer" class="overlay" hidden aria-modal="true" role="dialog" aria-labelledby="overlay-title">
@@ -634,7 +638,7 @@ const UNITS = {
   hulk:   { name: '浩克', hp: 462, armor: .21, radius: 28, speed: 65, range: 34, damage: 88, every: 1.33, cost: [202], build: 7.7, height: 84, art: 'hulk', info: '低血时最高增伤 50%，重击建筑。灭霸免疫浩克的伤害。' },
   mj:     { name: 'MJ', hp: 184, armor: .08, radius: 18, speed: 45, range: 248, damage: 16, every: 1.72, cost: [135], build: 4.8, height: 67, art: 'mj', aa: true,
     builder: true, web: 1.35, bossWeb: .85,
-    info: '可建蛛丝发射塔。普攻自动缠绕敌人 1.35 秒，可对空，盾兵免疫普通蛛丝。' },
+    info: '可建蛛丝重机枪。普攻自动缠绕敌人 1.35 秒，可对空，盾兵免疫普通蛛丝。' },
   rocket: { name: '火箭浣熊', hp: 171, armor: .07, radius: 18, speed: 76, range: 207, damage: 31, every: .72, cost: [141], build: 5.4, height: 63, art: 'rocket', aa: true, info: '中近程可对空。绕过盾面射击。灭霸在场时步入讲解石范围会自动喊话。' },
   stone:  { name: '讲解石', hp: 475, armor: .15, fixed: true, radius: 34, cost: [163], build: 7.8, height: 82, art: 'stone', info: '进攻这道防线的敌军须穿过音圈。完工及迎敌自动播放苦行山，雨爱手动释放。' },
   laser:  { name: '激光防御塔', hp: 450, armor: .16, fixed: true, radius: 28, cost: [151], build: 6.7,
@@ -643,12 +647,13 @@ const UNITS = {
   repair: { name: '修复湾', hp: 510, armor: .13, fixed: true, radius: 33, cost: [169], build: 7.2,
     height: 75, art: 'repair', autoRepair: 29, repairRate: 29, repairRadius: 176, buildAssist: .55,
     info: '修复范围内的友军和建筑，也可协助建筑师或机械师施工。' },
-  webTower: { name: '蛛丝发射塔', hp: 425, armor: .14, fixed: true, radius: 27, cost: [184], build: 6.8,
-    height: 81, art: 'webTower', range: 285, damage: 27, every: 1.2, aa: true, web: 1.72, bossWeb: .68, bossWebDamage: .52,
-    builtBy: 'mj', info: '由 MJ 施工。高速发射强化蛛丝，可对空。盾兵免疫，灭霸受到的伤害和缠绕时间较短。' },
+  webTower: { name: '蛛丝重机枪', hp: 425, armor: .14, fixed: true, radius: 27, cost: [184], build: 6.8,
+    height: 81, art: 'webTower', range: 285, damage: 10, every: 1.3, burst: 3, burstGap: .11,
+    aa: true, web: 1.72, bossWeb: .68, bossWebDamage: .52,
+    builtBy: 'mj', info: '由 MJ 施工。三连发强化蛛丝，可对空。盾兵免疫，灭霸受到的伤害和缠绕时间较短。' },
   frogLauncher: { name: '奶蛙发射器', hp: 436, armor: .15, fixed: true, radius: 31, cost: [168], build: 6.8,
-    height: 73, art: 'frogLauncher', launchRadius: 500, loadRadius: 94,
-    info: '每次把一只附近的奶蛙投射到射程内。装载范围 94，发射距离 500。' },
+    height: 73, art: 'frogLauncher', range: 500, damage: 96, every: 4.5, splashRadius: 83,
+    info: '远程火炮，自动发射奶蛙炮弹，溅射敌方地面部队和建筑。可手动指定落点。' },
   iron:   { name: '铁人', hp: 472, armor: .21, fixed: true, radius: 27, range: 311, damage: 36, every: .8, aa: true, cost: [156], build: 5.8, height: 77, art: 'iron', info: '自动瞄准射程内最近的敌人，可对空。盾兵免疫铁人的伤害。' },
   silo:   { name: '棍母发射井', hp: 678, armor: .22, fixed: true, radius: 38, cost: [615, 100], build: 19, height: 85, art: 'silo', info: '装填 25 秒。爆炸清除圈内敌方单位及建筑，灭霸失去 80% 当前血量。' },
   spider: { name: '小蜘蛛', hp: 29, armor: 0, radius: 9, speed: 107, range: 104, damage: 12, every: .64, aa: true,
@@ -668,7 +673,7 @@ const ENEMIES = {
   airFoot:   { name: '飞行步兵', hp: 104, armor: .09, radius: 18, speed: 101, range: 142, damage: 16, every: .98, reward: [17, 7], cost: [119], build: 4.7, height: 63, art: 'airFoot', air: true, projectile: 'bullet', info: '直冲我方建筑。' },
   airBow:    { name: '飞行弓兵', hp: 133, armor: .13, radius: 19, speed: 71, range: 282, damage: 25, every: 1.55, reward: [24, 9], cost: [176], build: 6.6, height: 70, art: 'airBow', air: true, info: '外围盘旋，优先攻击铁人和地面集群。' },
   airShield: { name: '飞行盾兵', hp: 164, armor: .34, radius: 26, speed: 57, range: 128, damage: 17, every: 1.4, reward: [28, 11], cost: [229], build: 8.4, height: 75, art: 'shield', air: true, heavy: true, shield: true, projectile: 'bullet', info: '掩护空军。普通蛛丝和蜘蛛伤害无效，捕网、棍母和盾侧射击可以应对。' },
-  boss:      { name: '灭霸', hp: 2870, armor: .15, radius: 40, speed: 39, range: 169, damage: 80, every: 1.9, reward: [125, 22], cost: [895], build: 23, height: 121, art: 'boss', heavy: true, aa: true, projectile: 'laser', bypassIntercept: true, info: '抽象波偷取 67 指数。免疫浩克，攻击绕过激光拦截。棍母与喊话仅首个附加易伤。' },
+  boss:      { name: '灭霸', hp: 2600, armor: .15, radius: 40, speed: 39, range: 169, damage: 72, every: 1.9, reward: [125, 22], cost: [895], build: 23, height: 121, art: 'boss', heavy: true, aa: true, projectile: 'laser', bypassIntercept: true, info: '抽象波偷取 67 指数。免疫浩克，攻击绕过激光拦截。棍母与喊话仅首个附加易伤。' },
 };
 
 const SKILLS = {
@@ -678,7 +683,7 @@ const SKILLS = {
   stone:  { label: '播放雨爱', cost: 24, cool: 45, hint: '手动播放雨爱司凤版 10 秒，范围内敌方减速 50%、受伤 +40%，可对空。与自动苦行山共享冷却。' },
   iron:   { label: '启动贾维斯', cost: 18, cool: 30, hint: '攻击速度提高 50%，持续 8 秒。' },
   silo:   { label: '发射棍母', cost: 16, target: true, hint: '只打击落点范围内的敌方单位和建筑。灭霸失去 80% 当前血量，并可获得棍母易伤。' },
-  frogLauncher: { label: '投射奶蛙', cost: 0, cool: 4.5, target: true, hint: '从附近装载一只奶蛙，快速飞往射程内的落点。' },
+  frogLauncher: { label: '指定落点', cost: 0, target: true, hint: '指定下一发奶蛙炮弹的落点。落地时溅射敌方地面目标。' },
 };
 const SONGS = ['东南苦行山', '雨爱司凤版'];
 const SONG_DURATION = [5, 10];
@@ -1007,7 +1012,7 @@ class Battle {
   }
 
   repairable(target, player, buildingsOnly = false) {
-    return !!target && target.player === player && alive(target) && completed(target, this.time) && !target.flight &&
+    return !!target && target.player === player && alive(target) && completed(target, this.time) &&
       target.hp < target.spec.hp && (!buildingsOnly || target.spec.fixed);
   }
 
@@ -1229,7 +1234,7 @@ class Battle {
   }
 
   command(units, point, target = null) {
-    const team = units.filter(u => u.player && alive(u) && completed(u, this.time) && !u.spec.fixed && !u.flight);
+    const team = units.filter(u => u.player && alive(u) && completed(u, this.time) && !u.spec.fixed);
     if (!team.length) return 0;
     const destination = {
       x: clamp(point.x, WORLD.left, WORLD.right),
@@ -1268,7 +1273,7 @@ class Battle {
 
   hold(units) {
     for (const u of units) {
-      if (!u.player || !alive(u) || !completed(u,this.time) || u.spec.fixed || u.flight) continue;
+      if (!u.player || !alive(u) || !completed(u,this.time) || u.spec.fixed) continue;
       u.order = { type: 'hold' };
       u.anchor = { x: u.x, y: u.y };
       u.target = null;
@@ -1320,59 +1325,58 @@ class Battle {
     if (!this.running || !unit?.player || !alive(unit) || !skill) return '战斗开始后可释放技能。';
     if (!completed(unit, this.time)) return '建造尚未完成。';
     if (active(this.laughUntil, this.time) || active(unit.restUntil, this.time) ||
-        active(unit.crouchUntil, this.time) || unit.roll || unit.flight) return '单位暂时无法行动。';
+        active(unit.crouchUntil, this.time) || unit.roll) return '单位暂时无法行动。';
     if (active(unit.cooldown, this.time) || active(unit.silenced, this.time)) return '技能冷却中。';
     if (unit.type === 'silo' && active(unit.loadedAt, this.time)) return '发射井尚未装填完成。';
-    if (unit.type === 'frogLauncher' && !this.launchableFrog(unit)) return '装载范围内没有待发射的奶蛙。';
     if (this.index + .0001 < skill.cost) return '67 指数不足。';
     return '';
   }
 
-  launchableFrog(launcher) {
-    return nearest(launcher, this.friends.filter(u => u.type === 'frog' && alive(u) && completed(u, this.time) &&
-      !u.flight && !active(u.crouchUntil, this.time)), launcher.spec.loadRadius + .0001);
-  }
-
-  launchProblem(launcher, point) {
-    if (!point || point.x < WORLD.left || point.x > WORLD.right || point.y < WORLD.top || point.y > WORLD.bottom) {
+  artilleryProblem(launcher, point) {
+    if (!point || !Number.isFinite(point.x) || !Number.isFinite(point.y) ||
+        point.x < WORLD.left || point.x > WORLD.right || point.y < WORLD.top || point.y > WORLD.bottom) {
       return '请选择战场内的落点。';
     }
-    return distance(launcher, point) > launcher.spec.launchRadius ? '落点超出发射范围。' : '';
+    return distance(launcher, point) > launcher.spec.range ? '落点超出火炮射程。' : '';
   }
 
-  launchFrog(launcher, point) {
-    const frog = this.launchableFrog(launcher);
-    const destination = { x: point.x, y: point.y };
-    frog.flight = { from: { x: launcher.x, y: launcher.y }, to: destination, start: this.time,
-      end: this.time + .57 + distance(launcher, point) / 1700 };
-    frog.x = launcher.x;
-    frog.y = launcher.y;
-    frog.order = null;
-    frog.target = null;
-    frog.angle = angleTo(launcher, point);
-    this.effect('ring', { x: launcher.x, y: launcher.y, color: '#c1ffac', radius: 48 }, .35);
-    this.event('frogLaunch');
+  fireFrogShell(launcher, point) {
+    const start = this.time;
+    const manual = !!launcher.aimPoint;
+    launcher.aimPoint = null;
+    launcher.fireAt = start + launcher.spec.every;
+    launcher.attackUntil = start + .28;
+    launcher.angle = angleTo(launcher, point);
+    this.missiles.push({
+      kind: 'frogShell', launcher, from: { x: launcher.x, y: launcher.y },
+      x: point.x, y: point.y, start, hitAt: start + .55 + distance(launcher, point) / 1700,
+    });
+    this.effect('dust', { x: launcher.x, y: launcher.y - 26, size: 22, color: '#c1ffac' }, .32);
+    this.event('frogShell', { manual });
   }
 
-  updateFlights() {
-    for (const frog of this.friends) {
-      if (!alive(frog) || !frog.flight) continue;
-      const { from, to, start, end } = frog.flight;
-      const part = clamp((this.time - start) / (end - start), 0, 1);
-      frog.x = lerp(from.x, to.x, part);
-      frog.y = lerp(from.y, to.y, part);
-      if (part < 1) continue;
-      frog.flight = null;
-      frog.anchor = { ...to };
-      frog.thinkAt = this.time;
-      this.effect('dust', { ...to, size: 21, color: '#c1ffac' }, .42);
+  frogShellImpact(shell) {
+    const { launcher } = shell;
+    const { splashRadius, damage } = launcher.spec;
+    this.effect('impact', { x: shell.x, y: shell.y, radius: splashRadius, color: '#c1e990' }, .54);
+    for (const enemy of this.units(!launcher.player)) {
+      if (!alive(enemy) || enemy.spec.air) continue;
+      const fraction = distance(shell, enemy) / splashRadius;
+      if (fraction > 1) continue;
+      this.hit(enemy, damage * (1 - .5 * fraction), { source: launcher });
     }
   }
 
   cast(unit, point = null) {
     const skill = SKILLS[unit?.type];
     if (this.skillProblem(unit) || (skill.target && !point)) return false;
-    if (unit.type === 'frogLauncher' && this.launchProblem(unit, point)) return false;
+    if (unit.type === 'frogLauncher') {
+      if (this.artilleryProblem(unit, point)) return false;
+      unit.aimPoint = { x: point.x, y: point.y };
+      if (this.time >= unit.fireAt) this.fireFrogShell(unit, unit.aimPoint);
+      else this.event('note', { message: '已指定落点，装填完成后发射。' });
+      return true;
+    }
     const t = this.time;
     this.pay([0, skill.cost]);
     if (skill.cool) unit.cooldown = t + skill.cool;
@@ -1409,7 +1413,6 @@ class Battle {
       this.event('note', { message: '三只小蜘蛛已部署，持续 15 秒。' });
     }
     if (unit.type === 'stone') this.startStoneSong(unit, 1);
-    if (unit.type === 'frogLauncher') this.launchFrog(unit, point);
     if (unit.type === 'iron') {
       unit.jarvis = t + 8;
       unit.fireAt = Math.min(unit.fireAt, t + unit.spec.every / 1.5);
@@ -1591,10 +1594,19 @@ class Battle {
   attack(unit, target) {
     const t = this.time;
     const spec = unit.spec;
+    if (unit.type === 'frogLauncher') {
+      if (!this.artilleryProblem(unit, target)) this.fireFrogShell(unit, target);
+      return;
+    }
     const weak = active(unit.guardUntil, t);
     let damage = spec.damage * (weak ? .3 : 1);
     const webSlow = active(unit.netUntil, t) ? unit.type === 'boss' ? 1.1 : 1.3 : 1;
-    const interval = spec.every * webSlow * (active(unit.broken, t) ? 1.62 : 1) / (active(unit.jarvis, t) ? 1.5 : 1);
+    let gap = spec.every;
+    if (spec.burst) {
+      unit.burstLeft = unit.burstLeft ? unit.burstLeft - 1 : spec.burst - 1;
+      gap = unit.burstLeft ? spec.burstGap : spec.every - (spec.burst - 1) * spec.burstGap;
+    }
+    const interval = gap * webSlow * (active(unit.broken, t) ? 1.62 : 1) / (active(unit.jarvis, t) ? 1.5 : 1);
     unit.fireAt = t + interval;
     unit.attackUntil = t + (spec.range <= 35 ? .32 : .17);
     unit.angle = angleTo(unit, target);
@@ -1612,7 +1624,7 @@ class Battle {
         tx: end.x, ty: end.y - (end.height ?? (end.spec.air ? 58 : 24)),
         style: unit.type, projectile: spec.projectile, player: unit.player,
         color: spec.web || unit.type === 'spider' ? '#e6efff' : unit.player ? '#ffe39a' : '#ff9a7c',
-      }, spec.web ? .42 : .18);
+      }, spec.web && !spec.burst ? .42 : .18);
     } else {
       this.effect('dust', { x: target.x, y: target.y, size: 16, color: unit.player ? '#ffd496' : '#e29477' }, .26);
     }
@@ -1630,7 +1642,7 @@ class Battle {
   }
 
   legalTarget(unit, target, focused = false) {
-    if (!target || !alive(target) || target.flight || unit.player === target.player ||
+    if (!target || !alive(target) || unit.player === target.player ||
         (target.spec.air && !unit.spec.aa) || (unit.spec.onlyAir && !target.spec.air)) return false;
     if (focused) return true;
     if (target.spec.shield && (unit.spec.web || (unit.spec.netEvery && active(unit.netAt, this.time)))) return false;
@@ -1640,7 +1652,8 @@ class Battle {
   friendlyTarget(unit) {
     let options = this.enemies.filter(enemy => this.legalTarget(unit, enemy));
     if (unit.spec.fixed || unit.type === 'mj' || unit.spec.onlyAir) {
-      options = options.filter(enemy => distance(unit, enemy) <= unit.spec.range + enemy.spec.radius);
+      options = options.filter(enemy =>
+        distance(unit, enemy) <= unit.spec.range + (unit.spec.splashRadius ? 0 : enemy.spec.radius));
       return nearest(unit, options);
     }
     const view = Math.max(unit.spec.range + 80, 178);
@@ -1738,10 +1751,14 @@ class Battle {
       this.effect('dust', { x: unit.x, y: unit.y, size: 16, color: '#c9bedf' }, .3);
       return;
     }
-    if (!completed(unit, t) || unit.flight || (unit.player && active(this.laughUntil, t)) ||
+    if (!completed(unit, t) || (unit.player && active(this.laughUntil, t)) ||
         active(unit.crouchUntil, t) || active(unit.restUntil, t) || active(unit.guardFlash, t)) return;
     if (unit.roll) {
       this.roll(unit, dt);
+      return;
+    }
+    if (unit.aimPoint) {
+      if (t >= unit.fireAt) this.fireFrogShell(unit, unit.aimPoint);
       return;
     }
     if (unit.type === 'boss' && (!unit.staging || unit.onRaid) && t >= unit.pulseAt) {
@@ -1852,11 +1869,11 @@ class Battle {
   spread(units, dt) {
     for (let i = 0; i < units.length; i++) {
       const a = units[i];
-      if (!alive(a) || !completed(a,this.time) || a.spec.fixed || a.flight || a.roll || active(a.rooted, this.time) ||
+      if (!alive(a) || !completed(a,this.time) || a.spec.fixed || a.roll || active(a.rooted, this.time) ||
           active(a.guardFlash, this.time) || active(a.restUntil, this.time) || active(a.crouchUntil, this.time)) continue;
       if (a.player && (a.order?.type === 'move' || active(this.laughUntil, this.time))) continue;
       for (const b of units) {
-        if (a === b || !alive(b) || b.flight || !!a.spec.air !== !!b.spec.air) continue;
+        if (a === b || !alive(b) || !!a.spec.air !== !!b.spec.air) continue;
         const radius = a.spec.radius + b.spec.radius;
         if (Math.abs(a.x - b.x) >= radius || Math.abs(a.y - b.y) >= radius) continue;
         const d = distance(a, b);
@@ -1912,7 +1929,7 @@ class Battle {
 
   capture(dt) {
     const point = this.mine;
-    const team = this.friends.some(u => alive(u) && completed(u,this.time) && !u.spec.fixed && !u.flight &&
+    const team = this.friends.some(u => alive(u) && completed(u,this.time) && !u.spec.fixed &&
       u.type !== 'spider' && distance(point, u) <= point.radius);
     const enemy = this.enemies.some(u => alive(u) && !u.spec.fixed && !u.spec.air && distance(point, u) <= point.radius);
     point.contested = team && enemy;
@@ -1943,11 +1960,13 @@ class Battle {
     this.finishJobs();
     this.enemyTurn();
     this.sendEnemy();
-    this.updateFlights();
 
     const arrivals = this.missiles.filter(m => t >= m.hitAt);
     this.missiles = this.missiles.filter(m => t < m.hitAt);
-    for (const missile of arrivals) this.impact(missile);
+    for (const missile of arrivals) {
+      if (missile.kind === 'frogShell') this.frogShellImpact(missile);
+      else this.impact(missile);
+    }
     this.updateRain();
     this.checkShout();
 
@@ -2247,15 +2266,22 @@ function webTowerArt(ctx, color) {
   for (const [x,y] of tips) { ctx.moveTo(0,-57);ctx.lineTo(x,y); }
   ctx.stroke();
   ellipse(ctx,0,-57,4,4,color);
+  polygon(ctx,[[6,-55],[21,-62],[40,-66],[47,-60],[40,-53],[18,-48]],'#65788c','#bac8dc',1.6);
+  for (let i=0;i<3;i++) {
+    ctx.fillStyle=i===1?'#e1e8ff':'#8195ac';
+    ctx.fillRect(24,-61+i*4,19,2);
+  }
 }
 
 function frogLauncherArt(ctx, color) {
   ellipse(ctx,0,1,43,16,'#323c2b','#a7b08a',1.5);
   roof(ctx,-3,0,54,39,16,'#838e60','#566845','#455237');
-  polygon(ctx,[[-24,-15],[-17,-41],[3,-37],[5,-13]],'#566b43','#a3b488',1.8);
-  polygon(ctx,[[-25,-28],[25,-65],[37,-59],[34,-46],[-13,-15]],'#a4c070','#4e6541',2);
-  polygon(ctx,[[-14,-29],[27,-58],[32,-54],[-11,-23]],'#384e37','#c4dda0',1.3);
-  ellipse(ctx,29,-55,7,5,color,'#374a32',1.5);
+  polygon(ctx,[[-23,-14],[-16,-45],[13,-43],[18,-14]],'#536746','#9eb17c',1.8);
+  ctx.save();ctx.translate(-3,-38);ctx.rotate(-.55);
+  roof(ctx,-8,7,42,17,18,'#a0b574','#617849','#3a513d');
+  polygon(ctx,[[10,-15],[40,-16],[48,-10],[44,0],[10,1]],'#adca77','#4b6341',1.6);
+  ellipse(ctx,45,-8,4,8,'#314633',color,1.8);
+  ctx.restore();
   ctx.fillStyle='#d5e9a6';ctx.fillRect(-20,-10,24,3);
 }
 
@@ -2506,22 +2532,21 @@ class BattlefieldView {
           }
         }
       } else if (selected.has(u)) {
-        const radius = u.spec.interceptRadius || u.spec.repairRadius || u.spec.launchRadius ||
-          (u.type==='iron'||u.type==='webTower' ? u.spec.range : 0);
+        const radius = u.spec.interceptRadius || u.spec.repairRadius ||
+          (u.type==='iron'||u.type==='webTower'||u.type==='frogLauncher' ? u.spec.range : 0);
         if (!radius) continue;
         const color=u.type==='laser'?'#91ebfb':'#a1d9ac';
         ctx.setLineDash([8,10]);
         ellipse(ctx,u.x,u.y,radius,radius,color+'10',color+'8e',1.4);
-        if (u.spec.loadRadius) ellipse(ctx,u.x,u.y,u.spec.loadRadius,u.spec.loadRadius,'#bffa9c16','#cbffc7',1.9);
+        if (u.aimPoint) ellipse(ctx,u.aimPoint.x,u.aimPoint.y,u.spec.splashRadius,u.spec.splashRadius,
+          '#c1ffac1b','#c1ffac',1.5);
         ctx.setLineDash([]);
       }
     }
   }
 
   bounds(unit, game, at=0) {
-    const flight=unit.flight;
-    const flying=flight ? Math.sin(Math.PI*clamp((game.time-flight.start)/(flight.end-flight.start),0,1))*118 :
-      unit.spec.air ? 52+5*Math.sin(at*3+unit.id) : 0;
+    const flying=unit.spec.air ? 52+5*Math.sin(at*3+unit.id) : 0;
     const h=unit.spec.height;
     return { x:unit.x, y:unit.y-flying, h, flying };
   }
@@ -2744,6 +2769,10 @@ class BattlefieldView {
 
     for(const missile of game.missiles) {
       const p=(t-missile.start)/(missile.hitAt-missile.start);
+      if (missile.kind === 'frogShell') {
+        this.drawFrogShell(missile, p);
+        continue;
+      }
       const x=lerp(missile.from.x,missile.x,p),y=lerp(missile.from.y,missile.y,p)-132*Math.sin(p*Math.PI)-16;
       ctx.save(); ctx.setLineDash([7,8]);
       ellipse(ctx,missile.x,missile.y,NUKE_RADIUS,NUKE_RADIUS,'#ffad4424','#ffd195',2.4);
@@ -2759,6 +2788,24 @@ class BattlefieldView {
       drawImageArt(ctx,'silo',0,24,49,1,1,false,44);
       ctx.restore();
     }
+  }
+
+  drawFrogShell(shell, part) {
+    const ctx=this.ctx, radius=shell.launcher.spec.splashRadius;
+    const x=lerp(shell.from.x,shell.x,part);
+    const arc=96;
+    const y=lerp(shell.from.y-25,shell.y,part)-arc*Math.sin(part*Math.PI);
+    ctx.save();ctx.setLineDash([5,7]);
+    ellipse(ctx,shell.x,shell.y,radius,radius,'#b0e87820','#bded95',1.6);
+    ctx.restore();
+    const angle=Math.atan2(shell.y-shell.from.y+25-arc*Math.PI*Math.cos(part*Math.PI), shell.x-shell.from.x);
+    ctx.save();ctx.translate(x,y);ctx.rotate(angle);
+    const trail=ctx.createLinearGradient(-58,0,8,0);
+    trail.addColorStop(0,'#b8f59700');trail.addColorStop(1,'#d9ff9d');
+    polygon(ctx,[[-58,0],[-9,-5],[-7,5]],trail);
+    ellipse(ctx,0,0,14,9,'#94b854','#eef8ba',1.6);
+    drawImageArt(ctx,'frog',1,8,16,1,1,false,20);
+    ctx.restore();
   }
 
   cursor(game, ui) {
@@ -2806,8 +2853,9 @@ class BattlefieldView {
         ellipse(ctx,point.x,point.y,NUKE_RADIUS,NUKE_RADIUS,'#ffe1a031','#ffe1a0',2.4);
         corners(ctx,point.x,point.y,52,52,9,'#ffe1a0',2.3);
       } else if(mode.type==='skill' && mode.unit.type==='frogLauncher') {
-        const reason=game.launchProblem(mode.unit,point);
+        const reason=game.artilleryProblem(mode.unit,point);
         const color=reason?'#ffad95':'#c1ffac';
+        if(!reason) ellipse(ctx,point.x,point.y,mode.unit.spec.splashRadius,mode.unit.spec.splashRadius,color+'23',color,1.7);
         corners(ctx,point.x,point.y,34,34,8,color,2.3);
         if(reason) this.text(reason,point.x,point.y-26,color,15);
       } else if(mode.type==='skill') {
@@ -3006,7 +3054,7 @@ function setPanel(name) {
     $('toggle-'+panel).setAttribute('aria-pressed',String(open));
   }
   if (name === 'unit') updateSelection();
-  if (name === 'train') updateCards();
+  if (name === 'train' || name === 'build') updateCards();
 }
 
 function refreshUnitChips() {
@@ -3317,9 +3365,9 @@ function handleEvents() {
     } else if (event.type === 'launch') {
       note('棍母已发射，正在飞向目标。');
       audio.tone([[140,.16],[206,.16],[292,.25]], 'triangle');
-    } else if (event.type === 'frogLaunch') {
-      note('奶蛙已投射，正在前往落点。');
-      audio.tone([[420,.09],[660,.16]],'triangle',.08);
+    } else if (event.type === 'frogShell') {
+      if (event.manual) note('奶蛙炮弹已发射。');
+      audio.tone([[186,.07],[112,.10]],'triangle',.045);
     } else if (event.type === 'impact') {
       note('棍母落地 · 清除 '+event.removed+' 个敌方目标'+
         (event.bossHit ? ' · 灭霸失去 80% 当前血量' : ''));
@@ -3398,6 +3446,11 @@ function selectedStations() {
   return [...ui.selected].filter(u => alive(u) && u.spec.production);
 }
 
+function selectedArchitects() {
+  const selected = [...ui.selected].filter(alive);
+  return selected.every(u => u.type === 'architect') ? selected : [];
+}
+
 function selectedMechanics() {
   if (selectedStations().length) return [];
   return [...ui.selected].filter(u => u.type === 'mechanic' && alive(u) && completed(u,game.time));
@@ -3430,18 +3483,28 @@ function updateCards() {
   const selected = selectedStations();
   const allStations = game.stations(true);
   const mechanics = selectedMechanics();
+  const architects = selectedArchitects();
   const baseOnly = selected.length > 0 && selected.every(u => u.type === 'base');
+  if (ui.panel === 'build') {
+    setText('build-title', architects.length > 1 ? '建筑师建造 · '+architects.length+' 名' :
+      architects.length ? '建筑师建造' : '阵地建造');
+    const repair = $('build-repair');
+    repair.hidden = ![...ui.selected].some(u => canWorkOrder(u) && u.spec.repairRate);
+    repair.disabled = paused || !game.actionAllowed;
+  }
   updateProductionPanel(selected, allStations, mechanics);
   for (const [type,card] of cards) {
     const spec = UNITS[type];
     const blueprint = spec.fixed || mechanics.length;
     const targets = blueprint ? [] : game.productionTargets(type, selected);
+    const builders = spec.fixed ? (architects.length ? architects : undefined) : mechanics;
     const enabled = game.actionAllowed && !paused && (blueprint ?
-      game.constructionCrew(type,true,mechanics.length && !spec.fixed ? mechanics : undefined).length &&
+      game.constructionCrew(type,true,builders).length &&
       game.canPay(spec.cost) && (type !== 'silo' || !game.silo) :
       !game.trainingProblem(type, targets));
     let caption = '', fill = 0;
-    if (!spec.fixed) card.button.hidden = mechanics.length ? !MECHANIC_UNITS.has(type) : baseOnly && type !== 'architect';
+    if (spec.fixed) card.button.hidden = !!(architects.length && spec.builtBy);
+    else card.button.hidden = mechanics.length ? !MECHANIC_UNITS.has(type) : baseOnly && type !== 'architect';
     if (!blueprint) {
       const stations = selected.length ? selected : allStations;
       const pending = stations.reduce((count,u) => count + u.queue.filter(job => job === type).length, 0);
@@ -3511,7 +3574,6 @@ function unitStatus(unit) {
     return { value: state + ' · ' + Math.floor(game.progress(unit)*100) + '%' +
       (work ? '' : ' · 可右键接手'), progress: game.progress(unit) };
   }
-  if (unit.flight) return { value: hp+' · 投射飞行中', progress:unit.hp/unit.spec.hp };
   if (unit.spec.production) {
     if (!unit.job) return { value: hp + ' · 可生产', progress: unit.hp / unit.spec.hp };
     const { start, end, type } = unit.job;
@@ -3544,7 +3606,9 @@ function unitStatus(unit) {
     return { value: hp+(active(unit.interceptAt,t)?' · 激光充能':' · 可拦截'), progress:unit.hp/unit.spec.hp };
   }
   if (unit.type === 'frogLauncher') {
-    return { value: hp+(game.launchableFrog(unit)?' · 有奶蛙待投射':' · 引导奶蛙进入装载圈'), progress:unit.hp/unit.spec.hp };
+    const status = unit.aimPoint ? '已指定落点' :
+      unit.fireAt > t ? '装填 '+seconds(unit.fireAt-t) : '自动对地轰击';
+    return { value: hp+' · '+status, progress:unit.hp/unit.spec.hp };
   }
   if (unit.type === 'stone') {
     const playing = active(unit.songUntil,t) ? SONGS[unit.playingMode]+' · '+seconds(unit.songUntil-t) :
@@ -3560,7 +3624,7 @@ function unitStatus(unit) {
 function updateDockCommand() {
   const command = $('dock-command');
   const targeting = !!ui.mode;
-  const canMove = [...ui.selected].some(u => alive(u) && completed(u,game.time) && !u.spec.fixed && !u.flight);
+  const canMove = [...ui.selected].some(u => alive(u) && completed(u,game.time) && !u.spec.fixed);
   const canWork = [...ui.selected].some(canWorkOrder);
   command.hidden = paused || !game.actionAllowed || (!targeting && !canMove && !canWork);
   const pressed = String(targeting);
@@ -3576,7 +3640,7 @@ function canWorkOrder(unit) {
 function updateSelection() {
   const unit = currentUnit();
   const group = [...ui.selected];
-  const team = group.filter(u => completed(u,game.time) && !u.spec.fixed && !u.flight);
+  const team = group.filter(u => completed(u,game.time) && !u.spec.fixed);
   const workers = group.filter(canWorkOrder);
   updateDockCommand();
   $('move-order').disabled = !team.length || paused || !game.actionAllowed;
@@ -3617,6 +3681,11 @@ function updateSelection() {
   action.disabled = paused || !!reason;
   action.classList.toggle('armed', ui.mode?.unit===unit);
   action.title = skill.hint + (reason ? '\n' + reason : '');
+  if (unit.type==='frogLauncher') {
+    const reload = unit.fireAt > t ? ' · 装填 '+seconds(unit.fireAt-t) : '';
+    setButton(action, (unit.aimPoint ? '重定落点' : skill.label)+reload, 'Q');
+    return;
+  }
   const stage = unit.type==='silo' ? game.siloState(unit) : null;
   const cd = Math.max(unit.cooldown || 0, unit.silenced || 0) - t;
   const label = stage && stage.until>t ? stage.name + ' ' + seconds(stage.until-t) :
@@ -3628,9 +3697,9 @@ function guidance() {
   const factories = game.factories(true);
   const f = game.factories(true, false);
   const builders = game.constructionCrew('factory',true);
-  if (game.phase==='ready') return ['开局部署', '选「工厂」后在地图左侧选址。用采矿机占金矿，提高金币收入。'];
+  if (game.phase==='ready') return ['开局部署', '点击建筑师打开建造窗口。先建工厂，再用采矿机占金矿。'];
   if (!builders.length) return ['补充建筑师', '点基地或工厂，花 40 金币生产建筑师。'];
-  if (!f.length) return ['建造工厂', '点「建造」下达工厂蓝图，再选址开矿。'];
+  if (!f.length) return ['建造工厂', '点击建筑师选择工厂蓝图，再选址开矿。'];
   if (!factories.length) return ['工厂施工', '建造者正在施工。可以提前安排采矿机蓝图。'];
   if (game.boss) return ['灭霸在场', '棍母能扣除灭霸 80% 当前血量，爆炸只打击敌方。'];
   if (game.goldRate() < GOLD_RATE + MINE_RATE) return ['建立收入', '让采矿机完工，提高生产速度。机动部队可争夺梗矿来赚取 67 指数。'];
@@ -3702,7 +3771,7 @@ function setMode(mode, announce = true) {
     mode?.type==='repair' ? '点受损友军或我方蓝图。建筑师维修建筑，修复湾需在范围内。' :
     mode?.type==='move' ? '点地图选择部队的目的地。' :
     mode?.type==='skill' ? (mode.unit.type==='silo'?'选择棍母落点，圆圈内只打击敌方。':
-      mode.unit.type==='frogLauncher'?'点击绿色射程圈内的前线落点。':'点击确定技能方向。') :
+      mode.unit.type==='frogLauncher'?'点射程圈内的落点，内圈显示炮弹溅射范围。':'点击确定技能方向。') :
     '已返回选择模式。';
   note(text);
 }
@@ -3721,8 +3790,10 @@ function chooseCard(type) {
   }
   if (spec.fixed || mechanics.length) {
     if (!game.canPay(spec.cost)) { note('金币或 67 指数不足。', true); return; }
-    if (!game.constructionCrew(type,true,spec.fixed ? undefined : mechanics).length) {
-      note(spec.builtBy ? '请先生产 MJ。' : spec.fixed ? '需要建筑师或机械师。' : '机械师只能现场建造奶蛙、美团老鼠和 MJ。',true);
+    const architects = selectedArchitects();
+    const builders = spec.fixed ? (architects.length ? architects : undefined) : mechanics;
+    if (!game.constructionCrew(type,true,builders).length) {
+      note(spec.builtBy ? '选中 MJ 即可建造蛛丝重机枪。' : spec.fixed ? '需要建筑师或机械师。' : '机械师只能现场建造奶蛙、美团老鼠和 MJ。',true);
       return;
     }
     setMode({ type:'build',unitType:type });
@@ -3766,7 +3837,7 @@ function issue(point, moveOnly = false) {
   const target=moveOnly ? null : hitTest(point, false);
   const selected = [...ui.selected].filter(alive);
   if (!moveOnly && selected.length && workOnTarget(hitTest(point,true),selected)) { updateHud(); return; }
-  const team=selected.filter(u=>completed(u,game.time)&&!u.spec.fixed&&!u.flight);
+  const team=selected.filter(u=>completed(u,game.time)&&!u.spec.fixed);
   if (!team.length && selected.some(canWorkOrder)) { note('请选择覆盖范围内的受损友军或有人施工的蓝图。',true); return; }
   if (!team.length) { note('请先选中机动单位。',true);return; }
   const count = game.command(team,point,target);
@@ -3795,7 +3866,7 @@ function commit(point) {
     setMode(null, false);
   } else if (mode.type==='skill') {
     if (mode.unit.type==='frogLauncher') {
-      const problem = game.launchProblem(mode.unit,point);
+      const problem = game.artilleryProblem(mode.unit,point);
       if (problem) { note(problem,true); return; }
     }
     if (!game.cast(mode.unit,point)) {
@@ -3817,7 +3888,9 @@ function selection(team, inspected=null, keepCamera=false, openDetails=true) {
   ui.selected=new Set(team);
   ui.inspected=inspected;
   if (openDetails && (team.length || inspected)) {
-    setPanel(team.length && team.every(u=>u.spec.production)?'train':'unit');
+    const panel = team.length && team.every(u=>u.spec.production) ? 'train' :
+      selectedArchitects().length ? 'build' : 'unit';
+    setPanel(panel);
   } else {
     if (ui.panel==='unit' && !team.length && !inspected) setPanel(null);
     updateSelection();
@@ -3834,13 +3907,13 @@ function selectNearby(unit) {
 function selectAll() {
   if (!game.actionAllowed || paused) return;
   setMode(null);
-  const forces=game.friends.filter(u=>alive(u)&&completed(u,game.time)&&!u.spec.fixed&&!u.flight&&
+  const forces=game.friends.filter(u=>alive(u)&&completed(u,game.time)&&!u.spec.fixed&&
     (u.type==='mj'||!u.spec.builder));
   selection(forces.length ? forces : game.builders(true));
 }
 function orderMode() {
   if (paused || !game.actionAllowed ||
-      ![...ui.selected].some(u=>alive(u)&&completed(u,game.time)&&!u.spec.fixed&&!u.flight)) return;
+      ![...ui.selected].some(u=>alive(u)&&completed(u,game.time)&&!u.spec.fixed)) return;
   setMode(ui.mode?.type==='move' ? null : {type:'move'});
 }
 function repairOrder() {
@@ -3862,7 +3935,7 @@ function hitTest(point, player) {
   const units=game.units(player);
   const touch=clamp((canvas.clientWidth<650 ? 10 : 5)/view.camera.scale,4,33);
   for(const u of units) {
-    if (!alive(u) || u.flight) continue;
+    if (!alive(u)) continue;
     const {x,y,h}=view.bounds(u,game,artAt);
     const width = Math.max(u.spec.radius + touch,h*.32);
     const center = y - h*.34;
@@ -4033,7 +4106,7 @@ canvas.addEventListener('pointerup',ev=>{
       selection([...team], null, false, false);
     } else {
       selection([friend], null, false, friend.spec.production || friend.spec.builder ||
-        friend.spec.buildAssist || friend.spec.launchRadius || ui.panel==='train');
+        friend.spec.buildAssist || friend.spec.splashRadius || ui.panel==='train');
     }
     ui.unitTap = repeated ? null : { unit:friend, kind:ev.pointerType, time:ev.timeStamp };
     return;
@@ -4173,6 +4246,7 @@ $('restart').addEventListener('click',restart);
 $('advance').addEventListener('click',start);
 $('ability').addEventListener('click',chooseSkill);
 $('repair-order').addEventListener('click',repairOrder);
+$('build-repair').addEventListener('click',repairOrder);
 $('field-train').addEventListener('click',()=>{
   if (!paused && game.actionAllowed && selectedMechanics().length) setPanel('train');
 });
