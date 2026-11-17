@@ -297,6 +297,20 @@ body { height: 100dvh; display: flex; flex-direction: column; overflow: hidden; 
   .difficulty .minor { padding-inline: 7px; min-height: 32px; }
 }
 
+.upgrade-row { display: flex; align-items: center; justify-content: space-between; gap: 7px; margin: 6px 0;
+  padding: 7px 8px; border: 1px solid #667956; border-radius: 4px; background: #25372c; }
+.upgrade-status { min-width: 0; flex: 1; }
+.upgrade-status strong { color: #e6eccf; font-size: 12px; }
+.upgrade-status small { display: block; margin-top: 2px; color: #b7c9b3; font-size: 10px; }
+.upgrade-meter { margin-top: 5px; height: 4px; border-radius: 2px; background: #70866770; }
+.upgrade-meter i { display: block; height: 100%; width: 0; border-radius: 2px; background: #e5c580; }
+.laser-load { padding: 7px 8px; margin: 6px 0; border: 1px solid #527679; border-radius: 4px;
+  background: #1c3434; color: #d0eee6; font-size: 11px; }
+.laser-load .upgrade-meter i { background: #8adddf; }
+.laser-load.overheated { color: #ffd0a8; border-color: #94664a; background: #3c2924; }
+.laser-load.overheated .upgrade-meter i { background: #ffa676; }
+.card.tech-locked .card-state { color: #ffe3aa; border: 1px solid #bd9463; }
+.unit-guide p.guide-upgrade { margin-top: 7px; color: #ead098; }
 .queue-status { margin: 0 0 7px; color: #c4d5be; font-size: 11px; line-height: 1.45; }
 .queue-list { display: flex; flex-wrap: wrap; gap: 4px 6px; margin-top: 5px; }
 .queue-list span { display: inline-block; max-width: 100%; padding: 3px 6px; border: 1px solid #52664f; border-radius: 3px; overflow-wrap: anywhere; }
@@ -390,7 +404,7 @@ body { height: 100dvh; display: flex; flex-direction: column; overflow: hidden; 
       <p>开矿、建造和作战，摧毁敌军的生产与建造能力。</p>
       <nav class="rule-nav" aria-label="规则目录">
         <a href="#rule-start">开局与胜负</a><a href="#rule-control">操作指令</a><a href="#rule-resources">资源与施工</a>
-        <a href="#rule-friendly">我方单位</a><a href="#rule-buildings">我方建筑</a><a href="#rule-enemies">敌军图鉴</a>
+        <a href="#rule-levels">建筑升级</a><a href="#rule-friendly">我方单位</a><a href="#rule-buildings">我方建筑</a><a href="#rule-enemies">敌军图鉴</a>
         <a href="#rule-combat">战斗与技能</a><a href="#rules-actions">进入试玩</a>
       </nav>
       <section class="rule-chapter" id="rule-start">
@@ -409,7 +423,7 @@ body { height: 100dvh; display: flex; flex-direction: column; overflow: hidden; 
           <li><strong>选择与浮窗</strong>　点建筑师或 MJ 直接展开各自的建造窗口，MJ 可在窗内召唤小蜘蛛。点基地或工厂打开生产，点其他固定单位打开状态与可用操作。拖住标题栏或左侧抓手移动窗口；选其他单位可直接切换，点空地或右上角 × 可收起。</li>
           <li><strong>多选</strong>　双击机动单位选中附近同类，双击工厂选中我方全部工厂。电脑可用 Shift 加点增减选择，拖空地框选机动单位。</li>
           <li><strong>指挥</strong>　电脑右键空地下达直线移动，触屏点空地移动。移动中的部队会自动攻击射程内合适的敌人，并继续前往目的地。右键敌人或在触屏上点敌人会让全队推进集火，途中先集火遇到的目标，击破后继续前进。原目标被摧毁后，队伍继续向其最后位置推进，并自动攻击沿途敌人。</li>
-          <li><strong>炮塔锁定</strong>　选中防空炮塔、蛛丝重机枪或奶蛙发射器后，右键敌人锁定，触屏点敌人锁定。炮塔等待目标进入射程再攻击，锁定结束后自动索敌。右键空地或点击「解除锁定」可恢复自动。</li>
+          <li><strong>炮塔锁定</strong>　选中防空炮塔、蛛丝重机枪或奶蛙火炮后，右键敌人锁定，触屏点敌人锁定。炮塔等待目标进入射程再攻击，锁定结束后自动索敌。右键空地或点击「解除锁定」可恢复自动。</li>
           <li><strong>上下文指令</strong>　右键受损友军或施工蓝图可下达维修、协同施工指令；触屏使用「维修」后再选目标。部署蓝图时仍可点其他友军切换选择。Esc 可取消指令或关闭窗口。</li>
           <li><strong>视角</strong>　小地图可点击或拖动查看战线其他位置，旁边可缩放和切换全图。电脑可用滚轮缩放、中键拖拽平移；触屏在战场上单指滑动平移、双指捏合缩放。</li>
         </ul>
@@ -422,6 +436,15 @@ body { height: 100dvh; display: flex; flex-direction: column; overflow: hidden; 
           <li><strong>放蓝图</strong>　选择建筑卡片，再点地图确定位置。常规建筑可在全战场选址，建筑轮廓须在战场边界内并与其他建筑留出间隔。采矿机须建在空置金矿上，其他建筑应避开矿点和梗矿。MJ 的蛛丝重机枪与机械师现场造兵须距对应建造者 260 以内。已付费的蓝图要等施工完成才能投入使用。</li>
           <li><strong>并行施工和维修</strong>　选中多名合格建造者可给同一蓝图加速。多个维修者可协同修同一个目标。自动维修逐个处理受损目标，手动指定可集中维修。修复湾在范围内可为建筑师或机械师正在施工的蓝图助建。</li>
           <li><strong>排队生产</strong>　每座基地和工厂最多容纳 10 个生产任务（含正在生产的一个），按入队顺序完成并在下单时扣款。选中多座完工工厂后，每点一次卡片，每座工厂各加一个任务。「设置集结点」是新兵出厂后的集合位置。</li>
+        </ul>
+      </section>
+      <section class="rule-chapter" id="rule-levels">
+        <h2>建筑升级与高级兵种</h2>
+        <ul>
+          <li>选中已完工的可升级建筑，在浮窗里按「升级 L2」。费用在开始时扣除，倒计时结束后启用 L2 数值。升级期间照常采矿、生产或防御。多选建筑时可一次支付并行升级。</li>
+          <li>采矿机升级需 800 金币，L2 产量为 L1 的 1.5 倍。工厂升级需 1000 金币，完成后解锁奶蛙机甲与 MJ。多选工厂时，高级订单只加入 L2 的队列。机械师现场建造 MJ 也需要存活的 L2 工厂。</li>
+          <li>奶蛙火炮、防空炮塔和激光防御塔的升级消耗金币。蛛丝重机枪和讲解石还要消耗 67 指数。每种升级的数值在建筑图鉴里列出。棍母发射井与修复湾是单级建筑。</li>
+          <li>激光塔每次拦截都会增加负荷。达到上限后进入过热冷却，冷却条倒数结束才恢复防御。火力间歇足够长时，负荷会自行下降。</li>
         </ul>
       </section>
       <section class="rule-chapter" id="rule-friendly">
@@ -442,7 +465,7 @@ body { height: 100dvh; display: flex; flex-direction: column; overflow: hidden; 
           <li><strong>地面和空中</strong>　地面攻击覆盖敌方地面部队及建筑。防空炮塔与机械师的轻武器专打空军；MJ、蛛丝重机枪与小蜘蛛能攻击两个高度。棍母导弹的爆炸覆盖地面、建筑和空中。</li>
           <li><strong>弹药和拦截</strong>　射击会发出弹丸、箭矢、蛛弹或导弹。激光防御塔用激光逐次拦截普通弹丸和箭矢；灭霸的拳铠弹可穿过拦截，刀盾狗的刀击属于近战。</li>
           <li><strong>技能</strong>　在单位窗口点亮起的技能按钮。MJ 的召唤入口也在建造窗口。方向或落点类技能需再次点地图。67 指数在施放时扣除；每个单位或建筑有独立冷却，讲解石的两首歌共用同一冷却。</li>
-          <li><strong>讲解石与灭霸</strong>　苦行山会用声波攻击地面敌军并变身控场。雨爱声波更强，可打击空军和灭霸，并让灭霸受到的常规伤害乘以 1.4；棍母导弹命中后附加的 1.5 倍易伤可与雨爱同时生效。</li>
+          <li><strong>讲解石与灭霸</strong>　苦行山会用声波攻击地面敌军并变身控场。雨爱声波更强，可打击空军和灭霸，并将其受到的常规伤害乘以 1.4，升级到 L2 后为 1.5 倍。棍母导弹命中的易伤可与雨爱同时生效。</li>
           <li><strong>攻防搭配</strong>　用机甲和老鼠处理刀盾狗，用对空导弹处理飞行盾兵，捕网可控制两种盾兵。打灭霸可以用奶蛙火炮、机甲和蛛丝持续输出，或攒满 67 指数建井，等灭霸进入棍母导弹爆炸圈再发射。</li>
         </ul>
       </section>
@@ -556,6 +579,18 @@ body { height: 100dvh; display: flex; flex-direction: column; overflow: hidden; 
               <button class="minor skill" type="button" id="ability"></button>
             </div>
           </div>
+          <div class="laser-load" id="laser-load" hidden>
+            <span id="laser-load-label">拦截负荷</span>
+            <div class="upgrade-meter"><i id="laser-load-progress"></i></div>
+          </div>
+          <div class="upgrade-row" id="unit-upgrade-row" hidden>
+            <div class="upgrade-status">
+              <strong id="unit-upgrade-title">L1</strong>
+              <small id="unit-upgrade-detail"></small>
+              <div class="upgrade-meter" id="unit-upgrade-meter" hidden><i id="unit-upgrade-progress"></i></div>
+            </div>
+            <button class="minor skill" type="button" id="unit-upgrade">升级 L2</button>
+          </div>
           <p class="lock-hint" id="lock-hint" hidden>右键敌人锁定，触屏点敌人锁定。解除锁定后自动索敌。</p>
           <div class="quick-units" id="quick-units" aria-label="选择已部署的单位"></div>
         </div>
@@ -568,6 +603,14 @@ body { height: 100dvh; display: flex; flex-direction: column; overflow: hidden; 
           <button class="close-window" type="button" aria-label="关闭生产窗口" data-close-panel>×</button>
         </div>
         <div class="window-content">
+          <div class="upgrade-row" id="train-upgrade-row" hidden>
+            <div class="upgrade-status">
+              <strong id="train-upgrade-title">L1</strong>
+              <small id="train-upgrade-detail"></small>
+              <div class="upgrade-meter" id="train-upgrade-meter" hidden><i id="train-upgrade-progress"></i></div>
+            </div>
+            <button class="minor skill" type="button" id="train-upgrade">升级 L2</button>
+          </div>
           <div class="queue-status"><div id="queue-note"></div><div class="queue-list" id="queue-list"></div></div>
           <div class="cards troops" id="troop-cards"></div>
         </div>
@@ -662,16 +705,23 @@ const WORLD = { w: 1600, h: 640, left: 42, right: 1565, top: 94, bottom: 548 };
 const INDEX_MAX = 100;
 const MINE = { x: 786, y: 403, radius: 67, gain: 1.35, time: 3 };
 const ARTILLERY_RANGE = 500;
-const STONE_RADIUS = ARTILLERY_RANGE;
-const STONE_WAVE_EVERY = 1.6;
-const SONG_WAVE_DAMAGE = [10, 20];
+const ARTILLERY_L2_RANGE = 620;
 const NUKE_RADIUS = 212;
+const SILO_FLIGHT_TIME = 5.5;
 const GOLD_RATE = 44;
 const MINE_RATE = 41;
 const OPENING_GOLD = 2000;
 const QUEUE_LIMIT = 10;
 const RAIN_SLOW = .5;
 const RAIN_DAMAGE = 1.4;
+const STONE_MUSIC = {
+  radius: ARTILLERY_RANGE, duration: [5, 10], waveEvery: 1.6, damage: [10, 20],
+  guardSpeed: .4, guardAttack: .3, rainSpeed: RAIN_SLOW, rainDamage: RAIN_DAMAGE,
+};
+const STONE_MUSIC_L2 = {
+  ...STONE_MUSIC, radius: ARTILLERY_L2_RANGE, duration: [7, 13], damage: [14, 28],
+  guardSpeed: .28, guardAttack: .22, rainSpeed: .38, rainDamage: 1.5,
+};
 const FIELD_BUILD_REACH = 260;
 const MECHANIC_UNITS = new Set(['frog','rat','mj']);
 const NET_RADIUS = 82;
@@ -715,10 +765,12 @@ const ARCHITECT = { name: '建筑师', hp: 145, armor: .08, radius: 16, speed: 7
 const BASE = { name: '基地', hp: 1400, armor: .16, radius: 49, fixed: true, production: true,
   height: 92, art: 'base', info: '开局自带，可排队生产建筑师。' };
 const FACTORY = { name: '工厂', hp: 1560, armor: .15, radius: 55, fixed: true, cost: [1200], build: 8.5,
-  height: 102, art: 'factory', production: true,
-  info: '按队列依次生产。双击任一工厂可全选工厂，每座各排一个单位。' };
+  height: 102, art: 'factory', production: true, upgrade: { cost: [1000], time: 7 },
+  info: '按队列生产，升级 L2 后解锁奶蛙机甲与 MJ。双击任一工厂可全选工厂。' };
 const MINER = { name: '采矿机', hp: 366, armor: .13, radius: 28, fixed: true, cost: [400], build: 4.6,
-  height: 64, art: 'miner', info: '建在金矿上。每座完工的采矿机增加 '+MINE_RATE+' 金币/秒。' };
+  height: 64, art: 'miner', income: MINE_RATE,
+  upgrade: { cost: [800], time: 5, stats: { income: MINE_RATE * 1.5 } },
+  info: '建在金矿上。L1 增加 '+MINE_RATE+' 金币/秒，L2 增加 '+(MINE_RATE*1.5)+' 金币/秒。' };
 
 const UNITS = {
   architect: ARCHITECT,
@@ -732,28 +784,40 @@ const UNITS = {
   frog:   { name: '奶蛙', hp: 104, armor: .06, radius: 17, speed: 78, range: 30, damage: 28, every: .95, cost: [420], build: 2.2, height: 61, art: 'frog', info: '蛙跳撞击对普通步兵增伤。地面近战。' },
   rat:    { name: '美团老鼠', hp: 359, armor: .29, radius: 23, speed: 45, range: 29, damage: 51, every: 1.65, cost: [1320], build: 5.9, height: 68, art: 'rat', info: '高血中甲。近战撞击对建筑增伤。滚动碰盾时造成冲击并停下。' },
   frogMech: { name: '奶蛙机甲', hp: 420, armor: .18, radius: 30, speed: 56, range: 165, damage: 66, every: 1.55,
-    cost: [1880], build: 7.7, height: 88, art: 'frogMech', flameHalfAngle: .61, armorScale: .5,
+    cost: [2380], factoryLevel: 2, build: 7.7, height: 88, art: 'frogMech', flameHalfAngle: .61, armorScale: .5,
     barrier: 125, barrierDelay: 6, barrierRate: 22,
-    info: '大范围喷火，削弱装甲效果。护盾脱战后恢复。击破敌军时播放 3 秒捧腹大笑。' },
-  mj:     { name: 'MJ', hp: 184, armor: .08, radius: 18, speed: 45, range: 248, damage: 16, every: 1.72, cost: [1100], build: 4.8, height: 67, art: 'mj', aa: true,
+    info: 'L2 工厂高级兵种。大范围喷火并削弱装甲，护盾脱战后恢复，击破敌军时播放 3 秒捧腹大笑。' },
+  mj:     { name: 'MJ', hp: 184, armor: .08, radius: 18, speed: 45, range: 248, damage: 16, every: 1.72, cost: [1480], factoryLevel: 2, build: 4.8, height: 67, art: 'mj', aa: true,
     builder: true, projectile: 'web', web: 1.35, bossWeb: .85,
-    info: '可建蛛丝重机枪。普攻自动缠绕敌人 1.35 秒，可对空，盾兵免疫普通蛛丝。' },
-  stone:  { name: '讲解石', hp: 475, armor: .15, fixed: true, radius: 34, cost: [1400], build: 7.8, height: 82, art: 'stone', info: '半径 '+STONE_RADIUS+'。两首歌都会发出声波，自动苦行山控地面，手动雨爱伤害更高。' },
+    info: 'L2 工厂高级兵种。可建蛛丝重机枪，普攻自动缠绕敌人 1.35 秒，可对空。盾兵免疫普通蛛丝。' },
+  stone:  { name: '讲解石', hp: 475, armor: .15, fixed: true, radius: 34, cost: [1400], build: 7.8,
+    height: 82, art: 'stone', music: STONE_MUSIC,
+    upgrade: { cost: [1650, 32], time: 8.5, stats: { music: STONE_MUSIC_L2 } },
+    info: '两首歌都会发出声波，自动苦行山控地面，手动雨爱可打空军。L2 加强范围、控制、杀伤和持续时间。' },
   laser:  { name: '激光防御塔', hp: 450, armor: .16, fixed: true, radius: 28, cost: [1270], build: 6.7,
     height: 78, art: 'laser', interceptRadius: 150, interceptEvery: 1.05,
-    info: '用激光拦截射向友军的普通弹丸和箭矢。灭霸的拳铠弹和刀盾狗近战可绕过拦截。' },
+    heatCapacity: 4, heatDelay: 2.6, heatDecay: .8, overheatTime: 5.5,
+    upgrade: { cost: [1300], time: 7, stats: {
+      interceptRadius: 225, interceptEvery: .75, heatCapacity: 6, heatDelay: 2.2, heatDecay: 1.25, overheatTime: 3.8,
+    } },
+    info: '拦截普通弹丸与箭矢，每次拦截会增加热量。热量满后暂停防御，冷却完成后恢复。' },
   repair: { name: '修复湾', hp: 510, armor: .13, fixed: true, radius: 33, cost: [1450], build: 7.2,
     height: 75, art: 'repair', autoRepair: 29, repairRate: 29, repairRadius: 240, buildAssist: .55,
     info: '修复范围内的友军和建筑，也可协助建筑师或机械师施工。' },
   webTower: { name: '蛛丝重机枪', hp: 425, armor: .14, fixed: true, radius: 27, cost: [1510], build: 6.8,
     height: 81, art: 'webTower', range: 285, damage: 10, every: 1.3, burst: 3, burstGap: .11,
     aa: true, projectile: 'web', web: 1.72, bossWeb: .68, bossWebDamage: .52,
+    upgrade: { cost: [1320, 20], time: 7, stats: {
+      range: 335, damage: 12, every: 1.12, burstGap: .1, web: 2.1, bossWeb: .8, bossWebDamage: .56,
+    } },
     builtBy: 'mj', info: '由 MJ 施工。三连发强化蛛丝，可对空。盾兵免疫，灭霸受到的伤害和缠绕时间较短。' },
-  frogLauncher: { name: '奶蛙发射器', hp: 436, armor: .15, fixed: true, radius: 31, cost: [1500], build: 6.8,
+  frogLauncher: { name: '奶蛙火炮', hp: 436, armor: .15, fixed: true, radius: 31, cost: [1500], build: 6.8,
     height: 73, art: 'frogLauncher', range: ARTILLERY_RANGE, damage: 96, every: 4.5, splashRadius: 83,
+    upgrade: { cost: [1200], time: 7.5, stats: { range: ARTILLERY_L2_RANGE, damage: 108, every: 3.8 } },
     info: '远程火炮，自动发射奶蛙炮弹，溅射敌方地面部队和建筑。可手动指定落点。' },
   airDefense: { name: '防空炮塔', hp: 472, armor: .21, fixed: true, radius: 27, range: 330, damage: 62,
     every: 1.65, aa: true, onlyAir: true, cost: [1280], build: 5.8, height: 77, art: 'airDefense',
+    upgrade: { cost: [1400], time: 7.5, stats: { range: 495, damage: 74, every: 1.5 } },
     info: '自动向空军发射棍母防空导弹。飞行盾兵正面可替身后空军挡弹，并承担伤害。' },
   silo:   { name: '棍母发射井', hp: 678, armor: .22, fixed: true, radius: 38, cost: [5400, 100], build: 19, height: 85, art: 'silo', info: '装填 25 秒后可手动发射棍母导弹。爆炸清除圈内敌方单位和建筑，灭霸失去 80% 当前血量。' },
   spider: { name: '小蜘蛛', hp: 29, armor: 0, radius: 9, speed: 107, range: 104, damage: 12, every: .64, aa: true,
@@ -780,13 +844,12 @@ const SKILLS = {
   frog:   { label: '捧腹大笑', cost: 16, cool: 20, target: true, hint: '选择方向。地面敌人失控 2 秒，奶蛙蹲下 1 秒。' },
   rat:    { label: '肥嘟嘟滚动', cost: 22, cool: 24, target: true, hint: '蓄力 2 秒后滚动碾压轻型地面敌人。碰盾停下，之后喘气 3 秒。' },
   mj:     { label: '释放小蜘蛛', cost: 23, cool: 25, hint: '召来 3 只小蜘蛛，存活 15 秒。范围捕网可缠住盾兵和灭霸，灭霸的缠绕更短。' },
-  stone:  { label: '播放雨爱', cost: 24, cool: 45, hint: '雨爱持续 10 秒，声波基础伤害 '+SONG_WAVE_DAMAGE[1]+'，范围内敌军减速 50%、受伤 +40%。可对空，与苦行山共享冷却。' },
+  stone:  { label: '播放雨爱', cost: 24, cool: 45, hint: '用雨爱声波打击范围内的敌军，同时减速并提高其受伤量。可对空，与苦行山共享冷却。' },
   airDefense: { label: '快速装填', cost: 18, cool: 30, hint: '棍母防空导弹发射速度提高 50%，持续 8 秒。' },
   silo:   { label: '发射棍母导弹', cost: 16, target: true, hint: '只打击落点范围内的敌方单位和建筑。灭霸失去 80% 当前血量，并获得持续易伤。' },
   frogLauncher: { label: '指定落点', cost: 0, target: true, hint: '指定下一发奶蛙炮弹的落点。落地时溅射敌方地面目标。' },
 };
 const SONGS = ['东南苦行山', '雨爱司凤版'];
-const SONG_DURATION = [5, 10];
 
 const clamp = (value, low, high) => Math.min(high, Math.max(low, value));
 const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
@@ -867,7 +930,7 @@ class Battle {
   goldRate(player = true) {
     const base = player ? GOLD_RATE : this.pace.baseIncome;
     const mines = this.units(player).filter(u => u.type === 'miner' && alive(u) && completed(u, this.time));
-    return base + mines.length * MINE_RATE;
+    return mines.reduce((income, mine) => income + mine.spec.income, base);
   }
 
   setDifficulty(key) {
@@ -899,6 +962,7 @@ class Battle {
       unit.work = 0;
       unit.hp *= .36;
     }
+    if (spec.upgrade) unit.level = 1;
     if (spec.barrier) unit.barrier = spec.barrier;
     if (spec.builder) unit.blueprints = [];
     if (spec.production) unit.queue = [];
@@ -923,10 +987,50 @@ class Battle {
     }
   }
 
+  upgradeQuote(units, player = true) {
+    const targets = [...new Set(units)].filter(unit => unit.player === player && alive(unit) &&
+      completed(unit, this.time) && unit.level === 1 && !unit.upgradeJob);
+    const cost = targets.reduce(([gold, index], unit) => {
+      const [price, skillCost = 0] = unit.spec.upgrade.cost;
+      return [gold + price, index + skillCost];
+    }, [0, 0]);
+    const problem = !this.actionAllowed ? '当前无法升级。' : !targets.length ? '没有可升级的 L1 建筑。' :
+      !this.canPay(cost, player) ? '金币或 67 指数不足。' : '';
+    return { targets, cost, problem };
+  }
+
+  upgrade(units, player = true) {
+    const { targets, cost, problem } = this.upgradeQuote(units, player);
+    if (problem) return false;
+    this.pay(cost, player);
+    for (const unit of targets) {
+      unit.upgradeJob = { start: this.time, end: this.time + unit.spec.upgrade.time };
+    }
+    if (player) this.event('upgrade', { unit: targets[0], count: targets.length });
+    return true;
+  }
+
+  finishUpgrades() {
+    for (const unit of [...this.friends, ...this.enemies]) {
+      if (!alive(unit) || !unit.upgradeJob || unit.upgradeJob.end > this.time) continue;
+      unit.level = 2;
+      if (unit.spec.upgrade.stats) unit.spec = { ...unit.spec, ...unit.spec.upgrade.stats };
+      unit.upgradeJob = null;
+      if (unit.player) this.event('upgraded', { unit });
+    }
+  }
+
   supportsTraining(station, type, player = true) {
     const spec = (player ? UNITS : ENEMIES)[type];
-    return !!(spec?.cost && !spec.fixed && station?.spec.production && station.player === player &&
-      alive(station) && completed(station, this.time) && (station.type !== 'base' || type === 'architect'));
+    if (!spec?.cost || spec.fixed || !station?.spec.production || station.player !== player ||
+        !alive(station) || !completed(station, this.time)) return false;
+    if (station.type === 'base') return type === 'architect';
+    return !spec.factoryLevel || station.level >= spec.factoryLevel;
+  }
+
+  fieldTechnologyProblem(type, player = true) {
+    const level = (player ? UNITS : ENEMIES)[type]?.factoryLevel;
+    return level && !this.factories(player).some(factory => factory.level >= level) ? '需要已完工的 L2 工厂。' : '';
   }
 
   productionTargets(type, selection = []) {
@@ -944,6 +1048,7 @@ class Battle {
   trainingProblem(type, stations, player = true) {
     if (!this.actionAllowed) return '当前无法生产。';
     if (!stations.length || !stations.every(u => this.supportsTraining(u, type, player))) {
+      if ((player ? UNITS : ENEMIES)[type]?.factoryLevel) return '需要已完工的 L2 工厂。';
       return type === 'architect' ? '需要一座完工的基地或工厂。' : '请选中已完工的工厂。';
     }
     if (stations.some(u => u.queue.length + Number(!!u.job) >= QUEUE_LIMIT)) return '所选生产队列已满。';
@@ -999,6 +1104,8 @@ class Battle {
   placementProblem(type, point, player = true, preferred = []) {
     const spec = (player ? UNITS : ENEMIES)[type];
     if (!this.actionAllowed || !spec?.cost) return '当前无法建造。';
+    const technology = this.fieldTechnologyProblem(type, player);
+    if (technology) return technology;
     const selected = this.constructionCrew(type, player, preferred);
     const crew = selected.length ? selected : this.constructionCrew(type, player);
     if (!crew.length) return spec.builtBy ? '需要一名完工的 MJ。' :
@@ -1422,10 +1529,14 @@ class Battle {
     return true;
   }
 
-  soundTargets(tower, mode) {
+  stoneMusic(tower) {
+    return active(tower.songUntil, this.time) ? tower.songMusic : tower.spec.music;
+  }
+
+  soundTargets(tower, mode, music = tower.spec.music) {
     return this.enemies.filter(enemy => alive(enemy) && enemy.type !== 'zombie' &&
       (mode === 1 || !enemy.spec.air && !enemy.spec.fixed && enemy.type !== 'boss') &&
-      distance(tower, enemy) <= STONE_RADIUS);
+      distance(tower, enemy) <= music.radius);
   }
 
   guardTargets(tower) {
@@ -1438,26 +1549,30 @@ class Battle {
       tower.cooldown = t + SKILLS.stone.cool;
       tower.silenced = t + 10;
     }
+    const music = tower.spec.music;
+    tower.songMusic = music;
     tower.songStartedAt = t;
-    tower.songUntil = t + SONG_DURATION[mode];
+    tower.songUntil = t + music.duration[mode];
     tower.playingMode = mode;
     tower.nextWaveAt = t;
     for (const enemy of guards) {
-      enemy.guardUntil = t + SONG_DURATION[0];
+      enemy.guardUntil = t + music.duration[0];
+      enemy.guardSpeed = music.guardSpeed;
+      enemy.guardAttack = music.guardAttack;
       enemy.guardFlash = t + .43;
       this.effect('guardFlash', { unit: enemy }, .76);
     }
     if (mode) this.updateRain();
-    this.event('song', { mode, name: SONGS[mode], tower });
+    this.event('song', { mode, name: SONGS[mode], tower, music });
   }
 
   pulseStone(tower) {
-    const mode = tower.playingMode;
-    tower.nextWaveAt = this.time + STONE_WAVE_EVERY;
+    const { playingMode: mode, songMusic: music } = tower;
+    tower.nextWaveAt = this.time + music.waveEvery;
     const color = mode ? '#82d8ff' : '#ffe09a';
-    this.effect('soundWave', { x: tower.x, y: tower.y, color, radius: STONE_RADIUS, strong: mode === 1 }, 1.3);
-    for (const enemy of this.soundTargets(tower, mode)) {
-      this.hit(enemy, SONG_WAVE_DAMAGE[mode], { source: tower });
+    this.effect('soundWave', { x: tower.x, y: tower.y, color, radius: music.radius, strong: mode === 1 }, 1.3);
+    for (const enemy of this.soundTargets(tower, mode, music)) {
+      this.hit(enemy, music.damage[mode], { source: tower });
     }
   }
 
@@ -1495,7 +1610,7 @@ class Battle {
     launcher.attackUntil = start + .28;
     launcher.angle = angleTo(launcher, point);
     this.missiles.push({
-      kind: 'frogShell', launcher, from: { x: launcher.x, y: launcher.y },
+      kind: 'frogShell', launcher, damage: launcher.spec.damage, from: { x: launcher.x, y: launcher.y },
       x: point.x, y: point.y, start, hitAt: start + .55 + distance(launcher, point) / 1700,
     });
     this.effect('dust', { x: launcher.x, y: launcher.y - 26, size: 22, color: '#c1ffac' }, .32);
@@ -1503,8 +1618,8 @@ class Battle {
   }
 
   frogShellImpact(shell) {
-    const { launcher } = shell;
-    const { splashRadius, damage } = launcher.spec;
+    const { launcher, damage } = shell;
+    const { splashRadius } = launcher.spec;
     this.effect('impact', { x: shell.x, y: shell.y, radius: splashRadius, color: '#c1e990' }, .54);
     for (const enemy of this.units(!launcher.player)) {
       if (!alive(enemy) || enemy.spec.air) continue;
@@ -1571,16 +1686,22 @@ class Battle {
       unit.firedAt = t;
       unit.rearmAt = t + 57;
       unit.loadedAt = unit.rearmAt + 25;
-      this.missiles.push({ kind: 'silo', from: { x: unit.x, y: unit.y }, x: point.x, y: point.y, start: t, hitAt: t + 1.75 });
+      this.missiles.push({ kind: 'silo', from: { x: unit.x, y: unit.y }, x: point.x, y: point.y, start: t, hitAt: t + SILO_FLIGHT_TIME });
       this.event('launch');
     }
     return true;
   }
 
   updateRain() {
-    const towers = this.friends.filter(u => u.type === 'stone' && alive(u) && u.playingMode === 1 && active(u.songUntil, this.time));
+    const towers = this.friends.filter(u => u.type === 'stone' && alive(u) &&
+      u.playingMode === 1 && active(u.songUntil, this.time))
+      .sort((a,b) => b.songMusic.rainDamage - a.songMusic.rainDamage);
     for (const enemy of this.enemies) {
-      enemy.rained = enemy.type !== 'zombie' && towers.some(tower => distance(tower, enemy) <= STONE_RADIUS);
+      const cover = enemy.type === 'zombie' ? null :
+        towers.find(tower => distance(tower, enemy) <= tower.songMusic.radius);
+      enemy.rained = !!cover;
+      enemy.rainDamage = cover?.songMusic.rainDamage;
+      enemy.rainSpeed = cover?.songMusic.rainSpeed;
     }
   }
 
@@ -1635,7 +1756,7 @@ class Battle {
         return false;
       }
       damage *= pierce ? 1 : 1 - target.spec.armor * (source?.spec.armorScale ?? 1);
-      if (target.rained) damage *= RAIN_DAMAGE;
+      if (target.rained) damage *= target.rainDamage ?? RAIN_DAMAGE;
       if (target.nukeMarked) damage *= 1.5;
       if (target.spec.barrier && damage > 0) {
         target.barrierRecoverAt = t + target.spec.barrierDelay;
@@ -1707,6 +1828,32 @@ class Battle {
     return first || target;
   }
 
+  laserState(tower) {
+    const { heatCapacity, heatDecay } = tower.spec;
+    const t = this.time;
+    const remaining = (tower.overheatUntil || 0) - t;
+    if (remaining > 0) {
+      return { remaining, fraction: remaining / (tower.overheatUntil - tower.overheatStartedAt) };
+    }
+    if (tower.overheatUntil) return { heat: 0, remaining: 0, fraction: 0 };
+    const idle = Math.max(0, t - (tower.heatDelayUntil ?? t));
+    const heat = Math.max(0, (tower.heat || 0) - idle * heatDecay);
+    return { heat, remaining: 0, fraction: heat / heatCapacity };
+  }
+
+  chargeLaser(tower) {
+    const { heatCapacity, heatDelay, overheatTime, interceptEvery } = tower.spec;
+    const t = this.time;
+    tower.heat = Math.min(heatCapacity, this.laserState(tower).heat + 1);
+    tower.heatDelayUntil = t + heatDelay;
+    tower.interceptAt = t + interceptEvery;
+    tower.overheatUntil = 0;
+    if (tower.heat >= heatCapacity) {
+      tower.overheatStartedAt = t;
+      tower.overheatUntil = t + overheatTime;
+    }
+  }
+
   laserIntercept(source, target) {
     if (!source.spec.projectile || source.spec.bypassIntercept) return null;
     const dx = target.x - source.x, dy = target.y - source.y;
@@ -1715,7 +1862,8 @@ class Battle {
     let closest = Infinity, interception = null;
     for (const tower of this.units(target.player)) {
       const radius = tower.spec.interceptRadius;
-      if (!radius || !alive(tower) || !completed(tower, this.time) || active(tower.interceptAt, this.time)) continue;
+      if (!radius || !alive(tower) || !completed(tower, this.time) ||
+          active(tower.interceptAt, this.time) || active(tower.overheatUntil, this.time)) continue;
       const tx = tower.x - source.x, ty = tower.y - source.y;
       const along = (tx * dx + ty * dy) / length;
       const cross = (tx * dy - ty * dx) / length;
@@ -1729,7 +1877,7 @@ class Battle {
     }
     if (interception) {
       const { tower } = interception;
-      tower.interceptAt = this.time + tower.spec.interceptEvery;
+      this.chargeLaser(tower);
       this.effect('intercept', interception, .35);
     }
     return interception;
@@ -1786,7 +1934,7 @@ class Battle {
       return;
     }
     const weak = active(unit.guardUntil, t);
-    let damage = spec.damage * (weak ? .3 : 1);
+    let damage = spec.damage * (weak ? (unit.guardAttack ?? STONE_MUSIC.guardAttack) : 1);
     const webSlow = active(unit.netUntil, t) ? unit.type === 'boss' ? 1.1 : 1.3 : 1;
     let gap = spec.every;
     if (spec.burst) {
@@ -1975,13 +2123,14 @@ class Battle {
     for (const tower of this.friends) {
       if (tower.type !== 'stone' || !alive(tower) || !completed(tower,this.time) ||
           unit.crossedStones?.has(tower.id)) continue;
-      if (distance(unit, tower) <= STONE_RADIUS - 2) {
+      const radius = this.stoneMusic(tower).radius;
+      if (distance(unit, tower) <= radius - 2) {
         (unit.crossedStones ??= new Set()).add(tower.id);
         continue;
       }
       const dx = unit.x - tower.x;
-      if (dx < -STONE_RADIUS*.55 || dx > STONE_RADIUS + 175 ||
-          (target && target.x > tower.x + STONE_RADIUS*.56)) continue;
+      if (dx < -radius*.55 || dx > radius + 175 ||
+          (target && target.x > tower.x + radius*.56)) continue;
       if (!crossing || tower.x > crossing.x) crossing = tower;
     }
     return crossing;
@@ -2024,8 +2173,8 @@ class Battle {
       if (active(unit.songUntil, t) && unit.nextWaveAt <= t) this.pulseStone(unit);
     }
     const rooted = active(unit.rooted, t);
-    let speed = (spec.speed || 0) * (active(unit.guardUntil, t) ? .4 : 1);
-    if (unit.rained) speed *= RAIN_SLOW;
+    let speed = (spec.speed || 0) * (active(unit.guardUntil, t) ? (unit.guardSpeed ?? STONE_MUSIC.guardSpeed) : 1);
+    if (unit.rained) speed *= unit.rainSpeed ?? RAIN_SLOW;
     if (active(unit.confused, t)) {
       if (!rooted) this.move(unit, { x: unit.x + Math.cos(unit.confuseFrom + Math.sin(t * 13 + unit.id) * 1.25) * 80,
         y: unit.y + Math.sin(unit.confuseFrom + Math.sin(t * 13 + unit.id) * 1.25) * 80 }, speed * .75, dt);
@@ -2190,6 +2339,7 @@ class Battle {
     this.enemyGold += this.goldRate(false) * dt;
     this.fx = this.fx.filter(f => f.end > t);
     this.finishJobs();
+    this.finishUpgrades();
     this.enemyTurn();
     this.sendEnemy();
 
@@ -2725,7 +2875,8 @@ class BattlefieldView {
         const color=blue?'#9bdcff':'#ffda83';
         if (isPlaying || selected.has(u)) {
           ctx.setLineDash(isPlaying?[]:[8,8]);
-          ellipse(ctx,u.x,u.y,STONE_RADIUS,STONE_RADIUS, isPlaying?color+'11':color+'07', color+'9c',1.7);
+          const radius = game.stoneMusic(u).radius;
+          ellipse(ctx,u.x,u.y,radius,radius, isPlaying?color+'11':color+'07', color+'9c',1.7);
           ctx.setLineDash([]);
           if (isPlaying) this.text('♪ '+SONGS[u.playingMode],u.x,u.y+57,color,16);
         }
@@ -2890,9 +3041,21 @@ class BattlefieldView {
     if (unit.type==='silo'&&unit.player&&!under) {
       const stage=game.siloState(unit);
       this.text(stage.name==='可发射'?'可发射':stage.name+' '+Math.ceil(stage.until-t)+'s',x,footY+27,'#f4cc8c',12);
-    } else if(spec.production&&!under) {
-      const pending = unit.player && unit.job ? ' · '+(unit.queue.length+1) : '';
-      this.text((unit.player?'':'敌方')+spec.name+pending,x,footY+27,side,13);
+    } else if (!under && (spec.production || unit.level)) {
+      const label = [];
+      if (spec.production) label.push((unit.player?'':'敌方')+spec.name);
+      if (unit.level) label.push('L'+unit.level);
+      if (unit.upgradeJob) label.push('升级 '+Math.ceil(unit.upgradeJob.end-t)+'s');
+      if (unit.player && unit.job) label.push(String(unit.queue.length+1));
+      if (unit.type === 'laser') {
+        const heat = game.laserState(unit);
+        ctx.fillStyle='#141e1c';
+        ctx.fillRect(x-29,footY+17,58,5);
+        ctx.fillStyle=heat.remaining > 0 ? '#ffad77' : '#93e4e7';
+        ctx.fillRect(x-28,footY+18,56*clamp(heat.fraction,0,1),3);
+        if (heat.remaining > 0) label.push('冷却 '+Math.ceil(heat.remaining)+'s');
+      }
+      this.text(label.join(' · '),x,footY+28,side,13);
     }
   }
 
@@ -3059,6 +3222,8 @@ class BattlefieldView {
     ctx.save();ctx.setLineDash([7,8]);
     ellipse(ctx,missile.x,missile.y,NUKE_RADIUS,NUKE_RADIUS,'#ffad4424','#ffd195',2.4);
     ctx.restore();
+    const remaining = (missile.hitAt-missile.start)*(1-part);
+    this.text('棍母导弹 '+remaining.toFixed(1)+'s',missile.x,missile.y+24,'#ffe0a2',15);
     ctx.save();
     ctx.translate(lerp(x,missile.x,part),lerp(y-24,missile.y,part)-arc*Math.sin(part*Math.PI));
     ctx.rotate(Math.atan2(missile.y-y+24-arc*Math.PI*Math.cos(part*Math.PI),missile.x-x));
@@ -3267,23 +3432,23 @@ const friendlyGuide = {
   architect: '基地和工厂都能生产。可建多数建筑与采矿机，手动修理受损建筑。维修速率 31 HP/s。多名建筑师可接手同一蓝图。',
   frog: '廉价近战，蛙跳撞击普通步兵时有额外伤害，也更容易被步兵击倒。捧腹大笑消耗 16 点 67，冷却 20 秒，选定方向后让扇形内地面敌人失控 2 秒，自己蹲下 1 秒。',
   rat: '高血量高装甲，普攻撞击建筑时伤害提高 55%。肥嘟嘟滚动消耗 22 点 67，冷却 24 秒，选方向蓄力 2 秒后碾压轻型地面单位；撞上盾兵或灭霸会造成伤害并停下，结束后喘气 3 秒。弓兵会在它蓄力时后撤。',
-  frogMech: '工厂生产的重装机甲。每 1.55 秒喷一次火，同时灼烧前方扇形内的地面敌军和建筑，火焰按一半装甲计算减伤。125 点护盾先承伤，6 秒未受击后每秒恢复 22 点。维修恢复机体血量，护盾自行充能。击破敌方目标时播放 3 秒捧腹大笑。',
-  mj: '自动攻击地面和空中目标，蛛弹命中后缠绕 1.35 秒。盾兵免疫蛛弹，灭霸定身 0.85 秒。可在身边建蛛丝重机枪。释放小蜘蛛消耗 23 点 67，冷却 25 秒。',
-  mechanic: '既可建建筑和采矿机，也能在周围现场建造奶蛙、美团老鼠或 MJ。附近 144 范围内逐个自动修理，每秒恢复 24 HP；手动指定为每秒 38 HP。自带轻型防空武器。',
+  frogMech: '由 L2 工厂生产的重装机甲。每 1.55 秒喷一次火，同时灼烧前方扇形内的地面敌军和建筑，火焰按一半装甲计算减伤。125 点护盾先承伤，6 秒未受击后每秒恢复 22 点。维修恢复机体血量，护盾自行充能。击破敌方目标时播放 3 秒捧腹大笑。',
+  mj: '由 L2 工厂生产。自动攻击地面和空中目标，蛛弹命中后缠绕 1.35 秒。盾兵免疫蛛弹，灭霸定身 0.85 秒。可在身边建蛛丝重机枪。释放小蜘蛛消耗 23 点 67，冷却 25 秒。',
+  mechanic: '可建建筑、采矿机和现场造兵。拥有 L2 工厂后可现场建造 MJ。附近 144 范围内逐个自动修理，每秒恢复 24 HP；手动指定为每秒 38 HP。自带轻型防空武器。',
   spider: '每次由 MJ 召唤 3 只，存活 15 秒，可攻击地面和空中。捕网冷却 4.6 秒，波及目标附近 82 范围的敌军，定身 1.65 秒，灭霸缩短至 0.52 秒。普通攻击对盾兵无效，捕网仍可命中。',
   base: '双方开局各有一座基地，维持基础生产能力，可排队补充建筑师。',
-  factory: '可排队生产建筑师、奶蛙、美团老鼠、奶蛙机甲、MJ 和机械师。选中多个工厂可同时下单，完工单位前往集结点。基地和工厂被破坏后，仍可用幸存建造者恢复产线。',
-  miner: '放在任意空置金矿上，完工后每秒增加 '+MINE_RATE+' 金币，摧毁后失去这份收入。',
+  factory: 'L1 可排队生产建筑师、奶蛙、美团老鼠和机械师，L2 解锁奶蛙机甲与 MJ。升级期间工厂继续处理队列。多选时，高级订单只发给 L2 工厂，完工单位前往集结点。基地和工厂被破坏后，仍可用幸存建造者恢复产线。',
+  miner: '放在任意空置金矿上，L1 完工后每秒增加 '+MINE_RATE+' 金币，升级后产量为 L1 的 1.5 倍。',
   airDefense: '自动向 330 射程内的空军发射棍母防空导弹，单发 62 伤害，每 1.65 秒发射一枚。飞行盾兵会用正面替后方空军承受导弹。快速装填消耗 18 点 67，冷却 30 秒，发射速度提高 50%，持续 8 秒。',
-  stone: '覆盖半径 '+STONE_RADIUS+'，与奶蛙火炮射程一致。歌曲生效期间每 '+STONE_WAVE_EVERY+' 秒发一次声波。'+
-    '《东南苦行山》自动播放，使圈内符合条件的敌军变为王警卫 5 秒，声波基础伤害 '+SONG_WAVE_DAMAGE[0]+'，只打地面部队。'+
-    '《雨爱司凤版》手动消耗 24 点 67，持续 10 秒，声波基础伤害 '+SONG_WAVE_DAMAGE[1]+'，可打空军、建筑和灭霸，并使敌人减速 50%、受伤提高 40%。'+
-    '僵尸免疫两首歌，灭霸免疫苦行山。两首歌共享 45 秒冷却，触发后沉默 10 秒。音频可循环，声波随战斗效果结束。',
-  laser: '拦截半径 150，拦截后需充能 1.05 秒。发射激光拦下射向友军的普通弹丸和箭矢；灭霸拳铠弹可穿过，刀盾狗的近战也不会被拦截。',
+  stone: 'L1 半径 '+STONE_MUSIC.radius+'，与同级奶蛙火炮射程一致。歌曲生效期间每 '+STONE_MUSIC.waveEvery+' 秒发一次声波。'+
+    '《东南苦行山》自动播放，使圈内合格敌军变为王警卫，L1 持续 5 秒，声波基础伤害 '+STONE_MUSIC.damage[0]+'。'+
+    '《雨爱司凤版》手动消耗 24 点 67，L1 持续 10 秒，声波基础伤害 '+STONE_MUSIC.damage[1]+'，可打空军、建筑和灭霸，减速 50%、受伤提高 40%。'+
+    '僵尸免疫两首歌，灭霸免疫苦行山。两首歌共享 45 秒冷却。音频可循环，声波随战斗效果结束。',
+  laser: '用激光拦截普通弹丸和箭矢。L1 拦截半径 150，单次间隔 1.05 秒，连续拦截 4 发后过热 5.5 秒。空闲时热量逐步消退，过热期间暂停拦截。灭霸拳铠弹和刀盾狗近战可绕过拦截。',
   repair: '半径 '+UNITS.repair.repairRadius+'，逐个修复范围内其他友军或建筑，每秒恢复 29 HP。可手动指定范围内目标或协助建筑师、机械师施工，不能独自建造，也不参与 MJ 的专属重机枪施工。',
   webTower: '仅 MJ 可施工。每轮打出三发蛛弹，命中后可对地对空定身 1.72 秒。普通蛛弹对盾兵无效，对灭霸仅造成 52% 的伤害并缠绕 0.68 秒。',
   frogLauncher: '自动发射远程奶蛙炮弹，射程 '+UNITS.frogLauncher.range+'，溅射半径 83，中心伤害 96，边缘伤害减半。无需场上有奶蛙。可手动指定下一发落点，与自动射击共用 4.5 秒装填，只打击敌方地面单位和建筑。',
-  silo: '需 '+UNITS.silo.cost[0]+' 金币和 '+UNITS.silo.cost[1]+' 点 67 才能建造。我方可建一座，完工后装填 25 秒。花 16 点 67 手动指定落点，棍母导弹约 1.75 秒后命中，清除半径 212 内的敌方地面部队、空军和建筑，友军安全。灭霸失去 80% 当前血量，之后受伤增加 50%。发射后冷却 57 秒，再装填 25 秒。',
+  silo: '需 '+UNITS.silo.cost[0]+' 金币和 '+UNITS.silo.cost[1]+' 点 67 才能建造。我方可建一座，完工后装填 25 秒。花 16 点 67 手动指定落点，棍母导弹约 '+SILO_FLIGHT_TIME+' 秒后命中，清除半径 212 内的敌方地面部队、空军和建筑，友军安全。灭霸失去 80% 当前血量，之后受伤增加 50%。发射后冷却 57 秒，再装填 25 秒。',
 };
 
 const enemyGuide = {
@@ -3291,7 +3456,7 @@ const enemyGuide = {
   architect: '能重建工厂，按 AI 计划建采矿机或哨戒塔。敌方没有基地和工厂后，还要清除幸存的建筑师。',
   factory: '敌军消耗金币在这里生产地面和空中单位。金币充足时可能扩建第二座。',
   miner: '完工后每秒替敌方增加 '+MINE_RATE+' 金币。袭击采矿机可以拖慢敌军补充兵力。',
-  sentry: '被动向附近我方地面部队和建筑发射炮弹，不能攻击空中。奶蛙发射器射程更远。',
+  sentry: '被动向附近我方地面部队和建筑发射炮弹，不能攻击空中。奶蛙火炮射程更远。',
   foot: '普通弹丸对奶蛙额外增伤，也会受到奶蛙的额外反击伤害。成群出现时可以用机甲喷火或火炮溅射。',
   shield: '刀盾狗拥有 63% 装甲，近战不会被激光拦截。免疫普通蛛丝和小蜘蛛的攻击，捕网仍能定身。可以用机甲、老鼠滚动或棍母导弹应对，也能被苦行山变成王警卫。',
   archer: '用箭矢远程攻击，优先打建筑，见到蓄力中的美团老鼠会后撤。集火、机甲压近或远程火炮都可逼退。',
@@ -3301,6 +3466,28 @@ const enemyGuide = {
   airShield: '空中重甲，能用正面替后方空军挡防空导弹并承伤。免疫普通蛛丝和蜘蛛伤害，捕网可以控制，防空导弹和棍母导弹可以打击它。',
   boss: '敌方金币和产线允许时生产的重型地面单位。拳铠弹无视激光拦截，进入战斗后约每 17 秒用抽象波偷取最多 18 点 67。免疫苦行山，雨爱有效，蛛丝和捕网控制时间缩短；棍母导弹可重创并标记易伤。',
 };
+
+function costText([gold, index = 0]) {
+  return gold+' 金币'+(index ? ' + '+index+' 点 67' : '');
+}
+
+function upgradeBenefit(type) {
+  const stats = UNITS[type].upgrade.stats;
+  switch (type) {
+    case 'miner': return '产速 '+stats.income+' 金币/秒';
+    case 'factory': return '解锁奶蛙机甲与 MJ';
+    case 'frogLauncher': return '射程 '+stats.range+'，单发 '+stats.damage+'，每 '+stats.every+' 秒发射';
+    case 'webTower': return '射程 '+stats.range+'，每发 '+stats.damage+'，三连发间隔 '+stats.every+' 秒，定身 '+stats.web+' 秒';
+    case 'airDefense': return '射程 '+stats.range+'，单发 '+stats.damage+'，每 '+stats.every+' 秒发射';
+    case 'laser': return '拦截半径 '+stats.interceptRadius+'，单次间隔 '+stats.interceptEvery+' 秒，连续拦截 '+stats.heatCapacity+' 发后冷却 '+stats.overheatTime+' 秒';
+    case 'stone': {
+      const music = stats.music;
+      return '半径 '+music.radius+'，苦行山 '+music.duration[0]+' 秒 / 每波 '+music.damage[0]+
+        '，雨爱 '+music.duration[1]+' 秒 / 每波 '+music.damage[1]+'，控场更强';
+    }
+    default: return '';
+  }
+}
 
 function renderUnitGuide(id, types, specs, descriptions) {
   const list = $(id);
@@ -3314,7 +3501,8 @@ function renderUnitGuide(id, types, specs, descriptions) {
     title.textContent = spec.name;
     const meta = [];
     if (spec.hp) meta.push(spec.hp+' HP', '护甲 '+Math.round(spec.armor*100)+'%');
-    if (spec.cost) meta.push(spec.cost[0]+' 金币'+(spec.cost[1] ? ' + '+spec.cost[1]+' 点 67' : ''));
+    if (spec.cost) meta.push(costText(spec.cost));
+    if (spec.factoryLevel) meta.push('需 L'+spec.factoryLevel+' 工厂');
     if (spec.build) meta.push(spec.build+' 秒'+(spec.fixed?'施工':'生产'));
     if (spec.range) meta.push('射程 '+spec.range);
     stats.className = 'unit-stats';
@@ -3322,6 +3510,12 @@ function renderUnitGuide(id, types, specs, descriptions) {
     stats.hidden = !meta.length;
     facts.textContent = descriptions[type];
     details.append(stats, facts);
+    if (specs === UNITS && spec.upgrade) {
+      const upgrade = document.createElement('p');
+      upgrade.className = 'guide-upgrade';
+      upgrade.textContent = 'L2 升级　'+costText(spec.upgrade.cost)+' · '+spec.upgrade.time+' 秒。'+upgradeBenefit(type)+'。';
+      details.append(upgrade);
+    }
     row.append(title, details);
     return row;
   });
@@ -3737,6 +3931,11 @@ function handleEvents() {
     } else if (event.type === 'built') {
       note(event.unit.spec.name + '已完工' + (event.unit.type === 'miner' ? ' · 金币产速 +'+MINE_RATE+'/s' : '。'));
       audio.tone([[520,.1],[690,.15]], 'triangle', .065);
+    } else if (event.type === 'upgrade') {
+      note(event.count > 1 ? event.count+' 座建筑开始升级 L2。' : event.unit.spec.name+'开始升级 L2。');
+    } else if (event.type === 'upgraded') {
+      note(event.unit.spec.name+' L2 已完成 · '+upgradeBenefit(event.unit.type));
+      audio.tone([[430,.1],[600,.13],[760,.17]],'triangle',.07);
     } else if (event.type === 'train') {
       note(event.typeName + (event.count > 1 ? ' · 已加入 '+event.count+' 座生产建筑的队列。' : '已加入生产队列。'));
       audio.tone([[410,.09]], 'sine', .06);
@@ -3753,8 +3952,10 @@ function handleEvents() {
     } else if (event.type === 'ratHit') {
       audio.play('ratHit', 'rat', .72);
     } else if (event.type === 'song') {
-      const control = event.mode ? '减速 50% / 受伤 +40%' : '圈内地面敌军变身 5 秒';
-      note('♪ '+event.name+' · 声波 '+SONG_WAVE_DAMAGE[event.mode]+' · '+control);
+      const { music, mode } = event;
+      const control = mode ? '减速 '+Math.round((1-music.rainSpeed)*100)+'% / 受伤 +'+
+        Math.round((music.rainDamage-1)*100)+'%' : '圈内地面敌军变身 '+music.duration[0]+' 秒';
+      note('♪ '+event.name+' · 声波 '+music.damage[mode]+' · '+control);
       audio.playStone();
     } else if (event.type === 'musicUpdate') {
       audio.playStone();
@@ -3762,7 +3963,7 @@ function handleEvents() {
       note('已占领梗矿 · +1.35 67/s');
       audio.tone([[464,.12],[583,.12],[722,.21]], 'sine');
     } else if (event.type === 'launch') {
-      note('棍母导弹已发射。');
+      note('棍母导弹已发射 · '+SILO_FLIGHT_TIME+' 秒后命中。');
       audio.tone([[140,.16],[206,.16],[292,.25]], 'triangle');
     } else if (event.type === 'frogShell') {
       if (event.manual) note('奶蛙炮弹已发射。');
@@ -3853,24 +4054,53 @@ function selectedMechanics() {
   return [...ui.selected].filter(u => u.type === 'mechanic' && alive(u) && completed(u,game.time));
 }
 
+function updateUpgradeControl(panel, selected) {
+  const buildings = selected.filter(unit => unit.player && unit.level && alive(unit));
+  const row = $(panel+'-upgrade-row');
+  row.hidden = !buildings.length;
+  if (!buildings.length) return;
+  const single = buildings.length === 1 ? buildings[0] : null;
+  const jobs = buildings.filter(unit => unit.upgradeJob).map(unit => unit.upgradeJob);
+  const next = jobs.sort((a,b) => a.end-b.end)[0];
+  const { targets, cost, problem } = game.upgradeQuote(buildings);
+  const action = $(panel+'-upgrade');
+  action.hidden = !targets.length;
+  action.disabled = paused || !!problem;
+  action.title = problem || (targets.length === 1 ? upgradeBenefit(targets[0].type) : '同时升级所选的 L1 建筑');
+  setButton(action, targets.length > 1 ? '升级 L2 ×'+targets.length : '升级 L2');
+
+  const top = buildings.filter(unit => unit.level === 2).length;
+  const label = single ? 'L'+single.level : top+' 座 L2 · '+(buildings.length-top)+' 座 L1';
+  setText(panel+'-upgrade-title', label+(next ? ' · 升级中 '+seconds(next.end-game.time) : ''));
+  const detail = targets.length ? costText(cost)+(targets.length === 1 ? ' · '+targets[0].spec.upgrade.time+' 秒' : '') :
+    next ? (jobs.length > 1 ? jobs.length+' 座正在升级' : '升级期间继续运作') :
+    top === buildings.length ? '已达最高等级' : '完工后可升级';
+  setText(panel+'-upgrade-detail', detail);
+  const meter = $(panel+'-upgrade-meter');
+  meter.hidden = !next;
+  if (next) $(panel+'-upgrade-progress').style.width = clamp((game.time-next.start)/(next.end-next.start),0,1)*100+'%';
+}
+
 function updateProductionPanel(selected, stations, mechanics) {
   if (ui.panel !== 'train') return;
+  updateUpgradeControl('train', selected);
   const shown = selected.length ? selected : stations;
   const baseOnly = selected.length > 0 && selected.every(u => u.type === 'base');
   setText('train-title', mechanics.length ? '机械师现场造兵' :
     baseOnly ? '基地生产' : selected.length ? '工厂生产 · '+selected.length+' 座' : '生产机动单位');
   $('rally').hidden = !!mechanics.length;
-  setText('queue-note', mechanics.length ? '选择一种单位，在机械师附近点地放置蓝图。' :
+  setText('queue-note', mechanics.length ? '点地面放置蓝图。现场建造 MJ 需有 L2 工厂。' :
     baseOnly ? '基地可生产建筑师。' : selected.length > 1 ?
-    '每点一次，所选的每座完工工厂各排一个单位。' : '点生产卡可继续排队。双击工厂选择所有工厂。');
+    '普通订单发给所有完工工厂，高级订单只发给 L2 工厂。' : '点生产卡可继续排队。升级 L2 解锁高级兵种。');
   const stamp = mechanics.length ? 'field' :
-    shown.map(station => [station.id,station.job?.type,completed(station,game.time),...station.queue].join('/')).join('|');
+    shown.map(station => [station.id,station.level,station.job?.type,completed(station,game.time),...station.queue].join('/')).join('|');
   if (stamp === queueStamp) return;
   queueStamp = stamp;
   $('queue-list').replaceChildren(...(mechanics.length ? [] : shown).map((station,i) => {
     const line = document.createElement('span');
     const types = [station.job?.type,...station.queue].filter(Boolean);
-    const name = station.spec.name+(shown.filter(u => u.type === station.type).length > 1 ? ' '+(i+1) : '');
+    const number = shown.filter(u => u.type === station.type).length > 1 ? ' '+(i+1) : '';
+    const name = station.spec.name+number+(station.level ? ' L'+station.level : '');
     line.textContent = name+' · '+(!completed(station,game.time)?'施工中':types.map(type=>UNITS[type].name).join(' → ')||'空闲');
     return line;
   }));
@@ -3897,7 +4127,9 @@ function updateCards() {
     const blueprint = spec.fixed || mechanics.length;
     const targets = blueprint ? [] : game.productionTargets(type, selected);
     const crew = spec.fixed ? (builders.length ? builders : undefined) : mechanics;
-    const enabled = game.actionAllowed && !paused && (blueprint ?
+    const techLocked = !!spec.factoryLevel &&
+      (blueprint ? !!game.fieldTechnologyProblem(type) : !targets.length);
+    const enabled = !techLocked && game.actionAllowed && !paused && (blueprint ?
       game.constructionCrew(type,true,crew).length &&
       game.canPay(spec.cost) && (type !== 'silo' || !game.silo) :
       !game.trainingProblem(type, targets));
@@ -3929,6 +4161,7 @@ function updateCards() {
         fill = stage.until > game.time ? (game.time-stage.from)/(stage.until-stage.from) : 1;
       }
     }
+    if (techLocked && !caption) caption = '需 L2 工厂';
     const src = getIcon(type);
     if (src !== card.source) {
       card.portrait.src = src;
@@ -3936,6 +4169,7 @@ function updateCards() {
     }
     const armed = ui.mode?.type === 'build' && ui.mode.unitType === type;
     card.button.classList.toggle('short', !enabled);
+    card.button.classList.toggle('tech-locked', techLocked);
     card.button.classList.toggle('armed', armed);
     card.button.classList.toggle('busy', !!caption);
     if (blueprint) card.button.setAttribute('aria-pressed', String(armed));
@@ -3984,7 +4218,7 @@ function unitStatus(unit) {
     if (stage.until>t) return { value: stage.name + ' · ' + seconds(stage.until-t), progress: (t-stage.from)/(stage.until-stage.from) };
     return { value: '可发射 · 16 点 67 指数', progress: 1 };
   }
-  if (unit.type === 'miner') return { value: hp + ' · +'+MINE_RATE+' 金币/s', progress: unit.hp / unit.spec.hp };
+  if (unit.type === 'miner') return { value: hp + ' · +'+unit.spec.income+' 金币/s', progress: unit.hp / unit.spec.hp };
   if (unit.order?.type === 'repair' && alive(unit.order.target)) {
     const target = unit.order.target;
     return { value: (active(unit.repairUntil,t)?'正在维修 ':'前往维修 ')+target.spec.name, progress: unit.hp/unit.spec.hp };
@@ -4002,7 +4236,7 @@ function unitStatus(unit) {
     return { value: hp+' · 修理 '+unit.repairBeam.spec.name, progress:unit.hp/unit.spec.hp };
   }
   if (unit.type === 'laser') {
-    return { value: hp+(active(unit.interceptAt,t)?' · 激光充能':' · 可拦截'), progress:unit.hp/unit.spec.hp };
+    return { value: hp+' · 拦截半径 '+unit.spec.interceptRadius, progress:unit.hp/unit.spec.hp };
   }
   const locked = unit.lockedTarget && alive(unit.lockedTarget) ? unit.lockedTarget : null;
   const lockStatus = locked ?
@@ -4050,7 +4284,17 @@ function updateSelection() {
   const team = group.filter(u => completed(u,game.time) && !u.spec.fixed);
   const workers = group.filter(canWorkOrder);
   const lockable = group.filter(u => game.canLock(u));
-  setText('unit-title', unit?.player && unit.spec.fixed ? unit.spec.name : '部队');
+  setText('unit-title', unit?.player && unit.spec.fixed ? unit.spec.name+(unit.level ? ' · L'+unit.level : '') : '部队');
+  if (ui.panel === 'unit') updateUpgradeControl('unit', group);
+  const laser = unit?.type === 'laser' && unit.player && completed(unit,game.time) ? game.laserState(unit) : null;
+  const laserPanel = $('laser-load');
+  laserPanel.hidden = !laser;
+  if (laser) {
+    laserPanel.classList.toggle('overheated', laser.remaining > 0);
+    setText('laser-load-label', laser.remaining > 0 ? '过热冷却 · '+seconds(laser.remaining) :
+      '拦截负荷 '+Math.round(laser.fraction*100)+'%'+(active(unit.interceptAt,game.time)?' · 充能中':''));
+    $('laser-load-progress').style.width = clamp(laser.fraction,0,1)*100+'%';
+  }
   const lockHint = $('lock-hint');
   lockHint.hidden = !lockable.length;
   $('unlock-order').hidden = !lockable.some(u => u.lockedTarget && alive(u.lockedTarget));
@@ -4099,7 +4343,9 @@ function updateSkillButton(action, unit) {
   const reason = game.skillProblem(unit);
   action.disabled = paused || !!reason;
   action.classList.toggle('armed', ui.mode?.unit===unit);
-  action.title = skill.hint + (reason ? '\n' + reason : '');
+  const hint = unit.type === 'stone' ?
+    '雨爱 '+unit.spec.music.duration[1]+' 秒，每波 '+unit.spec.music.damage[1]+' 基础伤害。'+skill.hint : skill.hint;
+  action.title = hint + (reason ? '\n' + reason : '');
   if (unit.type==='frogLauncher') {
     const reload = unit.fireAt > t ? ' · 装填 '+seconds(unit.fireAt-t) : '';
     setButton(action, (unit.aimPoint ? '重定落点' : skill.label)+reload, 'Q');
@@ -4157,7 +4403,7 @@ function updateHud() {
     $('boss-fill').style.width=clamp(boss.hp/boss.spec.hp,0,1)*100+'%';
     const statuses=[];
     if (boss.nukeMarked) statuses.push('棍母导弹易伤 +50%');
-    if (boss.rained) statuses.push('雨爱 ×'+RAIN_DAMAGE);
+    if (boss.rained) statuses.push('雨爱 ×'+(boss.rainDamage ?? RAIN_DAMAGE));
     setText('boss-status',statuses.join('  /  ')||'抽象波 '+seconds(boss.pulseAt-game.time));
   }
   if (bannerEnd && game.time >= bannerEnd) { $('callout').hidden=true; bannerEnd=0; }
@@ -4206,6 +4452,8 @@ function chooseCard(type) {
     return;
   }
   if (spec.fixed || mechanics.length) {
+    const techProblem = game.fieldTechnologyProblem(type);
+    if (techProblem) { note(techProblem,true); return; }
     if (!game.canPay(spec.cost)) { note('金币或 67 指数不足。', true); return; }
     const selected = selectedBuilders();
     const builders = spec.fixed ? (selected.length ? selected : undefined) : mechanics;
@@ -4223,6 +4471,16 @@ function chooseCard(type) {
   handleEvents();
   updateHud();
 }
+function chooseUpgrade() {
+  audio.unlock();
+  if (paused || !game.actionAllowed) return;
+  const { problem } = game.upgradeQuote(ui.selected);
+  if (problem) { note(problem,true); return; }
+  game.upgrade(ui.selected);
+  handleEvents();
+  updateHud();
+}
+
 function chooseSkill() {
   audio.unlock();
   const unit = currentUnit(), skill=SKILLS[unit?.type];
@@ -4677,6 +4935,8 @@ $('resume').addEventListener('click',pause);
 $('restart').addEventListener('click',restart);
 $('advance').addEventListener('click',start);
 $('ability').addEventListener('click',chooseSkill);
+$('unit-upgrade').addEventListener('click',chooseUpgrade);
+$('train-upgrade').addEventListener('click',chooseUpgrade);
 $('build-ability').addEventListener('click',chooseSkill);
 $('unlock-order').addEventListener('click',()=>{
   if (paused || !game.actionAllowed) return;
