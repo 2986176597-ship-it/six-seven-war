@@ -397,8 +397,8 @@ body { height: 100dvh; display: flex; flex-direction: column; overflow: hidden; 
         <h2>开局、难度与胜负</h2>
         <ol>
           <li>双方开局各在战场一端，拥有一座基地和一名建筑师。准备阶段可切换难度、放置蓝图和安排生产队列。点击「开始对战」后，时间、收入、施工和生产开始推进。</li>
-          <li>开局可以用建筑师放下工厂蓝图，再在附近金矿放置采矿机。基地可同时排队训练第二名建筑师；有了工厂，就能造兵争夺中部梗矿。</li>
-          <li>敌方用自己的金币开矿、盖工厂和生产部队。进攻取决于难度、库存、战场压力和敌方战术。简单的准备时间最长，困难的出击间隔更短、单次派兵更多，中等居于两者之间。</li>
+          <li>开局金币可以同时预订工厂、采矿机和第二名建筑师。优先建工厂就能尽早造兵，先开矿则能更快补充资金。准备好后派兵争夺中部梗矿。</li>
+          <li>敌方用自己的金币开矿、盖工厂和生产部队。进攻取决于难度、库存、战场压力和敌方战术。简单的准备时间最长，中等逐步施压，困难出击更频繁，开战 100 秒后偶尔会派出空地混编小队。</li>
           <li>摧毁敌方所有可生产的基地和工厂，并清除所有还能建造的单位即可获胜。我方失去同样的能力即战败；两边在同一时刻失去这些能力判为平局。在场且完工的建筑师、机械师和 MJ 都计为建造者。</li>
           <li>首次进入先打开这份规则。对战结束后，胜负、用时、难度与击破数写入当前浏览器，本机首页可查看战绩和最近 12 局。</li>
         </ol>
@@ -417,7 +417,7 @@ body { height: 100dvh; display: flex; flex-direction: column; overflow: hidden; 
       <section class="rule-chapter" id="rule-resources">
         <h2>资源、建造与生产</h2>
         <ul>
-          <li><strong>金币</strong>　我方开局 505 金币，开始后每秒自动获得 4.4。战场共有 6 处金矿，双方都可以在空置矿点建采矿机，每完工一座增加 4.1 金币/秒。击破敌军也奖励金币。上方只显示我方余额和产速。</li>
+          <li><strong>金币</strong>　我方开局 <span id="rule-opening-gold">2000</span> 金币，开始后每秒自动获得 <span id="rule-base-gold-rate">44</span> 金币。战场共有 6 处金矿，双方都可以在空置矿点建采矿机，每完工一座增加 <span id="rule-mine-gold-rate">41</span> 金币/秒。击破敌军也奖励金币。上方只显示我方余额和产速。</li>
           <li><strong>67 指数</strong>　击破敌军或占领梗矿可获得，最多存 100 点。让地面机动单位在梗矿圈内推进占领 3 秒，双方同时进入会争夺。占领且未被敌方争夺时每秒获得 1.35 点。小蜘蛛与敌方空军不能占矿。</li>
           <li><strong>放蓝图</strong>　选择建筑卡片，再点地图确定位置。常规建筑可在全战场选址，建筑轮廓须在战场边界内并与其他建筑留出间隔。采矿机须建在空置金矿上，其他建筑应避开矿点和梗矿。MJ 的蛛丝重机枪与机械师现场造兵须距对应建造者 260 以内。已付费的蓝图要等施工完成才能投入使用。</li>
           <li><strong>并行施工和维修</strong>　选中多名合格建造者可给同一蓝图加速。多个维修者可协同修同一个目标。自动维修逐个处理受损目标，手动指定可集中维修。修复湾在范围内可为建筑师或机械师正在施工的蓝图助建。</li>
@@ -442,7 +442,7 @@ body { height: 100dvh; display: flex; flex-direction: column; overflow: hidden; 
           <li><strong>地面和空中</strong>　地面攻击覆盖敌方地面部队及建筑。防空炮塔与机械师的轻武器专打空军；MJ、蛛丝重机枪与小蜘蛛能攻击两个高度。棍母导弹的爆炸覆盖地面、建筑和空中。</li>
           <li><strong>弹药和拦截</strong>　射击会发出弹丸、箭矢、蛛弹或导弹。激光防御塔用激光逐次拦截普通弹丸和箭矢；灭霸的拳铠弹可穿过拦截，刀盾狗的刀击属于近战。</li>
           <li><strong>技能</strong>　在单位窗口点亮起的技能按钮。MJ 的召唤入口也在建造窗口。方向或落点类技能需再次点地图。67 指数在施放时扣除；每个单位或建筑有独立冷却，讲解石的两首歌共用同一冷却。</li>
-          <li><strong>讲解石与灭霸</strong>　苦行山用于地面控场。雨爱能影响空军，也能让灭霸受到的常规伤害再乘以 1.4；棍母导弹命中后附加的 1.5 倍易伤可与雨爱同时生效。</li>
+          <li><strong>讲解石与灭霸</strong>　苦行山会用声波攻击地面敌军并变身控场。雨爱声波更强，可打击空军和灭霸，并让灭霸受到的常规伤害乘以 1.4；棍母导弹命中后附加的 1.5 倍易伤可与雨爱同时生效。</li>
           <li><strong>攻防搭配</strong>　用机甲和老鼠处理刀盾狗，用对空导弹处理飞行盾兵，捕网可控制两种盾兵。打灭霸可以用奶蛙火炮、机甲和蛛丝持续输出，或攒满 67 指数建井，等灭霸进入棍母导弹爆炸圈再发射。</li>
         </ul>
       </section>
@@ -462,7 +462,7 @@ body { height: 100dvh; display: flex; flex-direction: column; overflow: hidden; 
     <div class="resources" aria-label="资源">
       <div class="resource metal" title="双方都有基础收入。采矿机可提高每秒金币收入">
         <span class="resource-icon" aria-hidden="true">⬢</span>
-        <div><span class="resource-label">我方金币</span><div class="amount"><strong id="gold">505</strong> <small id="gold-rate">+4.4/s</small></div></div>
+        <div><span class="resource-label">我方金币</span><div class="amount"><strong id="gold">2000</strong> <small id="gold-rate">+44/s</small></div></div>
       </div>
       <div class="resource index" title="击杀敌军和控制梗矿可获取 67 指数">
         <span class="resource-icon" aria-hidden="true">67</span>
@@ -661,11 +661,14 @@ const MEDIA_ASSETS = {
 const WORLD = { w: 1600, h: 640, left: 42, right: 1565, top: 94, bottom: 548 };
 const INDEX_MAX = 100;
 const MINE = { x: 786, y: 403, radius: 67, gain: 1.35, time: 3 };
-const STONE_RADIUS = 176;
+const ARTILLERY_RANGE = 500;
+const STONE_RADIUS = ARTILLERY_RANGE;
+const STONE_WAVE_EVERY = 1.6;
+const SONG_WAVE_DAMAGE = [10, 20];
 const NUKE_RADIUS = 212;
-const GOLD_RATE = 4.4;
-const MINE_RATE = 4.1;
-const OPENING_GOLD = 505;
+const GOLD_RATE = 44;
+const MINE_RATE = 41;
+const OPENING_GOLD = 2000;
 const QUEUE_LIMIT = 10;
 const RAIN_SLOW = .5;
 const RAIN_DAMAGE = 1.4;
@@ -676,22 +679,23 @@ const BOSS_BLAST_LOSS = .8;
 const MECH_LAUGH_DURATION = 3;
 const DIFFICULTIES = {
   easy: {
-    label: '简单', firstAttack: 60, dispatchGap: 16, variation: 5, recovery: 24,
-    attackLimit: 3, reserve: 3, baseIncome: 3.3,
+    label: '简单', firstAttack: 64, dispatchGap: 17, variation: 5, recovery: 24,
+    attackLimit: 3, reserve: 3, baseIncome: 33,
     garrisonEvery: 8, defenseThreshold: 4, sentryLimit: 1, sentryBudget: Infinity,
     secondFactoryBudget: Infinity, extraArchitectAt: 73, bossSavingsAt: 170,
   },
   medium: {
-    label: '中等', firstAttack: 49, dispatchGap: 12, variation: 4, recovery: 17,
-    attackLimit: 5, reserve: 4, baseIncome: 4.05,
-    garrisonEvery: 5, defenseThreshold: 2, sentryLimit: 2, sentryBudget: 290,
-    secondFactoryBudget: 365, extraArchitectAt: 45, bossSavingsAt: 92,
+    label: '中等', firstAttack: 51, dispatchGap: 12, variation: 4, recovery: 17,
+    attackLimit: 5, reserve: 4, baseIncome: 40.5,
+    garrisonEvery: 5, defenseThreshold: 2, sentryLimit: 2, sentryBudget: 2600,
+    secondFactoryBudget: 3550, extraArchitectAt: 45, bossSavingsAt: 92,
   },
   hard: {
     label: '困难', firstAttack: 39, dispatchGap: 8.5, variation: 3, recovery: 10,
-    attackLimit: 7, reserve: 5, baseIncome: 4.95,
-    garrisonEvery: 3, defenseThreshold: 1, sentryLimit: 2, sentryBudget: 168,
-    secondFactoryBudget: 305, extraArchitectAt: 34, bossSavingsAt: 72,
+    attackLimit: 7, reserve: 5, baseIncome: 49.5,
+    garrisonEvery: 3, defenseThreshold: 1, sentryLimit: 2, sentryBudget: 1550,
+    secondFactoryBudget: 2800, extraArchitectAt: 34, bossSavingsAt: 72,
+    escortAfter: 100, escortGap: 34,
   },
 };
 const ENEMY_TACTICS = [
@@ -705,53 +709,53 @@ const GOLD_MINES = [
   { x: 1352, y: 166 }, { x: 1372, y: 493 }, { x: 1048, y: 247 },
 ];
 
-const ARCHITECT = { name: '建筑师', hp: 145, armor: .08, radius: 16, speed: 75, cost: [40], build: 3.2,
+const ARCHITECT = { name: '建筑师', hp: 145, armor: .08, radius: 16, speed: 75, cost: [200], build: 3.2,
   height: 40, art: 'architect', builder: true, repairRate: 31,
   info: '建造建筑和采矿机。用「维修」选受损建筑，或在电脑端右键该建筑。' };
 const BASE = { name: '基地', hp: 1400, armor: .16, radius: 49, fixed: true, production: true,
   height: 92, art: 'base', info: '开局自带，可排队生产建筑师。' };
-const FACTORY = { name: '工厂', hp: 1560, armor: .15, radius: 55, fixed: true, cost: [235], build: 8.5,
+const FACTORY = { name: '工厂', hp: 1560, armor: .15, radius: 55, fixed: true, cost: [1200], build: 8.5,
   height: 102, art: 'factory', production: true,
   info: '按队列依次生产。双击任一工厂可全选工厂，每座各排一个单位。' };
-const MINER = { name: '采矿机', hp: 366, armor: .13, radius: 28, fixed: true, cost: [80], build: 4.6,
-  height: 64, art: 'miner', info: '建在金矿上。每座完工的采矿机增加 4.1 金币/秒。' };
+const MINER = { name: '采矿机', hp: 366, armor: .13, radius: 28, fixed: true, cost: [400], build: 4.6,
+  height: 64, art: 'miner', info: '建在金矿上。每座完工的采矿机增加 '+MINE_RATE+' 金币/秒。' };
 
 const UNITS = {
   architect: ARCHITECT,
-  mechanic: { name: '机械师', hp: 211, armor: .14, radius: 18, speed: 63, cost: [118], build: 5.2,
+  mechanic: { name: '机械师', hp: 211, armor: .14, radius: 18, speed: 63, cost: [980], build: 5.2,
     height: 49, art: 'mechanic', builder: true, buildRate: 1.15, repairRate: 38, autoRepair: 24, repairRadius: 144,
     range: 157, damage: 8, every: 1.35, aa: true, onlyAir: true, projectile: 'bullet',
     info: '可建建筑、采矿机和三种机动单位，修理友军，并以轻武器防空。' },
   base: BASE,
   factory: FACTORY,
   miner: MINER,
-  frog:   { name: '奶蛙', hp: 104, armor: .06, radius: 17, speed: 78, range: 30, damage: 28, every: .95, cost: [48], build: 2.2, height: 61, art: 'frog', info: '蛙跳撞击对普通步兵增伤。地面近战。' },
-  rat:    { name: '美团老鼠', hp: 359, armor: .29, radius: 23, speed: 45, range: 29, damage: 51, every: 1.65, cost: [155], build: 5.9, height: 68, art: 'rat', info: '高血中甲。近战撞击对建筑增伤。滚动碰盾时造成冲击并停下。' },
+  frog:   { name: '奶蛙', hp: 104, armor: .06, radius: 17, speed: 78, range: 30, damage: 28, every: .95, cost: [420], build: 2.2, height: 61, art: 'frog', info: '蛙跳撞击对普通步兵增伤。地面近战。' },
+  rat:    { name: '美团老鼠', hp: 359, armor: .29, radius: 23, speed: 45, range: 29, damage: 51, every: 1.65, cost: [1320], build: 5.9, height: 68, art: 'rat', info: '高血中甲。近战撞击对建筑增伤。滚动碰盾时造成冲击并停下。' },
   frogMech: { name: '奶蛙机甲', hp: 420, armor: .18, radius: 30, speed: 56, range: 165, damage: 66, every: 1.55,
-    cost: [215], build: 7.7, height: 88, art: 'frogMech', flameHalfAngle: .61, armorScale: .5,
+    cost: [1880], build: 7.7, height: 88, art: 'frogMech', flameHalfAngle: .61, armorScale: .5,
     barrier: 125, barrierDelay: 6, barrierRate: 22,
     info: '大范围喷火，削弱装甲效果。护盾脱战后恢复。击破敌军时播放 3 秒捧腹大笑。' },
-  mj:     { name: 'MJ', hp: 184, armor: .08, radius: 18, speed: 45, range: 248, damage: 16, every: 1.72, cost: [135], build: 4.8, height: 67, art: 'mj', aa: true,
+  mj:     { name: 'MJ', hp: 184, armor: .08, radius: 18, speed: 45, range: 248, damage: 16, every: 1.72, cost: [1100], build: 4.8, height: 67, art: 'mj', aa: true,
     builder: true, projectile: 'web', web: 1.35, bossWeb: .85,
     info: '可建蛛丝重机枪。普攻自动缠绕敌人 1.35 秒，可对空，盾兵免疫普通蛛丝。' },
-  stone:  { name: '讲解石', hp: 475, armor: .15, fixed: true, radius: 34, cost: [163], build: 7.8, height: 82, art: 'stone', info: '进攻这道防线的敌军须穿过音圈。完工及迎敌自动播放苦行山，雨爱手动释放。' },
-  laser:  { name: '激光防御塔', hp: 450, armor: .16, fixed: true, radius: 28, cost: [151], build: 6.7,
+  stone:  { name: '讲解石', hp: 475, armor: .15, fixed: true, radius: 34, cost: [1400], build: 7.8, height: 82, art: 'stone', info: '半径 '+STONE_RADIUS+'。两首歌都会发出声波，自动苦行山控地面，手动雨爱伤害更高。' },
+  laser:  { name: '激光防御塔', hp: 450, armor: .16, fixed: true, radius: 28, cost: [1270], build: 6.7,
     height: 78, art: 'laser', interceptRadius: 150, interceptEvery: 1.05,
     info: '用激光拦截射向友军的普通弹丸和箭矢。灭霸的拳铠弹和刀盾狗近战可绕过拦截。' },
-  repair: { name: '修复湾', hp: 510, armor: .13, fixed: true, radius: 33, cost: [169], build: 7.2,
-    height: 75, art: 'repair', autoRepair: 29, repairRate: 29, repairRadius: 176, buildAssist: .55,
+  repair: { name: '修复湾', hp: 510, armor: .13, fixed: true, radius: 33, cost: [1450], build: 7.2,
+    height: 75, art: 'repair', autoRepair: 29, repairRate: 29, repairRadius: 240, buildAssist: .55,
     info: '修复范围内的友军和建筑，也可协助建筑师或机械师施工。' },
-  webTower: { name: '蛛丝重机枪', hp: 425, armor: .14, fixed: true, radius: 27, cost: [184], build: 6.8,
+  webTower: { name: '蛛丝重机枪', hp: 425, armor: .14, fixed: true, radius: 27, cost: [1510], build: 6.8,
     height: 81, art: 'webTower', range: 285, damage: 10, every: 1.3, burst: 3, burstGap: .11,
     aa: true, projectile: 'web', web: 1.72, bossWeb: .68, bossWebDamage: .52,
     builtBy: 'mj', info: '由 MJ 施工。三连发强化蛛丝，可对空。盾兵免疫，灭霸受到的伤害和缠绕时间较短。' },
-  frogLauncher: { name: '奶蛙发射器', hp: 436, armor: .15, fixed: true, radius: 31, cost: [168], build: 6.8,
-    height: 73, art: 'frogLauncher', range: 500, damage: 96, every: 4.5, splashRadius: 83,
+  frogLauncher: { name: '奶蛙发射器', hp: 436, armor: .15, fixed: true, radius: 31, cost: [1500], build: 6.8,
+    height: 73, art: 'frogLauncher', range: ARTILLERY_RANGE, damage: 96, every: 4.5, splashRadius: 83,
     info: '远程火炮，自动发射奶蛙炮弹，溅射敌方地面部队和建筑。可手动指定落点。' },
   airDefense: { name: '防空炮塔', hp: 472, armor: .21, fixed: true, radius: 27, range: 330, damage: 62,
-    every: 1.65, aa: true, onlyAir: true, cost: [156], build: 5.8, height: 77, art: 'airDefense',
+    every: 1.65, aa: true, onlyAir: true, cost: [1280], build: 5.8, height: 77, art: 'airDefense',
     info: '自动向空军发射棍母防空导弹。飞行盾兵正面可替身后空军挡弹，并承担伤害。' },
-  silo:   { name: '棍母发射井', hp: 678, armor: .22, fixed: true, radius: 38, cost: [615, 100], build: 19, height: 85, art: 'silo', info: '装填 25 秒后可手动发射棍母导弹。爆炸清除圈内敌方单位和建筑，灭霸失去 80% 当前血量。' },
+  silo:   { name: '棍母发射井', hp: 678, armor: .22, fixed: true, radius: 38, cost: [5400, 100], build: 19, height: 85, art: 'silo', info: '装填 25 秒后可手动发射棍母导弹。爆炸清除圈内敌方单位和建筑，灭霸失去 80% 当前血量。' },
   spider: { name: '小蜘蛛', hp: 29, armor: 0, radius: 9, speed: 107, range: 104, damage: 12, every: .64, aa: true,
     height: 29, art: 'spider', projectile: 'spiderRound', netEvery: 4.6, info: '可对空并向敌方目标发射范围捕网，持续 15 秒。' },
 };
@@ -761,22 +765,22 @@ const ENEMIES = {
   base: BASE,
   factory: FACTORY,
   miner: MINER,
-  sentry:    { name: '哨戒塔', hp: 355, armor: .18, fixed: true, radius: 25, range: 233, damage: 24, every: .98, cost: [138], build: 5.7, height: 63, art: 'sentry', projectile: 'bullet', info: '向射程内的地面部队和建筑发射炮弹。' },
-  foot:      { name: '普通步兵', hp: 108, armor: .11, radius: 17, speed: 72, range: 121, damage: 12, every: 1.15, reward: [12, 6], cost: [57], build: 2.65, height: 58, art: 'foot', projectile: 'bullet', info: '对奶蛙增伤。' },
-  shield:    { name: '刀盾狗', hp: 220, armor: .63, radius: 24, speed: 46, range: 31, damage: 26, every: 1.3, reward: [25, 11], cost: [171], build: 6.9, height: 67, art: 'shield', heavy: true, shield: true, bypassIntercept: true, info: '高装甲近战，免疫普通蛛丝和蜘蛛弹药。捕网可缠住，喷火和滚动可破其防御。' },
-  archer:    { name: '弓兵', hp: 102, armor: .08, radius: 17, speed: 64, range: 271, damage: 22, every: 1.52, reward: [17, 7], cost: [99], build: 4.4, height: 62, art: 'archer', projectile: 'arrow', info: '优先攻击建筑，会拉开与蓄力老鼠的距离。' },
-  zombie:    { name: '僵尸', hp: 211, armor: .16, radius: 21, speed: 56, range: 29, damage: 29, every: 1.12, reward: [20, 9], cost: [125], build: 5, height: 67, art: 'zombie', info: '完全免疫讲解石。' },
-  airFoot:   { name: '飞行步兵', hp: 104, armor: .09, radius: 18, speed: 101, range: 142, damage: 16, every: .98, reward: [17, 7], cost: [119], build: 4.7, height: 63, art: 'airFoot', air: true, projectile: 'bullet', info: '直冲我方建筑。' },
-  airBow:    { name: '飞行弓兵', hp: 133, armor: .13, radius: 19, speed: 71, range: 282, damage: 25, every: 1.55, reward: [24, 9], cost: [176], build: 6.6, height: 70, art: 'airBow', air: true, projectile: 'arrow', info: '外围盘旋，优先攻击防空炮塔和地面集群。' },
-  airShield: { name: '飞行盾兵', hp: 164, armor: .34, radius: 26, speed: 57, range: 128, damage: 17, every: 1.4, reward: [28, 11], cost: [229], build: 8.4, height: 75, art: 'shield', air: true, heavy: true, shield: true, projectile: 'bullet', info: '用正面的盾替身后空军承受防空弹。免疫普通蛛丝和蜘蛛伤害，捕网可缠住。' },
-  boss:      { name: '灭霸', hp: 2600, armor: .15, radius: 40, speed: 39, range: 169, damage: 72, every: 1.9, reward: [125, 22], cost: [895], build: 23, height: 121, art: 'boss', heavy: true, aa: true, projectile: 'bossRound', bypassIntercept: true, info: '拳铠投弹可绕过激光拦截。抽象波偷取 67 指数。棍母导弹命中后会持续易伤。' },
+  sentry:    { name: '哨戒塔', hp: 355, armor: .18, fixed: true, radius: 25, range: 233, damage: 24, every: .98, cost: [1150], build: 5.7, height: 63, art: 'sentry', projectile: 'bullet', info: '向射程内的地面部队和建筑发射炮弹。' },
+  foot:      { name: '普通步兵', hp: 108, armor: .11, radius: 17, speed: 72, range: 121, damage: 12, every: 1.15, reward: [110, 6], cost: [520], build: 2.65, height: 58, art: 'foot', projectile: 'bullet', info: '对奶蛙增伤。' },
+  shield:    { name: '刀盾狗', hp: 220, armor: .63, radius: 24, speed: 46, range: 31, damage: 26, every: 1.3, reward: [220, 11], cost: [1430], build: 6.9, height: 67, art: 'shield', heavy: true, shield: true, bypassIntercept: true, info: '高装甲近战，免疫普通蛛丝和蜘蛛弹药。捕网可缠住，喷火和滚动可破其防御。' },
+  archer:    { name: '弓兵', hp: 102, armor: .08, radius: 17, speed: 64, range: 271, damage: 22, every: 1.52, reward: [150, 7], cost: [860], build: 4.4, height: 62, art: 'archer', projectile: 'arrow', info: '优先攻击建筑，会拉开与蓄力老鼠的距离。' },
+  zombie:    { name: '僵尸', hp: 211, armor: .16, radius: 21, speed: 56, range: 29, damage: 29, every: 1.12, reward: [180, 9], cost: [1060], build: 5, height: 67, art: 'zombie', info: '完全免疫讲解石。' },
+  airFoot:   { name: '飞行步兵', hp: 104, armor: .09, radius: 18, speed: 101, range: 142, damage: 16, every: .98, reward: [150, 7], cost: [1020], build: 4.7, height: 63, art: 'airFoot', air: true, projectile: 'bullet', info: '直冲我方建筑。' },
+  airBow:    { name: '飞行弓兵', hp: 133, armor: .13, radius: 19, speed: 71, range: 282, damage: 25, every: 1.55, reward: [210, 9], cost: [1530], build: 6.6, height: 70, art: 'airBow', air: true, projectile: 'arrow', info: '外围盘旋，优先攻击防空炮塔和地面集群。' },
+  airShield: { name: '飞行盾兵', hp: 164, armor: .34, radius: 26, speed: 57, range: 128, damage: 17, every: 1.4, reward: [250, 11], cost: [1920], build: 8.4, height: 75, art: 'shield', air: true, heavy: true, shield: true, projectile: 'bullet', info: '用正面的盾替身后空军承受防空弹。免疫普通蛛丝和蜘蛛伤害，捕网可缠住。' },
+  boss:      { name: '灭霸', hp: 2600, armor: .15, radius: 40, speed: 39, range: 169, damage: 72, every: 1.9, reward: [1000, 22], cost: [7900], build: 23, height: 121, art: 'boss', heavy: true, aa: true, projectile: 'bossRound', bypassIntercept: true, info: '拳铠投弹可绕过激光拦截。抽象波偷取 67 指数。棍母导弹命中后会持续易伤。' },
 };
 
 const SKILLS = {
   frog:   { label: '捧腹大笑', cost: 16, cool: 20, target: true, hint: '选择方向。地面敌人失控 2 秒，奶蛙蹲下 1 秒。' },
   rat:    { label: '肥嘟嘟滚动', cost: 22, cool: 24, target: true, hint: '蓄力 2 秒后滚动碾压轻型地面敌人。碰盾停下，之后喘气 3 秒。' },
   mj:     { label: '释放小蜘蛛', cost: 23, cool: 25, hint: '召来 3 只小蜘蛛，存活 15 秒。范围捕网可缠住盾兵和灭霸，灭霸的缠绕更短。' },
-  stone:  { label: '播放雨爱', cost: 24, cool: 45, hint: '手动播放雨爱司凤版 10 秒，范围内敌方减速 50%、受伤 +40%，可对空。与自动苦行山共享冷却。' },
+  stone:  { label: '播放雨爱', cost: 24, cool: 45, hint: '雨爱持续 10 秒，声波基础伤害 '+SONG_WAVE_DAMAGE[1]+'，范围内敌军减速 50%、受伤 +40%。可对空，与苦行山共享冷却。' },
   airDefense: { label: '快速装填', cost: 18, cool: 30, hint: '棍母防空导弹发射速度提高 50%，持续 8 秒。' },
   silo:   { label: '发射棍母导弹', cost: 16, target: true, hint: '只打击落点范围内的敌方单位和建筑。灭霸失去 80% 当前血量，并获得持续易伤。' },
   frogLauncher: { label: '指定落点', cost: 0, target: true, hint: '指定下一发奶蛙炮弹的落点。落地时溅射敌方地面目标。' },
@@ -871,6 +875,7 @@ class Battle {
     this.difficulty = key;
     this.pace = DIFFICULTIES[key];
     this.nextDispatch = this.pace.firstAttack + this.openingVariation * (this.pace.variation + 4);
+    this.nextEscort = this.pace.escortAfter ?? Infinity;
     return true;
   }
 
@@ -1198,7 +1203,8 @@ class Battle {
   sendEnemy() {
     if (this.time < this.nextDispatch) return;
     const troops = this.enemies.filter(unit => alive(unit) && unit.staging);
-    if (troops.filter(unit => unit.onRaid).length >= this.pace.attackLimit) return;
+    const remainingSlots = this.pace.attackLimit - troops.filter(unit => unit.onRaid).length;
+    if (remainingSlots <= 0) return;
     const ready = troops.filter(unit => !unit.onRaid && !unit.defender);
     const silo = this.silo;
     const vulnerableSilo = silo && active(silo.loadedAt, this.time) && !active(silo.rearmAt, this.time);
@@ -1207,10 +1213,22 @@ class Battle {
       (vulnerableSilo && ready.find(unit => unit.raider)) ||
       recruits[Math.floor(this.random() * recruits.length)];
     if (!recruit) return;
-    recruit.onRaid = true;
-    recruit.target = null;
-    recruit.thinkAt = this.time;
-    if (recruit.type === 'boss') recruit.pulseAt = this.time + 15;
+    const group = [recruit];
+    if (this.time >= this.nextEscort && ready.length >= 3 && remainingSlots >= 2 && recruit.type !== 'boss') {
+      const escort = ready.find(unit => unit !== recruit && unit.type !== 'boss' &&
+        !!unit.spec.air !== !!recruit.spec.air);
+      if (escort) {
+        escort.lane = lerp(escort.lane, recruit.lane, .55);
+        group.push(escort);
+        this.nextEscort = this.time + this.pace.escortGap;
+      }
+    }
+    for (const unit of group) {
+      unit.onRaid = true;
+      unit.target = null;
+      unit.thinkAt = this.time;
+      if (unit.type === 'boss') unit.pulseAt = this.time + 15;
+    }
     this.nextDispatch = this.time + this.pace.dispatchGap + this.random() * this.pace.variation;
   }
 
@@ -1250,7 +1268,7 @@ class Battle {
           buildings.filter(u => u.type === 'sentry').length < pace.sentryLimit && wantsSentry) {
         this.enemyBuild('sentry', [{ x: 1253, y: 338 }, { x: 1204, y: 437 }, { x: 1255, y: 192 }]);
       } else if (!abandoned && factories.length === this.factories(false, false).length && factories.length < 2 &&
-          this.enemyGold >= pace.secondFactoryBudget && combat.length >= 3 && this.goldRate(false) > 9) {
+          this.enemyGold >= pace.secondFactoryBudget && combat.length >= 3 && this.goldRate(false) > 90) {
         this.enemyBuild('factory', [{ x: 1120, y: 488 }, { x: 1250, y: 486 }, { x: 1450, y: 446 }]);
       }
     }
@@ -1268,7 +1286,8 @@ class Battle {
     }
     const availability = factories.filter(u => !u.job);
     if (!availability.length) return;
-    if (this.time < 14 && unfinished.some(u => u.type === 'miner') && this.enemyGold < 101) return;
+    if (this.time < 14 && unfinished.some(u => u.type === 'miner') &&
+        this.enemyGold < MINER.cost[0] + ENEMIES.foot.cost[0]) return;
 
     const combatJobs = factories.filter(f => f.job && f.job.type !== 'architect');
     let recruitSlots = pace.attackLimit + pace.reserve - combat.length - combatJobs.length;
@@ -1280,7 +1299,7 @@ class Battle {
       return;
     }
     // A healthy force can save for a Titan. Falling back to regular production answers a push.
-    const saving = !this.boss && !waiting && this.goldRate(false) >= 12 &&
+    const saving = !this.boss && !waiting && this.goldRate(false) >= 120 &&
       this.time >= pace.bossSavingsAt && theirFront.length <= 2 && (combat.length >= 2 || theirFront.length === 0);
     if (saving) return;
 
@@ -1403,10 +1422,14 @@ class Battle {
     return true;
   }
 
-  guardTargets(tower) {
-    return this.enemies.filter(enemy => alive(enemy) && !enemy.spec.air && !enemy.spec.fixed &&
-      enemy.type !== 'zombie' && enemy.type !== 'boss' && !active(enemy.guardUntil, this.time) &&
+  soundTargets(tower, mode) {
+    return this.enemies.filter(enemy => alive(enemy) && enemy.type !== 'zombie' &&
+      (mode === 1 || !enemy.spec.air && !enemy.spec.fixed && enemy.type !== 'boss') &&
       distance(tower, enemy) <= STONE_RADIUS);
+  }
+
+  guardTargets(tower) {
+    return this.soundTargets(tower, 0).filter(enemy => !active(enemy.guardUntil, this.time));
   }
 
   startStoneSong(tower, mode, opening = false, guards = mode ? [] : this.guardTargets(tower)) {
@@ -1418,14 +1441,24 @@ class Battle {
     tower.songStartedAt = t;
     tower.songUntil = t + SONG_DURATION[mode];
     tower.playingMode = mode;
+    tower.nextWaveAt = t;
     for (const enemy of guards) {
       enemy.guardUntil = t + SONG_DURATION[0];
       enemy.guardFlash = t + .43;
       this.effect('guardFlash', { unit: enemy }, .76);
     }
     if (mode) this.updateRain();
-    this.effect('ring', { x: tower.x, y: tower.y, color: mode ? '#82d8ff' : '#ffe09a', radius: STONE_RADIUS }, 1.15);
     this.event('song', { mode, name: SONGS[mode], tower });
+  }
+
+  pulseStone(tower) {
+    const mode = tower.playingMode;
+    tower.nextWaveAt = this.time + STONE_WAVE_EVERY;
+    const color = mode ? '#82d8ff' : '#ffe09a';
+    this.effect('soundWave', { x: tower.x, y: tower.y, color, radius: STONE_RADIUS, strong: mode === 1 }, 1.3);
+    for (const enemy of this.soundTargets(tower, mode)) {
+      this.hit(enemy, SONG_WAVE_DAMAGE[mode], { source: tower });
+    }
   }
 
   siloState(unit) {
@@ -1623,8 +1656,8 @@ class Battle {
     }
     if (target.hp === 0) {
       this.effect('death', { x: target.x, y: target.y, air: target.spec.air, art: target.spec.art, player: target.player }, .6);
-      const [gold, index] = target.spec.reward || (target.spec.production ? [48, 12] :
-        target.spec.fixed ? [26, 7] : [target.type === 'spider' ? 0 : 9, 4]);
+      const [gold, index] = target.spec.reward || (target.spec.production ? [420, 12] :
+        target.spec.fixed ? [220, 7] : [target.type === 'spider' ? 0 : 80, 4]);
       if (!target.player) {
         this.kills++;
         this.gold += gold;
@@ -1982,11 +2015,13 @@ class Battle {
       this.event('pulse', { stolen: Math.floor(stolen) });
       unit.pulseAt = t + 17;
     }
-    if (unit.type === 'stone' && !active(unit.cooldown, t) && !active(unit.songUntil, t) &&
-        !active(unit.nextGuardCheck, t)) {
-      unit.nextGuardCheck = t + .18;
-      const guards = this.guardTargets(unit);
-      if (guards.length) this.startStoneSong(unit, 0, false, guards);
+    if (unit.type === 'stone') {
+      if (!active(unit.cooldown, t) && !active(unit.songUntil, t) && !active(unit.nextGuardCheck, t)) {
+        unit.nextGuardCheck = t + .18;
+        const guards = this.guardTargets(unit);
+        if (guards.length) this.startStoneSong(unit, 0, false, guards);
+      }
+      if (active(unit.songUntil, t) && unit.nextWaveAt <= t) this.pulseStone(unit);
     }
     const rooted = active(unit.rooted, t);
     let speed = (spec.speed || 0) * (active(unit.guardUntil, t) ? .4 : 1);
@@ -2690,15 +2725,9 @@ class BattlefieldView {
         const color=blue?'#9bdcff':'#ffda83';
         if (isPlaying || selected.has(u)) {
           ctx.setLineDash(isPlaying?[]:[8,8]);
-          ellipse(ctx,u.x,u.y,STONE_RADIUS,STONE_RADIUS, isPlaying?color+'20':color+'0d', color+'9c',1.7);
+          ellipse(ctx,u.x,u.y,STONE_RADIUS,STONE_RADIUS, isPlaying?color+'11':color+'07', color+'9c',1.7);
           ctx.setLineDash([]);
-          if (isPlaying) {
-            for (let i=0;i<3;i++) {
-              const p=(at*.74+i/3)%1;
-              ellipse(ctx,u.x,u.y,23+p*153,23+p*153,null,color+Math.round((1-p)*129).toString(16).padStart(2,'0'),2.5);
-            }
-            this.text('♪ '+SONGS[u.playingMode],u.x,u.y+57,color,16);
-          }
+          if (isPlaying) this.text('♪ '+SONGS[u.playingMode],u.x,u.y+57,color,16);
         }
       } else if (selected.has(u)) {
         const radius = u.spec.interceptRadius || u.spec.repairRadius ||
@@ -2900,6 +2929,14 @@ class BattlefieldView {
         ctx.globalAlpha=(1-p)*.87;
         if ('filter' in ctx) ctx.filter='brightness(0) invert(1)';
         drawImageArt(ctx,'guard',f.unit.x,f.unit.y,f.unit.spec.height*1.15*(1+p*.23));
+      } else if (f.type==='soundWave') {
+        const radius = 12 + (f.radius - 12) * p;
+        ctx.globalAlpha = (1-p) * .82;
+        ellipse(ctx,f.x,f.y,radius,radius,null,f.color,f.strong?4:2.5);
+        if (f.strong && radius>24) {
+          ctx.globalAlpha *= .58;
+          ellipse(ctx,f.x,f.y,radius-22,radius-22,null,f.color,2);
+        }
       } else if(f.type==='laughWave') {
         ctx.globalAlpha=(1-p)*.85;
         for(let i=0;i<4;i++) {
@@ -3236,21 +3273,24 @@ const friendlyGuide = {
   spider: '每次由 MJ 召唤 3 只，存活 15 秒，可攻击地面和空中。捕网冷却 4.6 秒，波及目标附近 82 范围的敌军，定身 1.65 秒，灭霸缩短至 0.52 秒。普通攻击对盾兵无效，捕网仍可命中。',
   base: '双方开局各有一座基地，维持基础生产能力，可排队补充建筑师。',
   factory: '可排队生产建筑师、奶蛙、美团老鼠、奶蛙机甲、MJ 和机械师。选中多个工厂可同时下单，完工单位前往集结点。基地和工厂被破坏后，仍可用幸存建造者恢复产线。',
-  miner: '放在任意空置金矿上，完工后每秒增加 4.1 金币，摧毁后失去这份收入。',
+  miner: '放在任意空置金矿上，完工后每秒增加 '+MINE_RATE+' 金币，摧毁后失去这份收入。',
   airDefense: '自动向 330 射程内的空军发射棍母防空导弹，单发 62 伤害，每 1.65 秒发射一枚。飞行盾兵会用正面替后方空军承受导弹。快速装填消耗 18 点 67，冷却 30 秒，发射速度提高 50%，持续 8 秒。',
-  stone: '覆盖半径 176，向圈后推进的敌军会经过音圈。完工自动播放《东南苦行山》，遇到合适的地面敌军会再次启动，圈内符合条件的目标变为王警卫 5 秒。其对飞行单位、僵尸和灭霸无效。《雨爱司凤版》消耗 24 点 67 手动播放，10 秒内让圈内敌方减速 50%、受伤提高 40%，可影响空军和灭霸，僵尸免疫。技能共享 45 秒冷却，触发控制后沉默 10 秒。两首歌音频都可循环，战斗效果按各自时长计。',
+  stone: '覆盖半径 '+STONE_RADIUS+'，与奶蛙火炮射程一致。歌曲生效期间每 '+STONE_WAVE_EVERY+' 秒发一次声波。'+
+    '《东南苦行山》自动播放，使圈内符合条件的敌军变为王警卫 5 秒，声波基础伤害 '+SONG_WAVE_DAMAGE[0]+'，只打地面部队。'+
+    '《雨爱司凤版》手动消耗 24 点 67，持续 10 秒，声波基础伤害 '+SONG_WAVE_DAMAGE[1]+'，可打空军、建筑和灭霸，并使敌人减速 50%、受伤提高 40%。'+
+    '僵尸免疫两首歌，灭霸免疫苦行山。两首歌共享 45 秒冷却，触发后沉默 10 秒。音频可循环，声波随战斗效果结束。',
   laser: '拦截半径 150，拦截后需充能 1.05 秒。发射激光拦下射向友军的普通弹丸和箭矢；灭霸拳铠弹可穿过，刀盾狗的近战也不会被拦截。',
-  repair: '半径 176，逐个修复范围内其他友军或建筑，每秒恢复 29 HP。可手动指定范围内目标或协助建筑师、机械师施工，不能独自建造，也不参与 MJ 的专属重机枪施工。',
+  repair: '半径 '+UNITS.repair.repairRadius+'，逐个修复范围内其他友军或建筑，每秒恢复 29 HP。可手动指定范围内目标或协助建筑师、机械师施工，不能独自建造，也不参与 MJ 的专属重机枪施工。',
   webTower: '仅 MJ 可施工。每轮打出三发蛛弹，命中后可对地对空定身 1.72 秒。普通蛛弹对盾兵无效，对灭霸仅造成 52% 的伤害并缠绕 0.68 秒。',
-  frogLauncher: '自动发射远程奶蛙炮弹，射程 500，溅射半径 83，中心伤害 96，边缘伤害减半。无需场上有奶蛙。可手动指定下一发落点，与自动射击共用 4.5 秒装填，只打击敌方地面单位和建筑。',
-  silo: '需 615 金币和 100 点 67 才能建造。我方可建一座，完工后装填 25 秒。花 16 点 67 手动指定落点，棍母导弹约 1.75 秒后命中，清除半径 212 内的敌方地面部队、空军和建筑，友军安全。灭霸失去 80% 当前血量，之后受伤增加 50%。发射后冷却 57 秒，再装填 25 秒。',
+  frogLauncher: '自动发射远程奶蛙炮弹，射程 '+UNITS.frogLauncher.range+'，溅射半径 83，中心伤害 96，边缘伤害减半。无需场上有奶蛙。可手动指定下一发落点，与自动射击共用 4.5 秒装填，只打击敌方地面单位和建筑。',
+  silo: '需 '+UNITS.silo.cost[0]+' 金币和 '+UNITS.silo.cost[1]+' 点 67 才能建造。我方可建一座，完工后装填 25 秒。花 16 点 67 手动指定落点，棍母导弹约 1.75 秒后命中，清除半径 212 内的敌方地面部队、空军和建筑，友军安全。灭霸失去 80% 当前血量，之后受伤增加 50%。发射后冷却 57 秒，再装填 25 秒。',
 };
 
 const enemyGuide = {
   base: '开局自带，持续训练建筑师。摧毁基地可切断这条产线。',
   architect: '能重建工厂，按 AI 计划建采矿机或哨戒塔。敌方没有基地和工厂后，还要清除幸存的建筑师。',
   factory: '敌军消耗金币在这里生产地面和空中单位。金币充足时可能扩建第二座。',
-  miner: '完工后每秒替敌方增加 4.1 金币。袭击采矿机可以拖慢敌军补充兵力。',
+  miner: '完工后每秒替敌方增加 '+MINE_RATE+' 金币。袭击采矿机可以拖慢敌军补充兵力。',
   sentry: '被动向附近我方地面部队和建筑发射炮弹，不能攻击空中。奶蛙发射器射程更远。',
   foot: '普通弹丸对奶蛙额外增伤，也会受到奶蛙的额外反击伤害。成群出现时可以用机甲喷火或火炮溅射。',
   shield: '刀盾狗拥有 63% 装甲，近战不会被激光拦截。免疫普通蛛丝和小蜘蛛的攻击，捕网仍能定身。可以用机甲、老鼠滚动或棍母导弹应对，也能被苦行山变成王警卫。',
@@ -3695,7 +3735,7 @@ function handleEvents() {
       note(event.unit.spec.name + '蓝图已部署。');
       audio.tone([[365,.105],[532,.11]], 'sine');
     } else if (event.type === 'built') {
-      note(event.unit.spec.name + '已完工' + (event.unit.type === 'miner' ? ' · 金币产速 +4.1/s' : '。'));
+      note(event.unit.spec.name + '已完工' + (event.unit.type === 'miner' ? ' · 金币产速 +'+MINE_RATE+'/s' : '。'));
       audio.tone([[520,.1],[690,.15]], 'triangle', .065);
     } else if (event.type === 'train') {
       note(event.typeName + (event.count > 1 ? ' · 已加入 '+event.count+' 座生产建筑的队列。' : '已加入生产队列。'));
@@ -3713,7 +3753,8 @@ function handleEvents() {
     } else if (event.type === 'ratHit') {
       audio.play('ratHit', 'rat', .72);
     } else if (event.type === 'song') {
-      note('♪ ' + event.name + (event.mode ? ' · 减速 50% / 受伤 +40%' : ' · 自动播放，圈内地面敌军变身 5 秒'));
+      const control = event.mode ? '减速 50% / 受伤 +40%' : '圈内地面敌军变身 5 秒';
+      note('♪ '+event.name+' · 声波 '+SONG_WAVE_DAMAGE[event.mode]+' · '+control);
       audio.playStone();
     } else if (event.type === 'musicUpdate') {
       audio.playStone();
@@ -3943,7 +3984,7 @@ function unitStatus(unit) {
     if (stage.until>t) return { value: stage.name + ' · ' + seconds(stage.until-t), progress: (t-stage.from)/(stage.until-stage.from) };
     return { value: '可发射 · 16 点 67 指数', progress: 1 };
   }
-  if (unit.type === 'miner') return { value: hp + ' · +4.1 金币/s', progress: unit.hp / unit.spec.hp };
+  if (unit.type === 'miner') return { value: hp + ' · +'+MINE_RATE+' 金币/s', progress: unit.hp / unit.spec.hp };
   if (unit.order?.type === 'repair' && alive(unit.order.target)) {
     const target = unit.order.target;
     return { value: (active(unit.repairUntil,t)?'正在维修 ':'前往维修 ')+target.spec.name, progress: unit.hp/unit.spec.hp };
@@ -4076,7 +4117,7 @@ function guidance() {
   const f = game.factories(true, false);
   const builders = game.constructionCrew('factory',true);
   if (game.phase==='ready') return ['开局准备', '点击建筑师打开建造窗口。选址建工厂，再用采矿机占金矿。'];
-  if (!builders.length) return ['补充建筑师', '点基地或工厂，花 40 金币生产建筑师。'];
+  if (!builders.length) return ['补充建筑师', '点基地或工厂，花 '+UNITS.architect.cost[0]+' 金币生产建筑师。'];
   if (!f.length) return ['建造工厂', '点击建筑师选择工厂蓝图，再选址开矿。'];
   if (!factories.length) return ['工厂施工', '建造者正在施工。可以提前安排采矿机蓝图。'];
   if (game.boss) return ['灭霸在场', '棍母导弹可扣除灭霸 80% 当前血量。奶蛙机甲和火炮可持续攻击。'];
@@ -4087,7 +4128,7 @@ function guidance() {
 }
 function updateHud() {
   setText('gold', Math.floor(game.gold));
-  setText('gold-rate', '+' + game.goldRate().toFixed(1) + '/s');
+  setText('gold-rate', '+' + game.goldRate() + '/s');
   setText('index', Math.floor(game.index));
   setText('clock', timeCode(game.time));
   const stations=game.stations(true);
@@ -4693,6 +4734,9 @@ window.addEventListener('resize',resizeBattlefield);
 if ('ResizeObserver' in window) new ResizeObserver(resizeBattlefield).observe(board);
 for (const name of panelNames) enableWindowDrag($(name+'-panel'));
 createCards();
+setText('rule-opening-gold', OPENING_GOLD);
+setText('rule-base-gold-rate', GOLD_RATE);
+setText('rule-mine-gold-rate', MINE_RATE);
 renderUnitGuide('rule-troops', [...troopTypes,'spider'], UNITS, friendlyGuide);
 renderUnitGuide('rule-structures', ['base',...structureTypes], UNITS, friendlyGuide);
 renderUnitGuide('rule-enemy-units',
