@@ -1,6 +1,6 @@
 # Six Seven War
 
-[打开游戏](https://2986176597-ship-it.github.io/six-seven-war/) · 支持电脑和手机浏览器。
+[打开游戏](https://yiyishenghui1027.github.io/six-seven-war/) · 支持电脑和手机浏览器。
 
 这是一款单人即时战略游戏。开局选择难度，建造工厂与采矿机，再生产部队。击毁敌方工厂与建筑师即获胜。
 
