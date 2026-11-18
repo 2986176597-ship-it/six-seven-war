@@ -454,7 +454,7 @@ body { height: 100dvh; display: flex; flex-direction: column; overflow: hidden; 
       <nav class="rule-nav" aria-label="规则目录">
         <a href="#rule-start">开局与胜负</a><a href="#rule-difficulty">五档难度</a><a href="#rule-control">电脑与手机操作</a>
         <a href="#rule-resources">资源与生产</a><a href="#rule-recycle">回收</a><a href="#rule-levels">建筑升级</a>
-        <a href="#rule-friendly">机动单位</a><a href="#rule-buildings">建筑</a><a href="#rule-enemies">敌军</a><a href="#rule-combat">战斗与技能</a>
+        <a href="#rule-friendly">机动单位</a><a href="#rule-buildings">建筑</a><a href="#rule-enemies">战场角色</a><a href="#rule-combat">战斗与技能</a>
       </nav>
       <section class="rule-chapter" id="rule-start">
         <h2>开局与胜负</h2>
@@ -473,9 +473,9 @@ body { height: 100dvh; display: flex; flex-direction: column; overflow: hidden; 
           <li><strong>中等</strong>　中期开始两支部队一同推进，敌方会择机升级采矿机。</li>
           <li><strong>困难</strong>　进攻更密，后期可集结三支地空混编部队，工厂和矿机遭遇威胁时留守兵力。</li>
           <li><strong>非常困难</strong>　敌军更快扩产和成队进攻，更积极部署哨戒塔、调整兵种。</li>
-          <li><strong>地狱</strong>　敌方经济更强、集结最快，敌方机动兵种（含灭霸）攻击力提高 <span id="rule-hell-attack">10</span>%。哨戒塔按标准伤害射击。</li>
+          <li><strong>地狱</strong>　敌方经济更强、集结最快，敌方机动兵种（含灭霸）攻击力提高 <span id="rule-hell-attack">10</span>%。固定武器使用标准伤害。</li>
         </ul>
-        <p>AI 会按我方防线和兵种选择进攻路线、配兵及扩张位置。高难度会在侧翼增建工厂，遇袭时留下守军、修理受损产线。对战开始前可切换难度。</p>
+        <p>AI 会按我方防线和兵种选择进攻路线、配兵及扩张位置，并为 L2 工厂和灭霸储备金币。高难度会在侧翼增建工厂，遇袭时留下守军、修理受损产线。对战开始前可切换难度。</p>
       </section>
       <section class="rule-chapter" id="rule-control">
         <h2>电脑与触屏操作</h2>
@@ -494,9 +494,9 @@ body { height: 100dvh; display: flex; flex-direction: column; overflow: hidden; 
           <li><strong>金币</strong>　开局双方各有 <span id="rule-opening-gold">2000</span> 金币。我方每秒自动获得 <span id="rule-base-gold-rate">46</span> 金币，每台 L1 采矿机另加 <span id="rule-mine-gold-rate">30</span> 金币/秒。新战场有 10 处金矿可争夺，击破敌军也能赚金币。</li>
           <li><strong>67 指数</strong>　双方开局各有 <span id="rule-opening-index">50</span> 点，每秒基础产速 <span id="rule-base-index-rate">0.5</span>，上限 <span id="rule-index-max">200</span>。击破敌军仍可获得奖励。我方余额和产速显示在顶部。</li>
           <li><strong>67矿</strong>　双方在中路各有一处 67矿。选建筑师，消耗 <span id="rule-index-mine-cost">40</span> 点 67，在己方矿点建造「奶龙67采矿机」。完工的 L1 每秒额外 +1，花 <span id="rule-index-upgrade-cost">1500</span> 金币升 L2 后每秒额外 +2。</li>
-          <li><strong>建造</strong>　选卡片再点地图放蓝图，建造者会前往施工。机动单位所在的位置可以放建筑蓝图，已有建筑和建筑蓝图会占用地面。金矿和 67矿各供对应矿机使用。机械师现场造兵和 MJ 建蛛丝重机枪的蓝图须距对应建造者 260 以内。</li>
-          <li><strong>协同</strong>　多选合格建造者，让他们一起接手蓝图可缩短工期。修复湾可在范围内辅助建筑师或机械师。机械师和修复湾自动逐个修理受损友军，也可手动指定目标集中维修。</li>
-          <li><strong>排队</strong>　每座产线最多 10 个订单，包含正在生产的一项。下单立即扣款，按加入顺序完工。多座工厂同时选中时，每点一次卡片，各合格工厂同时排入一个订单。</li>
+          <li><strong>建造</strong>　选卡片后，电脑左键或右键地图、手机点地图即可放蓝图。机动部队站在目标点也可以建。已有建筑和建筑蓝图会占用对应地面，金矿和 67矿各供对应矿机使用。机械师现场造兵和 MJ 建蛛丝重机枪的蓝图须距对应建造者 260 以内。</li>
+          <li><strong>协同</strong>　多选建造者接手同一蓝图可缩短工期，修复湾可在 240 范围内协助，也能为 MJ 加速。机械师和修复湾会逐个维修范围内的受损单位和所有建筑，包括蛛丝重机枪。可手动集中维修。</li>
+          <li><strong>排队</strong>　双方使用同一套兵种和建筑。每座产线最多 10 个订单，下单立即扣款并按顺序完工。多选工厂时，普通订单发给所有合格工厂，灭霸订单只发给一座。</li>
           <li><strong>集结</strong>　选中基地或工厂，点生产浮窗里的「设置集结点」，再点地图。多选工厂可批量设置，单选可分别设置。电脑也可选中产线后右键空地。包括建筑师和机械师在内，新出厂部队会向旗标移动并沿途还击。改旗标后，仍在队列里的单位会去新位置。点「恢复默认」可让出厂部队使用默认去向。</li>
           <li><strong>定价</strong>　双方建造、造兵与升级的金币价格都是整百。需要 67 指数的项目会在金币之外标明额外花费。</li>
         </ul>
@@ -515,31 +515,31 @@ body { height: 100dvh; display: flex; flex-direction: column; overflow: hidden; 
         <h2>建筑升级与高级兵种</h2>
         <ul>
           <li>在完工建筑的浮窗点「升级 L2」，开始时扣费，倒计时归零后应用升级。工厂、矿机和武器在升级期间照常工作，多选时可并行升级。</li>
-          <li>采矿机花 800 金币升级，L2 收入为 L1 的 1.5 倍。工厂花 1000 金币升级，L2 可生产奶蛙机甲和 MJ。机械师要现场建造 MJ，也需要一座已升级的工厂。</li>
+          <li>采矿机花 800 金币升级，L2 收入为 L1 的 1.5 倍。工厂花 1000 金币升级，L2 可生产奶蛙机甲、MJ 和灭霸。机械师要现场建造 MJ，也需要一座已升级的工厂。</li>
           <li>奶蛙火炮、防空炮塔和激光防御塔用金币升级。讲解石与蛛丝重机枪还需要 67 指数。棍母发射井和修复湾按单级运行。各建筑的费用与升级收益可查图鉴。</li>
         </ul>
       </section>
       <section class="rule-chapter" id="rule-friendly">
-        <h2>我方机动单位</h2>
+        <h2>双方机动单位</h2>
         <dl class="unit-guide" id="rule-troops"></dl>
       </section>
       <section class="rule-chapter" id="rule-buildings">
-        <h2>我方建筑</h2>
+        <h2>双方建筑</h2>
         <dl class="unit-guide" id="rule-structures"></dl>
       </section>
       <section class="rule-chapter" id="rule-enemies">
-        <h2>敌军与战场角色</h2>
+        <h2>战场角色</h2>
         <dl class="unit-guide" id="rule-enemy-units"></dl>
       </section>
       <section class="rule-chapter" id="rule-combat">
         <h2>射程、弹药与技能</h2>
         <ul>
-          <li><strong>目标高度</strong>　奶蛙、老鼠、机甲和火炮攻击地面。防空炮塔与机械师攻击空中。MJ、蛛丝重机枪和小蜘蛛可以攻击两种高度，棍母导弹同时覆盖落点内的敌军建筑与空地部队。</li>
+          <li><strong>目标高度</strong>　奶蛙、老鼠、机甲、火炮、步兵与弓兵攻击地面。防空炮塔与机械师攻击空中。MJ、蛛丝重机枪、小蜘蛛和灭霸可以攻击两种高度，棍母导弹同时覆盖落点内的敌军建筑与空地部队。</li>
           <li><strong>拦截</strong>　激光防御塔拦截普通炮弹和箭矢。每次拦截增加负荷，过热时等冷却条结束才能恢复。刀盾狗使用近战，灭霸的拳铠弹可以绕过拦截。</li>
           <li><strong>施放技能</strong>　选中单位后点亮起的技能，方向类或落点类技能再点战场。技能所需的 67 指数和冷却时间可在单位面板查看。</li>
           <li><strong>讲解石切歌</strong>　完工后循环播放《东南苦行山》。选中讲解石，花 <span id="rule-rain-cost">24</span> 点 67 手动播放《雨爱司凤版》，立即打断苦行山。雨爱生效期间无法重复施放，结束后自动切回苦行山。苦行山的自动控场单独计时。</li>
           <li><strong>控场</strong>　苦行山让符合条件的地面敌人变身王警卫。雨爱声波覆盖空地，令敌军减速并受到更多伤害。僵尸免疫两首歌。普通蛛丝打盾兵无效，蜘蛛捕网仍可缠住两种盾兵和灭霸。</li>
-          <li><strong>灭霸</strong>　可用机甲、火炮、蛛丝与雨爱持续压制。棍母导弹飞行 <span id="rule-silo-flight">5.5</span> 秒后落地，只杀伤敌方。命中灭霸扣除其 80% 当前血量，并让他之后受到的伤害提高 50%。这一易伤能叠加雨爱的增伤。</li>
+          <li><strong>灭霸与棍母导弹</strong>　每方同时最多生产或部署一名灭霸。可用机甲、火炮、蛛丝与雨爱压制敌方灭霸。棍母发射井可建多座，每座独立装填。导弹飞行 <span id="rule-silo-flight">5.5</span> 秒后落地，只杀伤敌方。命中灭霸扣除其 80% 当前血量，并让他之后受到的伤害提高 50%。这一易伤能叠加雨爱的增伤。</li>
         </ul>
       </section>
       <div class="lobby-actions rules-actions" id="rules-actions">
@@ -598,7 +598,7 @@ body { height: 100dvh; display: flex; flex-direction: column; overflow: hidden; 
         <div class="health-track"><span id="factory-fill"></span></div>
       </div>
       <div id="boss-hud" class="boss-hud map-hud" hidden>
-        <div class="health-label"><span><i></i> 灭霸</span><strong id="boss-value"></strong></div>
+        <div class="health-label"><span><i></i> 敌方灭霸</span><strong id="boss-value"></strong></div>
         <div class="health-track"><span id="boss-fill"></span></div>
         <small id="boss-status"></small>
       </div>
@@ -816,6 +816,7 @@ const SILO_FLIGHT_TIME = 5.5;
 const GOLD_RATE = 46;
 const MINE_RATE = 30;
 const OPENING_GOLD = 2000;
+const ENEMY_THINK_INTERVAL = 1.17;
 const QUEUE_LIMIT = 10;
 const RAIN_SLOW = .5;
 const RAIN_DAMAGE = 1.4;
@@ -835,44 +836,45 @@ const RECYCLE_TIME = 3;
 const RECYCLE_REFUND = .8;
 const NET_RADIUS = 82;
 const BOSS_BLAST_LOSS = .8;
+const BOSS_PULSE_RADIUS = 290;
 const MECH_LAUGH_DURATION = 3;
 const DIFFICULTIES = {
   easy: {
     label: '简单', firstAttack: 62, dispatchGap: 17, variation: 5, recovery: 24,
     attackLimit: 4, reserve: 3, baseIncome: 34, mineLimit: 3, factoryLimit: 1,
     garrisonEvery: 8, defenseThreshold: 4, sentryLimit: 1, sentryBudget: Infinity,
-    secondFactoryBudget: Infinity, extraArchitectAt: 73, bossSavingsAt: 170,
+    secondFactoryBudget: Infinity, extraArchitectAt: 73, bossSavingsAt: 168,
     packAfter: 145, packWait: 4, defenseReach: 350, homeGuard: 1, counterWeight: .35,
   },
   medium: {
     label: '中等', firstAttack: 43, dispatchGap: 10.5, variation: 4, recovery: 16,
     attackLimit: 8, reserve: 4, baseIncome: 43, mineLimit: 4, factoryLimit: 2,
     garrisonEvery: 5, defenseThreshold: 2, sentryLimit: 2, sentryBudget: 2600,
-    secondFactoryBudget: 2500, extraArchitectAt: 43, bossSavingsAt: 105, bossRaidFloor: 6,
+    secondFactoryBudget: 2500, extraArchitectAt: 43, bossSavingsAt: 103,
     packAfter: 59, packWait: 6, defenseReach: 465, homeGuard: 2, counterWeight: .8,
     mineUpgradeAt: 100, mineUpgradeLimit: 1,
   },
   hard: {
-    label: '困难', firstAttack: 32, dispatchGap: 7.6, variation: 3, recovery: 10,
-    attackLimit: 10, reserve: 5, baseIncome: 52, mineLimit: 5, factoryLimit: 2,
+    label: '困难', firstAttack: 32, dispatchGap: 7.15, variation: 3, recovery: 10,
+    attackLimit: 10, reserve: 5, baseIncome: 56, mineLimit: 5, factoryLimit: 2,
     garrisonEvery: 3, defenseThreshold: 1, sentryLimit: 2, sentryBudget: 1550,
-    secondFactoryBudget: 2150, extraArchitectAt: 32, bossSavingsAt: 86, bossRaidFloor: 7,
+    secondFactoryBudget: 2150, extraArchitectAt: 32, bossSavingsAt: 84, supportBudget: 2250,
     packAfter: 47, tripleAfter: 101, packWait: 5, defenseReach: 545, homeGuard: 3, counterWeight: 1.2,
     mineUpgradeAt: 78, mineUpgradeLimit: 2,
   },
   'very-hard': {
     label: '非常困难', firstAttack: 29, dispatchGap: 6.5, variation: 2.8, recovery: 9,
-    attackLimit: 13, reserve: 6, baseIncome: 64, mineLimit: 6, factoryLimit: 3,
+    attackLimit: 13, reserve: 6, baseIncome: 69, mineLimit: 6, factoryLimit: 3,
     garrisonEvery: 3, defenseThreshold: 1, sentryLimit: 3, sentryBudget: 2300,
-    secondFactoryBudget: 1800, extraArchitectAt: 27, bossSavingsAt: 76, bossRaidFloor: 9,
+    secondFactoryBudget: 1800, extraArchitectAt: 27, bossSavingsAt: 73, supportBudget: 2200,
     packAfter: 40, tripleAfter: 80, packWait: 4.4, defenseReach: 590, homeGuard: 3, counterWeight: 1.4,
     mineUpgradeAt: 68, mineUpgradeLimit: 2,
   },
   hell: {
     label: '地狱', firstAttack: 25, dispatchGap: 5.8, variation: 2.5, recovery: 8,
-    attackLimit: 15, reserve: 7, baseIncome: 74, mineLimit: 7, factoryLimit: 3, attackMultiplier: 1.1,
+    attackLimit: 15, reserve: 7, baseIncome: 81, mineLimit: 7, factoryLimit: 3, attackMultiplier: 1.1,
     garrisonEvery: 3, defenseThreshold: 1, sentryLimit: 3, sentryBudget: 2100,
-    secondFactoryBudget: 1600, extraArchitectAt: 23, bossSavingsAt: 68, bossRaidFloor: 11,
+    secondFactoryBudget: 1600, extraArchitectAt: 23, bossSavingsAt: 64, supportBudget: 2000,
     packAfter: 34, tripleAfter: 61, packWait: 4, defenseReach: 620, homeGuard: 4, counterWeight: 1.55,
     mineUpgradeAt: 62, mineUpgradeLimit: 3,
   },
@@ -892,7 +894,7 @@ const BASE = { name: '基地', hp: 1400, armor: .16, radius: 49, fixed: true, pr
   height: 92, art: 'base', info: '开局自带，可排队生产建筑师。' };
 const FACTORY = { name: '工厂', hp: 1560, armor: .15, radius: 55, fixed: true, cost: [1200], build: 7.4,
   height: 102, art: 'factory', production: true, upgrade: { cost: [1000], time: 7 },
-  info: '按队列生产，升级 L2 后解锁奶蛙机甲与 MJ。双击任一工厂可全选工厂。' };
+  info: '按队列生产，升级 L2 后解锁奶蛙机甲、MJ 和灭霸。双击任一工厂可全选工厂。' };
 const MINER = { name: '采矿机', hp: 366, armor: .13, radius: 28, fixed: true, cost: [400], build: 4.2,
   height: 64, art: 'miner', income: MINE_RATE,
   upgrade: { cost: [800], time: 5, stats: { income: MINE_RATE * 1.5 } },
@@ -934,7 +936,7 @@ const UNITS = {
     info: '拦截普通弹丸与箭矢，每次拦截会增加热量。热量满后暂停防御，冷却完成后恢复。' },
   repair: { name: '修复湾', hp: 510, armor: .13, fixed: true, radius: 33, cost: [1500], build: 7.2,
     height: 75, art: 'repair', autoRepair: 29, repairRate: 29, repairRadius: 240, buildAssist: .55,
-    info: '修复范围内的友军，可助建并回收范围内的我方建筑。' },
+    info: '逐个修复范围内所有友军建筑及部队，可协助 MJ 施工，也可协助回收建筑。' },
   webTower: { name: '蛛丝重机枪', hp: 425, armor: .14, fixed: true, radius: 27, cost: [1500], build: 6.8,
     height: 81, art: 'webTower', range: 285, damage: 10, every: 1.3, burst: 3, burstGap: .11,
     aa: true, projectile: 'web', web: 1.72, bossWeb: .68, bossWebDamage: .52,
@@ -953,23 +955,15 @@ const UNITS = {
   silo:   { name: '棍母发射井', hp: 678, armor: .22, fixed: true, radius: 38, cost: [5400, 100], build: 19, height: 85, art: 'silo', info: '装填 25 秒后可手动发射棍母导弹。爆炸清除圈内敌方单位和建筑，灭霸失去 80% 当前血量。' },
   spider: { name: '小蜘蛛', hp: 29, armor: 0, radius: 9, speed: 107, range: 104, damage: 12, every: .64, aa: true,
     height: 29, art: 'spider', projectile: 'spiderRound', netEvery: 4.6, info: '可对空并向敌方目标发射范围捕网，持续 15 秒。' },
-};
-
-const ENEMIES = {
-  architect: ARCHITECT,
-  base: BASE,
-  factory: FACTORY,
-  miner: MINER,
-  indexMiner: INDEX_MINER,
   sentry:    { name: '哨戒塔', hp: 355, armor: .18, fixed: true, radius: 25, range: 233, damage: 24, every: .98, cost: [1200], build: 5.7, height: 63, art: 'sentry', projectile: 'bullet', info: '向射程内的地面部队和建筑发射炮弹。' },
   foot:      { name: '普通步兵', hp: 108, armor: .11, radius: 17, speed: 72, range: 121, damage: 12, every: 1.15, reward: [110, 6], cost: [500], build: 2.65, height: 58, art: 'foot', projectile: 'bullet', info: '对奶蛙增伤。' },
   shield:    { name: '刀盾狗', hp: 220, armor: .63, radius: 24, speed: 46, range: 31, damage: 26, every: 1.3, reward: [220, 11], cost: [1400], build: 6.9, height: 67, art: 'shield', heavy: true, shield: true, bypassIntercept: true, info: '高装甲近战，免疫普通蛛丝和蜘蛛弹药。捕网可缠住，喷火和滚动可破其防御。' },
   archer:    { name: '弓兵', hp: 102, armor: .08, radius: 17, speed: 64, range: 271, damage: 22, every: 1.52, reward: [150, 7], cost: [900], build: 4.4, height: 62, art: 'archer', projectile: 'arrow', info: '优先攻击建筑，会拉开与蓄力老鼠的距离。' },
   zombie:    { name: '僵尸', hp: 211, armor: .16, radius: 21, speed: 56, range: 29, damage: 29, every: 1.12, reward: [180, 9], cost: [1100], build: 5, height: 67, art: 'zombie', info: '完全免疫讲解石。' },
-  airFoot:   { name: '飞行步兵', hp: 104, armor: .09, radius: 18, speed: 101, range: 142, damage: 16, every: .98, reward: [150, 7], cost: [1000], build: 4.7, height: 63, art: 'airFoot', air: true, projectile: 'bullet', info: '直冲我方建筑。' },
+  airFoot:   { name: '飞行步兵', hp: 104, armor: .09, radius: 18, speed: 101, range: 142, damage: 16, every: .98, reward: [150, 7], cost: [1000], build: 4.7, height: 63, art: 'airFoot', air: true, projectile: 'bullet', info: '高速空军，擅长突袭敌方建筑。' },
   airBow:    { name: '飞行弓兵', hp: 133, armor: .13, radius: 19, speed: 71, range: 282, damage: 25, every: 1.55, reward: [210, 9], cost: [1500], build: 6.6, height: 70, art: 'airBow', air: true, projectile: 'arrow', info: '外围盘旋，优先攻击防空炮塔和地面集群。' },
   airShield: { name: '飞行盾兵', hp: 164, armor: .34, radius: 26, speed: 57, range: 128, damage: 17, every: 1.4, reward: [250, 11], cost: [1900], build: 8.4, height: 75, art: 'shield', air: true, heavy: true, shield: true, projectile: 'bullet', info: '用正面的盾替身后空军承受防空弹。免疫普通蛛丝和蜘蛛伤害，捕网可缠住。' },
-  boss:      { name: '灭霸', hp: 2600, armor: .15, radius: 40, speed: 39, range: 169, damage: 72, every: 1.9, reward: [1000, 22], cost: [7900], build: 23, height: 121, art: 'boss', heavy: true, aa: true, projectile: 'bossRound', bypassIntercept: true, info: '拳铠投弹可绕过激光拦截。抽象波偷取 67 指数。棍母导弹命中后会持续易伤。' },
+  boss:      { name: '灭霸', hp: 2400, armor: .15, radius: 40, speed: 42, range: 169, damage: 66, every: 1.9, reward: [1000, 22], cost: [6000], factoryLevel: 2, build: 18, height: 121, art: 'boss', heavy: true, aa: true, projectile: 'bossRound', bypassIntercept: true, info: 'L2 工厂生产，每方同时只能有一名（含排队）。投弹绕过激光拦截，抽象波偷取对方 67 指数。' },
 };
 
 const SKILLS = {
@@ -1078,7 +1072,6 @@ class Battle {
   get layout() { return BATTLE_MAPS[this.mapId]; }
   get world() { return this.layout.world; }
   get boss() { return this.enemies.find(unit => unit.type === 'boss' && alive(unit)); }
-  get silo() { return this.friends.find(unit => unit.type === 'silo' && alive(unit)); }
   get running() { return this.phase === 'running'; }
   get actionAllowed() { return this.running || this.phase === 'ready'; }
 
@@ -1091,6 +1084,11 @@ class Battle {
   }
   stations(player) {
     return this.units(player).filter(u => u.spec.production && alive(u) && completed(u, this.time));
+  }
+
+  hasBoss(player) {
+    return this.units(player).some(unit => unit.type === 'boss' && alive(unit)) ||
+      this.stations(player).some(unit => unit.job?.type === 'boss' || unit.queue.includes('boss'));
   }
   setRally(stations, point) {
     if (!this.actionAllowed || point && (!Number.isFinite(point.x) || !Number.isFinite(point.y))) return 0;
@@ -1130,7 +1128,7 @@ class Battle {
   }
 
   create(type, x, y, player, buildTime = 0) {
-    const spec = (player ? UNITS : ENEMIES)[type];
+    const spec = UNITS[type];
     const unit = {
       id: ++this.uid, type, spec, x, y, player, hp: spec.hp, readyAt: this.time + buildTime,
       madeAt: this.time, anchor: { x, y }, angle: player ? 0 : Math.PI,
@@ -1202,7 +1200,7 @@ class Battle {
   }
 
   supportsTraining(station, type, player = true) {
-    const spec = (player ? UNITS : ENEMIES)[type];
+    const spec = UNITS[type];
     if (!spec?.cost || spec.fixed || !station?.spec.production || station.player !== player ||
         !alive(station) || !completed(station, this.time)) return false;
     if (station.type === 'base') return type === 'architect';
@@ -1210,45 +1208,47 @@ class Battle {
   }
 
   fieldTechnologyProblem(type, player = true) {
-    const level = (player ? UNITS : ENEMIES)[type]?.factoryLevel;
+    const level = UNITS[type]?.factoryLevel;
     return level && !this.factories(player).some(factory => factory.level >= level) ? '需要已完工的 L2 工厂。' : '';
+  }
+
+  productionTime(station) {
+    return (station.job ? Math.max(0, station.job.end - this.time) : 0) +
+      station.queue.reduce((sum, type) => sum + UNITS[type].build, 0);
   }
 
   productionTargets(type, selection = []) {
     const selected = selection.filter(u => u.spec.production && u.player && alive(u));
-    if (selected.length) return selected.filter(u => this.supportsTraining(u, type));
-    const estimate = u => (u.job ? Math.max(0, u.job.end - this.time) : 0) +
-      u.queue.reduce((sum, job) => sum + UNITS[job].build, 0);
-    const available = this.stations(true).filter(u => this.supportsTraining(u, type));
+    const available = (selected.length ? selected : this.stations(true)).filter(u => this.supportsTraining(u, type));
+    if (selected.length && type !== 'boss') return available;
     const free = available.filter(u => u.queue.length + Number(!!u.job) < QUEUE_LIMIT);
     const target = (free.length ? free : available)
-      .sort((a, b) => estimate(a) - estimate(b) || Number(b.type === 'base') - Number(a.type === 'base'))[0];
+      .sort((a, b) => this.productionTime(a) - this.productionTime(b) || Number(b.type === 'base') - Number(a.type === 'base'))[0];
     return target ? [target] : [];
   }
 
   trainingProblem(type, stations, player = true) {
     if (!this.actionAllowed) return '当前无法生产。';
     if (!stations.length || !stations.every(u => this.supportsTraining(u, type, player))) {
-      if ((player ? UNITS : ENEMIES)[type]?.factoryLevel) return '需要已完工的 L2 工厂。';
+      if (UNITS[type]?.factoryLevel) return '需要已完工的 L2 工厂。';
       return type === 'architect' ? '需要一座完工的基地或工厂。' : '请选中已完工的工厂。';
     }
-    if (stations.some(u => u.queue.length + Number(!!u.job) >= QUEUE_LIMIT)) return '所选生产队列已满。';
-    const spec = (player ? UNITS : ENEMIES)[type];
-    if (!this.canPay(spec.cost.map(value => value * stations.length), player)) return '金币不足。';
-    if (type === 'boss' && (this.boss || this.stations(false).some(u => u.job?.type === 'boss' || u.queue.includes('boss')))) {
-      return '灭霸已在场或正在生产。';
+    if (type === 'boss' && (stations.length !== 1 || this.hasBoss(player))) {
+      return '每方同时只能拥有或生产一名灭霸。';
     }
+    if (stations.some(u => u.queue.length + Number(!!u.job) >= QUEUE_LIMIT)) return '所选生产队列已满。';
+    if (!this.canPay(UNITS[type].cost.map(value => value * stations.length), player)) return '金币不足。';
     return '';
   }
 
   startJob(station, type, start = this.time) {
-    const spec = (station.player ? UNITS : ENEMIES)[type];
+    const spec = UNITS[type];
     station.job = { type, start, end: start + spec.build };
   }
 
   trainGroup(type, stations, player = true) {
     if (this.trainingProblem(type, stations, player)) return false;
-    const spec = (player ? UNITS : ENEMIES)[type];
+    const spec = UNITS[type];
     this.pay(spec.cost.map(value => value * stations.length), player);
     for (const station of stations) {
       if (station.job) station.queue.push(type);
@@ -1275,7 +1275,7 @@ class Battle {
   }
 
   constructionCrew(type, player, candidates = this.builders(player)) {
-    const spec = (player ? UNITS : ENEMIES)[type];
+    const spec = UNITS[type];
     if (!spec?.cost) return [];
     return candidates.filter(unit =>
       unit.player === player && unit.spec.builder && alive(unit) && completed(unit, this.time) &&
@@ -1284,7 +1284,7 @@ class Battle {
   }
 
   placementProblem(type, point, player = true, preferred = []) {
-    const spec = (player ? UNITS : ENEMIES)[type];
+    const spec = UNITS[type];
     if (!this.actionAllowed || !spec?.cost) return '当前无法建造。';
     const technology = this.fieldTechnologyProblem(type, player);
     if (technology) return technology;
@@ -1292,7 +1292,6 @@ class Battle {
     const crew = selected.length ? selected : this.constructionCrew(type, player);
     if (!crew.length) return spec.builtBy ? '需要 '+UNITS[spec.builtBy].name+' 施工。' :
       spec.fixed ? '需要建筑师或机械师。' : '需要机械师在现场造兵。';
-    if (type === 'silo' && this.silo) return '已有一座棍母发射井。';
     if (!this.canPay(spec.cost, player)) return '金币或 67 指数不足。';
     const { world, goldMines, indexMines } = this.layout;
     if (![point.x,point.y].every(Number.isFinite) || point.x - spec.radius < world.left || point.x + spec.radius > world.right ||
@@ -1310,15 +1309,16 @@ class Battle {
     }
     if (type === 'miner' && !goldMines.some(m => distance(m, point) < 1)) return '采矿机须建在金矿上。';
     if (spec.fixed && type !== 'miner' && goldMines.some(m => distance(m, point) < spec.radius + 40)) return '请将金矿保留给采矿机。';
-    const obstructed = [...this.friends, ...this.enemies].some(unit => alive(unit) &&
-      (unit.spec.fixed || !spec.fixed && !completed(unit, this.time)) && distance(point, unit) < spec.radius + unit.spec.radius + 10);
-    return obstructed ? '选址与现有建筑或蓝图重叠。' : '';
+    const blocker = [...this.friends, ...this.enemies].find(unit => alive(unit) &&
+      (unit.spec.fixed || !spec.fixed && !completed(unit, this.time)) &&
+      distance(point, unit) < spec.radius + unit.spec.radius);
+    return blocker ? '选址与'+blocker.spec.name+(completed(blocker, this.time) ? '重叠。' : '蓝图重叠。') : '';
   }
 
   build(type, point, player = true, preferred = []) {
     point = this.placementPoint(type, point);
     if (this.placementProblem(type, point, player, preferred)) return null;
-    const spec = (player ? UNITS : ENEMIES)[type];
+    const spec = UNITS[type];
     const selected = this.constructionCrew(type, player, preferred);
     const blueprint = this.create(type, point.x, point.y, player, spec.build);
     this.assignBuild(blueprint, selected.length ? preferred : [], false);
@@ -1349,9 +1349,8 @@ class Battle {
         unit.blueprints.push(blueprint);
       }
     }
-    const hasCrew = blueprint.spec.builtBy !== 'mj' && (crew.length || this.builders(player).some(unit =>
-      unit.type !== 'mj' && unit.blueprints.includes(blueprint)));
-    const bays = hasCrew ? preferred.filter(bay => bay.player === player && bay.spec.buildAssist &&
+    const hasCrew = crew.length || this.constructionCrew(type, player).some(unit => unit.blueprints.includes(blueprint));
+    const bays = hasCrew && blueprint.spec.fixed ? preferred.filter(bay => bay.player === player && bay.spec.buildAssist &&
       alive(bay) && completed(bay, this.time) && distance(bay, blueprint) <= bay.spec.repairRadius) : [];
     for (const bay of bays) bay.order = { type: 'assist', target: blueprint };
     return crew.length + bays.length;
@@ -1387,7 +1386,7 @@ class Battle {
     } else {
       unit.angle = angleTo(unit, blueprint);
       unit.anchor = { x: unit.x, y: unit.y };
-      if (unit.type !== 'mj') blueprint.primaryWorkAt = this.time;
+      blueprint.primaryWorkAt = this.time;
       this.applyBuildWork(unit, blueprint, dt * (unit.spec.buildRate || 1));
     }
     return true;
@@ -1395,14 +1394,14 @@ class Battle {
 
   assistBuild(bay, dt) {
     const t = this.time;
-    const inRange = target => !!target && target !== bay && alive(target) && !completed(target, t) &&
-      target.spec.builtBy !== 'mj' && distance(bay, target) <= bay.spec.repairRadius;
+    const inRange = target => target?.spec.fixed && target.player === bay.player && target !== bay &&
+      alive(target) && !completed(target, t) && distance(bay, target) <= bay.spec.repairRadius;
     const assigned = bay.order?.type === 'assist' ? bay.order.target : null;
     if (assigned && !inRange(assigned)) bay.order = null;
-    const target = inRange(assigned) ? assigned : nearest(bay,
-      this.units(bay.player).filter(u => u.primaryWorkAt === t && inRange(u)));
+    const working = target => inRange(target) && target.primaryWorkAt === t;
+    const target = working(assigned) ? assigned : nearest(bay, this.units(bay.player).filter(working));
     if (!target) return false;
-    if (target.primaryWorkAt === t) this.applyBuildWork(bay, target, dt * bay.spec.buildAssist);
+    this.applyBuildWork(bay, target, dt * bay.spec.buildAssist);
     return true;
   }
 
@@ -1451,10 +1450,11 @@ class Battle {
     if (!eligible(unit.repairTarget)) {
       unit.repairTarget = nearest(unit, this.units(unit.player).filter(eligible));
     }
-    const target = unit.repairTarget;
+    const target = unit.repairTarget || (unit.type === 'repair' && this.repairable(unit, unit.player) &&
+      unit.passiveRepairAt !== this.time ? unit : null);
     if (!target) return;
     target.passiveRepairAt = this.time;
-    this.repairUnit(unit, target, unit.spec.autoRepair, dt);
+    this.repairUnit(unit, target, unit.spec.autoRepair * (target === unit ? .35 : 1), dt);
   }
 
   isRecycler(unit) {
@@ -1530,7 +1530,7 @@ class Battle {
           unit.order = { type: 'move', destination, x: destination.x,
             y: clamp(destination.y + offset * .53, world.top, world.bottom) };
         }
-      } else if (!unit.spec.builder) {
+      } else if (!['architect', 'mechanic'].includes(type)) {
         this.enemyProduced++;
         unit.raider = this.random() < .33;
         unit.defender = type !== 'boss' && this.enemyProduced % this.pace.garrisonEvery === 0 &&
@@ -1549,16 +1549,20 @@ class Battle {
   }
 
   enemyBuild(type, points, workers, threats) {
+    const crew = this.constructionCrew(type, false, workers);
+    if (!crew.length || this.fieldTechnologyProblem(type, false)) return false;
     const factories = type === 'factory' ? this.factories(false,false) : [];
-    const sites = points.map(point => {
-      const worker = nearest(point, workers);
+    const sites = [];
+    for (const point of points) {
+      const worker = nearest(point, crew, localConstruction(UNITS[type]) ? FIELD_BUILD_REACH : Infinity);
+      if (!worker) continue;
       const danger = threats.reduce((score, unit) => {
-        const reach = unit.spec.fixed ? (unit.spec.music?.radius || unit.spec.range) + 45 : 155 + (unit.spec.range || 0) * .4;
+        const reach = unit.spec.fixed ? (unit.spec.music?.radius || unit.spec.range || 0) + 45 : 155 + (unit.spec.range || 0) * .4;
         return score + (distance(unit,point) < reach ? (unit.spec.fixed ? 3 : 1) : 0);
       },0);
       const crowding = factories.reduce((sum,station) => sum + Math.max(0, 400-distance(station,point)),0);
-      return { point, worker, score: distance(point,worker) + danger * 340 + crowding };
-    });
+      sites.push({ point, worker, score: distance(point,worker) + danger * 340 + crowding });
+    }
     sites.sort((a,b) => a.score-b.score);
     return sites.some(({point,worker}) => this.build(type, point, false, [worker]));
   }
@@ -1590,15 +1594,15 @@ class Battle {
     const t = this.time, pace = this.pace;
     if (t < this.nextDispatch) return;
     const troops = this.enemies.filter(unit => alive(unit) && unit.staging);
-    const remainingSlots = pace.attackLimit - troops.filter(unit => unit.onRaid).length;
-    if (remainingSlots <= 0) return;
     const ready = troops.filter(unit => !unit.onRaid && !unit.defender && !this.enemyReserve.has(unit));
     if (!ready.length) return;
+    const boss = ready.find(unit => unit.type === 'boss');
+    const remainingSlots = pace.attackLimit - troops.filter(unit => unit.onRaid).length;
+    if (remainingSlots <= 0 && !boss) return;
     const size = t >= (pace.tripleAfter ?? Infinity) ? 3 : t >= pace.packAfter ? 2 : 1;
-    const desired = Math.min(remainingSlots, size);
-    const silo = this.silo;
-    const vulnerableSilo = silo && active(silo.loadedAt, t) && !active(silo.rearmAt, t);
-    const urgent = ready.find(unit => unit.type === 'boss') ||
+    const desired = Math.min(Math.max(1, remainingSlots), size);
+    const vulnerableSilo = this.friends.some(unit => alive(unit) && unit.type === 'silo' && this.siloLoading(unit));
+    const urgent = boss ||
       (vulnerableSilo && ready.find(unit => unit.raider));
     if (!urgent && ready.length < desired && t < this.nextDispatch + pace.packWait) return;
 
@@ -1627,9 +1631,59 @@ class Battle {
     this.nextDispatch = t + pace.dispatchGap + this.random() * pace.variation;
   }
 
+  reserveForBoss(factories) {
+    const t = this.time;
+    const start = Math.max(this.pace.bossSavingsAt, this.nextEnemyBossAt ?? 0);
+    if (!factories.length || t < start || this.hasBoss(false)) {
+      this.enemyBossBank = 0;
+      return 0;
+    }
+    const laboratory = factories.filter(factory => factory.level === 2)
+      .sort((a, b) => this.productionTime(a) - this.productionTime(b))[0];
+    if (laboratory && this.train('boss', false, laboratory)) {
+      this.enemyBossBank = 0;
+      this.nextEnemyBossAt = t + 96;
+      return 0;
+    }
+    if (!laboratory && !factories.some(factory => factory.upgradeJob)) this.upgrade([factories[0]], false);
+    const savings = (this.enemyBossBank ?? 0) + this.goldRate(false) * ENEMY_THINK_INTERVAL * .68;
+    this.enemyBossBank = Math.min(savings, UNITS.boss.cost[0], this.enemyGold);
+    return this.enemyBossBank;
+  }
+
+  enemyAbility(defenses, army, opponents) {
+    if (this.difficulty === 'easy' || active(this.nextEnemySkill, this.time)) return;
+    for (const unit of [...defenses, ...army]) {
+      if (!SKILLS[unit.type] || this.skillProblem(unit) || unit.type === 'frogLauncher') continue;
+      const inRange = radius => opponents.filter(target => distance(unit, target) <= radius);
+      let target = null;
+      if (unit.type === 'silo') {
+        const targets = inRange(920).filter(target => !target.spec.fixed);
+        const cluster = largestCluster(targets);
+        if (cluster && targets.filter(target => distance(cluster, target) <= NUKE_RADIUS*.8).length >= 5) target = cluster;
+      } else if (unit.type === 'stone') {
+        const targets = this.soundTargets(unit, 1);
+        if (targets.some(target => target.spec.air || target.type === 'boss') || targets.length >= 3) target = unit;
+      } else if (unit.type === 'airDefense') {
+        if (inRange(unit.spec.range).filter(target => target.spec.air).length >= 2) target = unit;
+      } else if (unit.type === 'mj') {
+        if (inRange(190).length >= 2) target = unit;
+      } else if (unit.type === 'rat') {
+        target = nearest(unit, opponents.filter(target => !target.spec.air && !target.spec.fixed), 190);
+      } else if (unit.type === 'frog') {
+        const targets = inRange(175).filter(target => !target.spec.air && !target.spec.fixed);
+        if (targets.length >= 2) target = nearest(unit, targets);
+      }
+      if (target && this.cast(unit, target)) {
+        this.nextEnemySkill = this.time + (this.difficulty === 'medium' ? 14 : 8);
+        return;
+      }
+    }
+  }
+
   enemyTurn() {
     if (this.nextBrain > this.time) return;
-    this.nextBrain = this.time + 1.17;
+    this.nextBrain = this.time + ENEMY_THINK_INTERVAL;
     const pace = this.pace;
     if (this.time >= this.nextTactic) {
       const step = 1 + Math.floor(this.random() * (ENEMY_TACTICS.length - 1));
@@ -1645,7 +1699,8 @@ class Battle {
     const miners = [...this.friends, ...buildings].filter(u => alive(u) && u.type === 'miner');
     const ownedMines = buildings.filter(u => u.type === 'miner');
     const indexMiner = buildings.find(u => u.type === 'indexMiner');
-    const combat = this.enemies.filter(u => alive(u) && !u.spec.fixed && !u.spec.builder);
+    const combat = this.enemies.filter(u => alive(u) && !u.spec.fixed && u.spec.damage &&
+      u.type !== 'spider' && u.type !== 'mechanic');
     const fielded = this.friends.filter(u => alive(u) && completed(u,this.time));
     const theirTroops = fielded.filter(u => u.spec.damage && !u.spec.fixed);
     const keySites = buildings.filter(u => u.spec.production || u.spec.income || u.spec.indexIncome);
@@ -1671,6 +1726,9 @@ class Battle {
     }
     const { world, goldMines, indexMines } = this.layout;
     const revenue = this.goldRate(false);
+    const reserved = this.reserveForBoss(factories);
+    const spending = () => this.enemyGold - reserved;
+    const advanced = factories.some(unit => unit.level === 2);
     const expansionBudget = pace.secondFactoryBudget + Math.max(0,factories.length-1)*1300;
     const wantsFactory = !underAttack && factories.length > 0 && factories.length === allFactories.length &&
       factories.length < pace.factoryLimit && combat.length >= (factories.length === 1 ? 3 : 5) && revenue >= 90;
@@ -1681,36 +1739,57 @@ class Battle {
       !siege.some(tower => distance(mine,tower) <= (tower.spec.music?.radius ?? tower.spec.range))) : [];
     const idle = workers.filter(u => u.order?.type !== 'repair' && !u.blueprints.some(b => alive(b) && !completed(b,this.time)));
     const threats = fielded.filter(unit => (unit.spec.damage || unit.spec.music) && !unit.spec.onlyAir);
-    const wantsSentry = underAttack || (this.time > 54 && this.enemyGold >= pace.sentryBudget && combat.length > 3);
+    const wantsSentry = underAttack || (this.time > 54 && spending() >= pace.sentryBudget && combat.length > 3);
     const threatenedSite = pressurePoint && nearest(pressurePoint,keySites);
     const sentrySites = [mapPoint(world,.725,.59),mapPoint(world,.81,.33),mapPoint(world,.81,.72)];
     if (threatenedSite) sentrySites.push({x:threatenedSite.x-100,y:threatenedSite.y-114},
       {x:threatenedSite.x-100,y:threatenedSite.y+114});
 
+    if (advanced && pace.supportBudget && spending() >= pace.supportBudget &&
+        !factories.some(factory => factory.upgradeJob) && this.time > pace.bossSavingsAt + 68) {
+      const spare = factories.find(factory => factory.level === 1);
+      if (spare) this.upgrade([spare], false);
+    }
     if (idle.length) {
-      const buildAt = (type,points) => this.enemyBuild(type,points,idle,threats);
-      const abandoned = unfinished.find(u => !workers.some(worker => worker.blueprints.includes(u)));
+      const buildAt = (type,points) => (!allFactories.length || spending() >= UNITS[type].cost[0]) &&
+        this.enemyBuild(type,points,idle,threats);
+      const abandoned = unfinished.find(u => !workers.some(worker => worker.blueprints.includes(u)) &&
+        this.constructionCrew(u.type, false, idle).length);
+      const defense = buildings.filter(u => ['sentry','airDefense','stone','frogLauncher','webTower','laser'].includes(u.type));
+      const airThreat = fielded.filter(u => u.spec.air).length;
+      const focus = airThreat >= 2 && !defense.some(u => u.type === 'airDefense') ? 'airDefense' :
+        siege.length && !defense.some(u => u.type === 'frogLauncher') ? 'frogLauncher' :
+        pace.supportBudget && theirFront.length >= 3 && !defense.some(u => u.type === 'stone') ? 'stone' : 'sentry';
+      const webWorkers = idle.filter(unit => unit.type === 'mj' && !unit.onRaid && unit.x >= world.w*.54);
+      const webSites = webWorkers.flatMap(unit => [{ x: unit.x-62, y: unit.y-82 }, { x: unit.x-62, y: unit.y+82 }]);
       if (!allFactories.length) {
         buildAt('factory', [mapPoint(world,.875,.5),mapPoint(world,.81,.36),mapPoint(world,.81,.65),mapPoint(world,.72,.82)]);
       } else if (abandoned) {
-        this.assignBuild(abandoned,[nearest(abandoned,idle)],true);
+        this.assignBuild(abandoned,[nearest(abandoned,this.constructionCrew(abandoned.type, false, idle))],true);
       } else {
-        const fortify = wantsSentry && !unfinished.some(u => u.type === 'sentry') &&
-          buildings.filter(u => u.type === 'sentry').length < pace.sentryLimit;
-        const expand = wantsFactory && this.enemyGold >= expansionBudget;
+        const fortify = wantsSentry && !defense.some(u => !completed(u, this.time)) &&
+          defense.length < pace.sentryLimit;
+        const expand = wantsFactory && spending() >= expansionBudget;
         const indexSite = indexMines.find(site => !site.player);
-        const buildIndex = !underAttack && !indexMiner && workers.length > 1 && this.time >= 32 &&
+        const buildIndex = !underAttack && !indexMiner && workers.filter(u => u.type === 'architect').length > 1 && this.time >= 32 &&
           ownedMines.some(u => completed(u,this.time)) && !nearest(indexSite,theirTroops,195);
-        const defended = underAttack && fortify && buildAt('sentry',sentrySites);
+        const defended = underAttack && fortify && buildAt(focus,sentrySites);
         const expanded = !defended && expand && buildAt('factory', [mapPoint(world,.70,.23),mapPoint(world,.70,.80),
           mapPoint(world,.79,.24),mapPoint(world,.79,.79),mapPoint(world,.91,.72)]);
         const gatheredIndex = !defended && !expanded && buildIndex && buildAt('indexMiner',[indexSite]);
         const mined = !defended && !expanded && !gatheredIndex && pressure < 4 && buildAt('miner',mineSites);
         if (!defended && !expanded && !gatheredIndex && !mined) {
-          const staffed = fortify && buildAt('sentry',sentrySites);
+          const support = pace.supportBudget && spending() >= pace.supportBudget && this.time >= 68;
+          const damaged = keySites.find(site => completed(site,this.time) && site.hp < site.spec.hp*.74);
+          const repairSites = damaged ? [{ x: damaged.x+85, y: damaged.y+74 }, { x: damaged.x+85, y: damaged.y-74 }] : [];
+          const staffed = (fortify && buildAt(focus,sentrySites)) || (support && (
+            (damaged && !buildings.some(u => u.type === 'repair') && buildAt('repair',repairSites)) ||
+            (webSites.length && !defense.some(u => u.type === 'webTower') && buildAt('webTower',webSites)) ||
+            (siege.length && !buildings.some(u => u.type === 'laser') && buildAt('laser',sentrySites)) ||
+            (this.boss && pace.factoryLimit >= 3 && this.time >= 165 && !buildings.some(u => u.type === 'silo') &&
+              spending() >= UNITS.silo.cost[0] + 1700 && buildAt('silo',[mapPoint(world,.82,.21),mapPoint(world,.85,.84)]))));
           if (!staffed && pace.homeGuard >= 2 && !workers.some(worker => worker.order?.type === 'repair')) {
-            const damaged = keySites.find(site => completed(site,this.time) && site.hp < site.spec.hp*.74);
-            const repairer = damaged && nearest(damaged,idle,310);
+            const repairer = damaged && nearest(damaged,idle.filter(unit => this.canRepair(unit,damaged)),310);
             if (repairer) repairer.order = { type: 'repair', target: damaged };
           }
         }
@@ -1718,42 +1797,37 @@ class Battle {
     }
 
     const stations = this.stations(false);
-    const workerJobs = stations.filter(f => f.job?.type === 'architect').length;
+    const workerJobs = stations.filter(f => f.job?.type === 'architect' || f.queue.includes('architect')).length;
     const workerLimit = this.time < pace.extraArchitectAt ? 1 : factories.length >= 2 && pace.factoryLimit === 3 ? 3 : 2;
-    if (workers.length + workerJobs < workerLimit) {
+    const architects = workers.filter(u => u.type === 'architect').length;
+    if (architects + workerJobs < workerLimit && (!architects || spending() >= ARCHITECT.cost[0])) {
       const producer = stations.find(u => u.type === 'base' && !u.job) || factories.find(u => !u.job);
       if (producer) this.train('architect', false, producer);
     }
     const mineWork = ownedMines.filter(unit => completed(unit,this.time));
     if (!underAttack && this.time >= (pace.mineUpgradeAt ?? Infinity) && combat.length >= 3 &&
-        factories.length && this.enemyGold >= MINER.upgrade.cost[0] + ENEMIES.archer.cost[0] &&
+        factories.length && spending() >= MINER.upgrade.cost[0] + UNITS.archer.cost[0] &&
         mineWork.filter(unit => unit.level === 2 || unit.upgradeJob).length < pace.mineUpgradeLimit) {
       const mine = mineWork.find(unit => unit.level === 1 && !unit.upgradeJob);
       if (mine) this.upgrade([mine], false);
     }
     if (indexMiner && indexMiner.level === 1 && !indexMiner.upgradeJob && !underAttack && factories.length >= 2 &&
-        this.time >= 100 && this.enemyGold >= 4400 && combat.length >= 5) this.upgrade([indexMiner],false);
-    const availability = factories.filter(u => !u.job);
+        this.time >= 100 && spending() >= 4400 && combat.length >= 5) this.upgrade([indexMiner],false);
+    if (pace.supportBudget && combat.length >= 4 && spending() >= pace.supportBudget &&
+        !workers.some(u => u.type === 'mechanic') && !stations.some(u => u.job?.type === 'mechanic')) {
+      const station = factories.find(u => !u.job);
+      if (station) this.train('mechanic', false, station);
+    }
+    this.enemyAbility(buildings, combat, fielded);
+    const availability = factories.filter(u => !u.job).sort((a,b) => b.level-a.level);
     if (!availability.length) return;
     if (this.time < 14 && unfinished.some(u => u.type === 'miner') &&
-        this.enemyGold < MINER.cost[0] + ENEMIES.foot.cost[0]) return;
-    if (wantsFactory && this.enemyGold < expansionBudget && this.enemyGold + revenue*6 >= expansionBudget) return;
+        spending() < MINER.cost[0] + UNITS.foot.cost[0]) return;
+    if (wantsFactory && spending() < expansionBudget && spending() + revenue*6 >= expansionBudget) return;
 
-    const combatJobs = factories.filter(f => f.job && f.job.type !== 'architect');
+    const combatJobs = factories.filter(f => f.job && !['architect', 'mechanic'].includes(f.job.type));
     let recruitSlots = pace.attackLimit + pace.reserve - combat.length - combatJobs.length;
     if (recruitSlots <= 0) return;
-
-    const waiting = combatJobs.some(f => f.job.type === 'boss');
-    if (!this.boss && !waiting && this.time >= pace.bossSavingsAt && this.enemyGold >= ENEMIES.boss.cost[0]) {
-      this.train('boss', false, availability[0]);
-      return;
-    }
-    // A healthy force can save for a Titan. Falling back to regular production answers a push.
-    const raidStrength = combat.filter(unit => !unit.defender && !this.enemyReserve.has(unit)).length;
-    const canBank = raidStrength >= (pace.bossRaidFloor ?? 0) || this.time >= pace.bossSavingsAt + 85;
-    const saving = canBank && !this.boss && !waiting && revenue >= 120 &&
-      this.time >= pace.bossSavingsAt && !underAttack && (combat.length >= 2 || pressure === 0);
-    if (saving && this.enemyGold >= 4100) return;
 
     const antiAir = fielded.filter(u => u.spec.aa);
     const airDefenseCount = antiAir.filter(u => u.type === 'airDefense').length;
@@ -1772,31 +1846,47 @@ class Battle {
     const tactic = ENEMY_TACTICS[this.tactic].weight;
     const choices = [
       ['foot', 3.5 - .78 * have('foot') + .36 * Math.min(4, playerGround) - .38 * answer * openArtillery],
+      ['frog', 1.65 - .87 * have('frog') + .58 * answer * Math.min(3,fielded.filter(u => u.type === 'foot').length)],
+      ['rat', 1.45 - have('rat') + .84 * answer * Math.min(2,fielded.filter(u => u.type === 'shield').length)],
       ['archer', 3.12 - .89 * have('archer') + .36 * Math.min(5, airDefenseCount) + .66 * answer * heavyGround],
       ['shield', 1.02 + 1.2 * Math.min(3, airDefenseCount) - 1.05 * have('shield') + 1.03 * answer * webs],
       ['zombie', 2.25 - 1.05 * have('zombie') + .45 * Math.min(4, playerGround) + 1.6 * answer * stones],
       ['airFoot', (antiAirCount < 2 ? 3.25 : 2.35) - 1.25 * have('airFoot') + 1.3 * answer * openArtillery],
       ['airBow', 1.81 + .43 * Math.min(4, airDefenseCount) - 1.12 * have('airBow') + .76 * answer * openArtillery],
       ['airShield', (have('airBow') + have('airFoot') >= 1 ? 2.46 : .65) + .31 * Math.min(4, antiAirCount) - 1.74 * have('airShield')],
+      ['frogMech', (this.difficulty === 'easy' ? .7 : 2.4) - 1.7 * have('frogMech') + .6 * answer * playerGround],
+      ['mj', 1.65 - 1.4 * have('mj') + .5 * answer * Math.min(4, fielded.filter(u => u.spec.air).length)],
     ].map(([type, score]) => {
-      const weight = Math.max(.13, score) * (tactic[type] || 1) * (ENEMIES[type].air ? airPressure : 1);
+      const weight = Math.max(.13, score) * (tactic[type] || 1) * (UNITS[type].air ? airPressure : 1);
       return [type, weight];
     });
     const saveSeconds = !underAttack && pressure < 2 && (combat.length >= 2 || this.time < pace.firstAttack - 14)
       ? (opening ? 7 : 4) : 0;
+    const mechCost = UNITS.frogMech.cost[0];
+    const mechFactory = pace.supportBudget && this.boss && !underAttack && combat.length >= 4 &&
+      !have('frogMech') && spending() + revenue * 6 >= mechCost &&
+      this.time >= (this.nextMechPlanAt ?? 0) && availability.find(factory => factory.level === 2);
     if (!saveSeconds) this.enemyRecruit = null;
     for (const factory of availability) {
       if (recruitSlots <= 0) break;
-      const budget = this.enemyGold + revenue * saveSeconds;
-      const choicesInBudget = choices.filter(([type]) => ENEMIES[type].cost[0] <= budget);
+      if (factory === mechFactory) {
+        if (spending() < mechCost) return;
+        if (this.train('frogMech', false, factory)) {
+          this.nextMechPlanAt = this.time + 40;
+          recruitSlots--;
+          continue;
+        }
+      }
+      const budget = spending() + revenue * saveSeconds;
+      const choicesInBudget = choices.filter(([type]) => UNITS[type].cost[0] <= budget && this.supportsTraining(factory, type, false));
       let type = this.enemyRecruit;
-      if (!type) {
-        if (!choicesInBudget.length) break;
+      if (!choicesInBudget.some(choice => choice[0] === type)) {
+        if (!choicesInBudget.length) continue;
         let draw = this.random() * choicesInBudget.reduce((sum, [,weight]) => sum + weight,0);
         [type] = choicesInBudget.find(([,weight]) => (draw -= weight) < 0) ||
           choicesInBudget[choicesInBudget.length - 1];
       }
-      if (!this.canPay(ENEMIES[type].cost, false)) {
+      if (spending() < UNITS[type].cost[0]) {
         this.enemyRecruit = type;
         break;
       }
@@ -1892,7 +1982,7 @@ class Battle {
   }
 
   soundTargets(tower, mode, music = tower.spec.music) {
-    return this.enemies.filter(enemy => alive(enemy) && enemy.type !== 'zombie' &&
+    return this.units(!tower.player).filter(enemy => alive(enemy) && enemy.type !== 'zombie' &&
       (mode === 1 || !enemy.spec.air && !enemy.spec.fixed && enemy.type !== 'boss') &&
       distance(tower, enemy) <= music.radius);
   }
@@ -1918,7 +2008,7 @@ class Battle {
       this.effect('guardFlash', { unit: enemy }, .76);
     }
     if (mode) this.updateRain();
-    this.event('song', { mode, name: SONGS[mode], tower, music });
+    if (tower.player) this.event('song', { mode, name: SONGS[mode], tower, music });
   }
 
   pulseStone(tower) {
@@ -1940,14 +2030,14 @@ class Battle {
 
   skillProblem(unit) {
     const skill = SKILLS[unit?.type];
-    if (!this.running || !unit?.player || !alive(unit) || !skill) return '战斗开始后可释放技能。';
+    if (!this.running || !alive(unit) || !skill) return '战斗开始后可释放技能。';
     if (!completed(unit, this.time)) return '建造尚未完成。';
     if (active(unit.restUntil, this.time) || active(unit.crouchUntil, this.time) || unit.roll) return '单位暂时无法行动。';
     if (unit.type === 'stone') {
       if (this.stoneRainActive(unit)) return '雨爱司凤版正在播放。';
     } else if (active(unit.cooldown, this.time)) return '技能冷却中。';
     if (unit.type === 'silo' && active(unit.loadedAt, this.time)) return '发射井尚未装填完成。';
-    if (this.index + .0001 < skill.cost) return '67 指数不足。';
+    if (!this.canPay([0, skill.cost], unit.player)) return '67 指数不足。';
     return '';
   }
 
@@ -1989,7 +2079,7 @@ class Battle {
 
   cast(unit, point = null) {
     const skill = SKILLS[unit?.type];
-    if (this.skillProblem(unit) || (skill.target && !point)) return false;
+    if (this.skillProblem(unit) || (skill.target && ![point?.x, point?.y].every(Number.isFinite))) return false;
     if (unit.type === 'frogLauncher') {
       if (this.artilleryProblem(unit, point)) return false;
       unit.lockedTarget = null;
@@ -1999,13 +2089,13 @@ class Battle {
       return true;
     }
     const t = this.time;
-    this.pay([0, skill.cost]);
+    this.pay([0, skill.cost], unit.player);
     if (skill.cool) unit.cooldown = t + skill.cool;
     if (unit.type === 'frog') {
       const direction = angleTo(unit, point);
       unit.angle = direction;
       unit.crouchUntil = t + 1;
-      for (const enemy of this.enemies) {
+      for (const enemy of this.units(!unit.player)) {
         if (alive(enemy) && !enemy.spec.air && distance(unit, enemy) <= 240 &&
             Math.abs(angleGap(angleTo(unit, enemy), direction)) <= .77) {
           enemy.confused = t + 2;
@@ -2025,40 +2115,43 @@ class Battle {
     if (unit.type === 'mj') {
       for (let i = 0; i < 3; i++) {
         const direction = unit.angle - 1.05 + i * 1.05;
-        const spider = this.create('spider', unit.x + Math.cos(direction) * 30, unit.y + Math.sin(direction) * 30, true);
+        const spider = this.create('spider', unit.x + Math.cos(direction) * 30, unit.y + Math.sin(direction) * 30, unit.player);
         spider.expires = t + 15;
         spider.parent = unit;
         spider.anchor = { x: unit.x, y: unit.y };
       }
       this.effect('ring', { x: unit.x, y: unit.y, color: '#e3dfff', radius: 64 }, .65);
-      this.event('note', { message: '三只小蜘蛛已部署，持续 15 秒。' });
+      if (unit.player) this.event('note', { message: '三只小蜘蛛已部署，持续 15 秒。' });
     }
     if (unit.type === 'stone') this.startStoneSong(unit, 1);
     if (unit.type === 'airDefense') {
       unit.fastReloadUntil = t + 8;
       unit.fireAt = Math.min(unit.fireAt, t + unit.spec.every / 1.5);
       this.effect('ring', { x: unit.x, y: unit.y, color: '#ffdc91', radius: 82 }, .66);
-      this.event('note', { message: '防空炮塔快速装填 · 发射速度 +50%' });
+      if (unit.player) this.event('note', { message: '防空炮塔快速装填 · 发射速度 +50%' });
     }
     if (unit.type === 'silo') {
       unit.firedAt = t;
       unit.rearmAt = t + 57;
       unit.loadedAt = unit.rearmAt + 25;
-      this.missiles.push({ kind: 'silo', from: { x: unit.x, y: unit.y }, x: point.x, y: point.y, start: t, hitAt: t + SILO_FLIGHT_TIME });
-      this.event('launch');
+      this.missiles.push({ kind: 'silo', player: unit.player, from: { x: unit.x, y: unit.y },
+        x: point.x, y: point.y, start: t, hitAt: t + SILO_FLIGHT_TIME });
+      this.event('launch', { player: unit.player, flightTime: SILO_FLIGHT_TIME });
     }
     return true;
   }
 
   updateRain() {
-    const towers = this.friends.filter(u => u.type === 'stone' && alive(u) && this.stoneRainActive(u))
-      .sort((a,b) => b.songMusic.rainDamage - a.songMusic.rainDamage);
-    for (const enemy of this.enemies) {
-      const cover = enemy.type === 'zombie' ? null :
-        towers.find(tower => distance(tower, enemy) <= tower.songMusic.radius);
-      enemy.rained = !!cover;
-      enemy.rainDamage = cover?.songMusic.rainDamage;
-      enemy.rainSpeed = cover?.songMusic.rainSpeed;
+    for (const player of [true, false]) {
+      const towers = this.units(player).filter(u => u.type === 'stone' && alive(u) && this.stoneRainActive(u))
+        .sort((a,b) => b.songMusic.rainDamage - a.songMusic.rainDamage);
+      for (const enemy of this.units(!player)) {
+        const cover = enemy.type === 'zombie' ? null :
+          towers.find(tower => distance(tower, enemy) <= tower.songMusic.radius);
+        enemy.rained = !!cover;
+        enemy.rainDamage = cover?.songMusic.rainDamage;
+        enemy.rainSpeed = cover?.songMusic.rainSpeed;
+      }
     }
   }
 
@@ -2080,7 +2173,7 @@ class Battle {
       this.effect('dust', { x: from.x, y: from.y, color: '#ffbd6f', size: 23 }, .49);
       unit.trailAt = this.time + .055;
     }
-    const hits = this.enemies.filter(e =>
+    const hits = this.units(!unit.player).filter(e =>
       alive(e) && !e.spec.air && !roll.hit.has(e.id) && distance(unit, e) < 35 + e.spec.radius);
     hits.sort((a, b) => distance(unit, a) - distance(unit, b));
     for (const enemy of hits) {
@@ -2105,7 +2198,7 @@ class Battle {
   }
 
   hit(target, damage, { pierce = false, raw = false, source = null } = {}) {
-    if (!alive(target)) return false;
+    if (!alive(target) || source?.player === target.player) return false;
     const t = this.time;
     if (!raw) {
       if (target.spec.shield && source && (source.spec.web || source.type === 'spider')) {
@@ -2151,8 +2244,9 @@ class Battle {
           this.nextDispatch = Math.max(this.nextDispatch, t + this.pace.recovery);
         }
       }
-      if (target.type === 'silo') this.event('note', { message: '棍母发射井已被摧毁。', danger: true });
-      if (target.type === 'stone') this.event('musicUpdate');
+      if (target.type === 'silo') this.event('note', { message: (target.player ? '我方' : '敌方')+'棍母发射井已被摧毁。',
+        danger: target.player });
+      if (target.player && target.type === 'stone') this.event('musicUpdate');
     }
     return true;
   }
@@ -2171,7 +2265,7 @@ class Battle {
     const length = dx * dx + dy * dy;
     if (length < 1) return target;
     let first = null, best = 1;
-    for (const shield of this.enemies) {
+    for (const shield of this.units(target.player)) {
       if (!alive(shield) || !shield.spec.air || !shield.spec.shield) continue;
       const along = ((shield.x - from.x) * dx + (shield.y - from.y) * dy) / length;
       if (along <= 0 || along >= best ||
@@ -2274,7 +2368,7 @@ class Battle {
   captureNet(spider, target) {
     const t = this.time;
     spider.netAt = t + spider.spec.netEvery;
-    for (const enemy of this.enemies) {
+    for (const enemy of this.units(!spider.player)) {
       if (!alive(enemy) || distance(target, enemy) > NET_RADIUS) continue;
       const until = t + (enemy.type === 'boss' ? .52 : 1.65);
       enemy.netUntil = Math.max(enemy.netUntil || 0, until);
@@ -2354,19 +2448,26 @@ class Battle {
       if (this.legalTarget(unit, target)) return this.inAttackRange(unit, target) ? target : null;
       unit.lockedTarget = null;
     }
-    const options = this.enemies.filter(enemy => this.legalTarget(unit, enemy));
+    const options = this.units(!unit.player).filter(enemy => this.legalTarget(unit, enemy));
     if (rangeOnly || unit.spec.fixed || unit.type === 'mj' || unit.spec.onlyAir) {
       return nearest(unit, options.filter(enemy => this.inAttackRange(unit, enemy)));
     }
     const view = Math.max(unit.spec.range + 80, 178);
-    return nearest(unit, options.filter(enemy =>
-      distance(unit, enemy) <= view && distance(unit.anchor, enemy) <= view + 30));
+    const nearby = options.filter(enemy => distance(unit, enemy) <= view && distance(unit.anchor, enemy) <= view + 30);
+    if (unit.type === 'airBow') {
+      const tower = nearest(unit, nearby.filter(enemy => enemy.type === 'airDefense'));
+      if (tower) return tower;
+    }
+    if (['archer', 'airFoot', 'airBow'].includes(unit.type)) {
+      const building = nearest(unit, nearby.filter(enemy => enemy.spec.fixed));
+      if (building) return building;
+    }
+    return nearest(unit, nearby);
   }
 
   enemyTarget(unit) {
     const options = this.friends.filter(friend => this.legalTarget(unit, friend));
-    const silo = this.silo;
-    if (unit.spec.fixed) return nearest(unit, options, unit.spec.range + 32);
+    if (unit.spec.fixed) return nearest(unit, options.filter(enemy => this.inAttackRange(unit, enemy)));
     if (unit.staging && !unit.onRaid) {
       if (unit.defender || this.enemyReserve.has(unit)) {
         const threat = nearest(unit, options.filter(friend => this.enemyDefenseTargets.has(friend)),
@@ -2376,7 +2477,10 @@ class Battle {
       return nearest(unit, options.filter(friend => friend.x >= unit.staging.x - 154),
         Math.max(200, unit.spec.range + 25));
     }
-    if (silo && unit.raider && this.siloState(silo).name.match(/建造|装填/)) return silo;
+    if (unit.raider) {
+      const silo = nearest(unit, options.filter(enemy => enemy.type === 'silo' && this.siloLoading(enemy)), 520);
+      if (silo) return silo;
+    }
     const search = unit.onRaid && unit.x > this.world.w*.42 ? 520 : Infinity;
     if (unit.type === 'airBow') {
       const tower = nearest(unit, options.filter(friend => friend.type === 'airDefense'),search);
@@ -2394,6 +2498,10 @@ class Battle {
       if (asset) return asset;
     }
     return nearest(unit, options, unit.type === 'boss' ? 650 : 315);
+  }
+
+  siloLoading(silo) {
+    return active(silo.loadedAt, this.time) && !active(silo.rearmAt, this.time);
   }
 
   walk(unit, direction, amount) {
@@ -2501,6 +2609,19 @@ class Battle {
     return crossing;
   }
 
+  pulseBoss(unit) {
+    const t = this.time;
+    const target = nearest(unit, this.units(!unit.player).filter(alive), BOSS_PULSE_RADIUS);
+    unit.pulseAt = t + (target ? 17 : 1);
+    if (!target) return;
+    const stolen = Math.min(18, unit.player ? this.enemyIndex : this.index);
+    this.pay([0, stolen], !unit.player);
+    if (unit.player) this.index = Math.min(INDEX_MAX, this.index + stolen);
+    else this.enemyIndex = Math.min(INDEX_MAX, this.enemyIndex + stolen);
+    this.effect('ring', { x: unit.x, y: unit.y, color: '#e0a0ff', radius: BOSS_PULSE_RADIUS }, 1.17);
+    this.event('pulse', { stolen: Math.floor(stolen), player: unit.player });
+  }
+
   act(unit, dt) {
     const t = this.time, spec = unit.spec;
     if (active(unit.expires, t) === false && unit.expires) {
@@ -2522,19 +2643,14 @@ class Battle {
       return;
     }
     if (unit.type === 'boss' && (!unit.staging || unit.onRaid) && t >= unit.pulseAt) {
-      const stolen = Math.min(18, this.index);
-      this.index -= stolen;
-      this.enemyIndex = Math.min(INDEX_MAX, this.enemyIndex + stolen);
-      this.effect('ring', { x: unit.x, y: unit.y, color: '#e0a0ff', radius: 290 }, 1.17);
-      this.event('pulse', { stolen: Math.floor(stolen) });
-      unit.pulseAt = t + 17;
+      this.pulseBoss(unit);
     }
     if (unit.type === 'stone') {
       const songActive = active(unit.songUntil, t);
       if (unit.playingMode === 1 && !songActive) {
         unit.playingMode = 0;
         unit.songStartedAt = t;
-        this.event('musicUpdate');
+        if (unit.player) this.event('musicUpdate');
       }
       if (!songActive && !active(unit.guardReadyAt ?? unit.cooldown, t) && !active(unit.nextGuardCheck, t)) {
         unit.nextGuardCheck = t + .18;
@@ -2599,8 +2715,8 @@ class Battle {
         return;
       }
     }
-    if (unit.type === 'archer' && !rooted) {
-      const charging = nearest(unit, this.friends.filter(f =>
+    if (unit.type === 'archer' && !rooted && order?.type !== 'hold') {
+      const charging = nearest(unit, this.units(!unit.player).filter(f =>
         alive(f) && f.type === 'rat' && f.roll?.chargeUntil > t), 248);
       if (charging) {
         this.walk(unit, angleTo(charging, unit), speed * 1.23 * dt);
@@ -2612,10 +2728,12 @@ class Battle {
     }
     if (within) {
       if (t >= unit.fireAt) this.attack(unit, target);
-      if (unit.type === 'airBow' && !rooted) {
+      if (unit.type === 'airBow' && !rooted && order?.type !== 'hold') {
         const tangent = angleTo(target, unit) + (unit.id % 2 ? .98 : -.98);
         const side = Math.sin(tangent) * 62;
-        this.move(unit, { x: Math.max(target.x + 69, unit.x + Math.cos(tangent) * 57), y: unit.y + side }, speed * .52, dt);
+        const x = unit.x + Math.cos(tangent) * 57;
+        this.move(unit, { x: unit.player ? Math.min(target.x - 69, x) : Math.max(target.x + 69, x),
+          y: unit.y + side }, speed * .52, dt);
       }
       if (!order || order.type !== 'move') return;
     }
@@ -2631,7 +2749,7 @@ class Battle {
       if (unit.player) this.shootNearby(unit);
       return;
     }
-    if (unit.player) {
+    if (unit.player || unit.parent) {
       if (unit.parent && alive(unit.parent)) unit.anchor = { x: unit.parent.x + 25, y: unit.parent.y + 23 };
       if (distance(unit, unit.anchor) > 25) {
         this.move(unit, unit.anchor, speed * .8, dt);
@@ -2689,7 +2807,8 @@ class Battle {
   impact(missile) {
     this.effect('impact', { x: missile.x, y: missile.y, radius: NUKE_RADIUS }, 1.32);
     let removed = 0, bossHit = false;
-    for (const unit of this.enemies) {
+    const player = missile.player ?? true;
+    for (const unit of this.units(!player)) {
       if (!alive(unit) || distance(missile, unit) > NUKE_RADIUS) continue;
       if (unit.type === 'boss') {
         bossHit = true;
@@ -2700,7 +2819,7 @@ class Battle {
         removed++;
       }
     }
-    this.event('impact', { removed, bossHit });
+    this.event('impact', { removed, bossHit, player });
   }
 
   step(dt) {
@@ -2800,12 +2919,12 @@ function restoreBattle(records) {
         item[key] = decode(value);
       }
       if (kind === 'unit') {
-        const library = item.player ? UNITS : ENEMIES;
-        if (!Object.hasOwn(library,item.type) || ![item.x,item.y,item.hp].every(Number.isFinite)) {
+        if (!Object.hasOwn(UNITS,item.type) || ![item.x,item.y,item.hp].every(Number.isFinite)) {
           throw new TypeError('Invalid saved unit');
         }
-        const spec = library[item.type];
-        item.spec = item.level === 2 && spec.upgrade?.stats ? { ...spec, ...spec.upgrade.stats } : spec;
+        const savedSpec = UNITS[item.type];
+        item.hp = Math.min(item.hp, savedSpec.hp);
+        item.spec = item.level === 2 && savedSpec.upgrade?.stats ? { ...savedSpec, ...savedSpec.upgrade.stats } : savedSpec;
       }
     } else {
       throw new TypeError('Invalid battle record');
@@ -3125,7 +3244,7 @@ function structureArt(ctx, type, player, at, facing = 0) {
 }
 
 function iconArt(type, player = true) {
-  const spec = (player ? UNITS : ENEMIES)[type];
+  const spec = UNITS[type];
   if (imageReady(spec.art) && type !== 'silo') return ART[spec.art].src;
   const icon = document.createElement('canvas');
   icon.width = 155; icon.height = 104;
@@ -3335,7 +3454,7 @@ class BattlefieldView {
 
   zones(game, selected, at) {
     const ctx=this.ctx;
-    for (const u of game.friends) {
+    for (const u of [...game.friends, ...game.enemies]) {
       if (!alive(u) || !completed(u,game.time)) continue;
       if (u.type === 'stone') {
         const isPlaying=active(u.songUntil,game.time);
@@ -3350,7 +3469,7 @@ class BattlefieldView {
         }
       } else if (selected.has(u)) {
         const radius = u.spec.interceptRadius || u.spec.repairRadius ||
-          (u.type==='airDefense'||u.type==='webTower'||u.type==='frogLauncher'||u.type==='frogMech' ? u.spec.range : 0);
+          (u.spec.fixed || u.type==='frogMech' ? u.spec.range : 0);
         if (!radius) continue;
         const color=u.type==='laser'?'#91ebfb':'#a1d9ac';
         ctx.setLineDash([8,10]);
@@ -3693,11 +3812,13 @@ class BattlefieldView {
   drawSiloMissile(missile, part) {
     const ctx=this.ctx;
     const arc=132, {x,y}=missile.from;
+    const hostile=missile.player === false;
+    const warning=hostile?'#ff9a80':'#ffd195';
     ctx.save();ctx.setLineDash([7,8]);
-    ellipse(ctx,missile.x,missile.y,NUKE_RADIUS,NUKE_RADIUS,'#ffad4424','#ffd195',2.4);
+    ellipse(ctx,missile.x,missile.y,NUKE_RADIUS,NUKE_RADIUS,warning+'24',warning,2.4);
     ctx.restore();
     const remaining = (missile.hitAt-missile.start)*(1-part);
-    this.text('棍母导弹 '+remaining.toFixed(1)+'s',missile.x,missile.y+24,'#ffe0a2',15);
+    this.text((hostile?'敌方':'')+'棍母导弹 '+remaining.toFixed(1)+'s',missile.x,missile.y+24,warning,15);
     ctx.save();
     ctx.translate(lerp(x,missile.x,part),lerp(y-24,missile.y,part)-arc*Math.sin(part*Math.PI));
     ctx.rotate(Math.atan2(missile.y-y+24-arc*Math.PI*Math.cos(part*Math.PI),missile.x-x));
@@ -3910,14 +4031,20 @@ function drawOutcome(canvas, phase, at) {
 
 const $ = id => document.getElementById(id);
 const canvas = $('map'), board = $('board'), view = new BattlefieldView(canvas);
-const troopTypes = ['architect', 'frog', 'rat', 'frogMech', 'mj', 'mechanic'];
-const structureTypes = ['factory', 'miner', 'airDefense', 'stone', 'silo', 'laser', 'repair', 'webTower', 'frogLauncher', 'indexMiner'];
 const shortcuts = '123457890-=[],./';
-const roster = [...troopTypes, ...structureTypes];
+const roster = [
+  'architect', 'frog', 'rat', 'frogMech', 'mj', 'mechanic',
+  'factory', 'miner', 'airDefense', 'stone', 'silo', 'laser', 'repair', 'webTower', 'frogLauncher', 'indexMiner',
+  'foot', 'shield', 'archer', 'zombie', 'airFoot', 'airBow', 'airShield', 'boss', 'sentry',
+];
+const troopTypes = roster.filter(type => !UNITS[type].fixed);
+const structureTypes = roster.filter(type => UNITS[type].fixed);
 const cardTints = {
   architect:'#62694b',frog:'#777645',rat:'#786846',frogMech:'#786b39',mj:'#614e4f',mechanic:'#476b61',
   factory:'#55654e',miner:'#706647',indexMiner:'#68507d',airDefense:'#466259',stone:'#5d6555',silo:'#605c4c',laser:'#3e6870',repair:'#526d59',
-  webTower:'#575a78',frogLauncher:'#506b46',
+  webTower:'#575a78',frogLauncher:'#506b46',sentry:'#67564a',
+  foot:'#735f4a',shield:'#555379',archer:'#706342',zombie:'#4b684b',
+  airFoot:'#4a6574',airBow:'#415e68',airShield:'#4f526b',boss:'#685078',
 };
 const ending = ['won','lost','draw'];
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -3947,7 +4074,7 @@ const stoneTracks = ['guardSong','rainSong'];
 const stoneMusicOffset = { guardSong: .72, rainSong: .40 };
 let unitChipsStamp = '';
 
-const friendlyGuide = {
+const unitGuide = {
   architect: '基地和工厂都能生产。可建通用建筑和采矿机，也可手动回收建筑或维修受损建筑。维修速率为每秒 31 HP，多名建筑师可接手同一蓝图。',
   frog: '廉价近战，蛙跳撞击普通步兵时有额外伤害，也更容易被步兵击倒。捧腹大笑消耗 16 点 67，冷却 20 秒，选定方向后让扇形内地面敌人失控 2 秒，自己蹲下 1 秒。',
   rat: '高血量高装甲，普攻撞击建筑时伤害提高 55%。肥嘟嘟滚动消耗 22 点 67，冷却 24 秒，选方向蓄力 2 秒后碾压轻型地面单位；撞上盾兵或灭霸会造成伤害并停下，结束后喘气 3 秒。弓兵会在它蓄力时后撤。',
@@ -3956,7 +4083,7 @@ const friendlyGuide = {
   mechanic: '可建通用建筑并在前线建造奶蛙、美团老鼠或 MJ，现场建造 MJ 需要 L2 工厂。范围 144 内自动维修，每秒恢复 24 HP，手动维修每秒恢复 38 HP。可回收建筑和有造价的我方机动部队，并以轻武器防空。',
   spider: '每次由 MJ 召唤 3 只，存活 15 秒，可攻击地面和空中。捕网冷却 4.6 秒，波及目标附近 82 范围的敌军，定身 1.65 秒，灭霸缩短至 0.52 秒。普通攻击对盾兵无效，捕网仍可命中。',
   base: '双方开局各有一座基地，维持基础生产能力，可排队补充建筑师。',
-  factory: 'L1 可排队生产建筑师、奶蛙、美团老鼠和机械师，L2 解锁奶蛙机甲与 MJ。升级期间工厂继续处理队列。多选时，高级订单只发给 L2 工厂，完工单位前往集结点。基地和工厂被破坏后，仍可用幸存建造者恢复产线。',
+  factory: 'L1 可排队生产基础兵种，含步兵、弓兵、刀盾狗、僵尸和三种空军。L2 解锁奶蛙机甲、MJ 和灭霸。升级期间工厂继续处理队列，完工单位前往集结点。基地和工厂被破坏后，仍可用能建工厂的幸存建造者恢复产线。',
   miner: '放在任意空置金矿上，L1 完工后每秒增加 '+MINE_RATE+' 金币，升级后产量为 L1 的 1.5 倍。',
   indexMiner: '建筑师消耗 '+INDEX_MINER.cost[1]+' 点 67 在己方中路矿点建造。完工后每秒在基础产速上额外增加 '+INDEX_MINER.indexIncome+' 点 67。',
   airDefense: '自动向 330 射程内的空军发射棍母防空导弹，单发 62 伤害，每 1.65 秒发射一枚。飞行盾兵会用正面替后方空军承受导弹。快速装填消耗 18 点 67，冷却 30 秒，发射速度提高 50%，持续 8 秒。',
@@ -3965,19 +4092,11 @@ const friendlyGuide = {
     '《雨爱司凤版》消耗 '+SKILLS.stone.cost+' 点 67，可手动打断苦行山。L1 生效 10 秒，声波基础伤害 '+STONE_MUSIC.damage[1]+'，可打空军、建筑和灭霸，减速 50%、受伤提高 40%。'+
     '雨爱结束后会切回苦行山，已变身的王警卫按原倒计时恢复。僵尸免疫两首歌，灭霸免疫苦行山。',
   laser: '用激光拦截普通弹丸和箭矢。L1 拦截半径 150，单次间隔 1.05 秒，连续拦截 4 发后过热 5.5 秒。空闲时热量逐步消退，过热期间暂停拦截。灭霸拳铠弹和刀盾狗近战可绕过拦截。',
-  repair: '逐个维修半径 '+UNITS.repair.repairRadius+' 内的其他友军和建筑，每秒恢复 29 HP。可手动指定维修，辅助建筑师和机械师施工，或回收半径内我方建筑。',
+  repair: '逐个维修半径 '+UNITS.repair.repairRadius+' 内的友军和所有建筑，包括蛛丝重机枪及其他修复湾，每秒恢复 29 HP。空闲时可慢速自修。可手动指定维修、协助建筑师、机械师和 MJ 施工，或回收范围内的友方建筑。',
   webTower: '仅 MJ 可施工。每轮打出三发蛛弹，命中后可对地对空定身 1.72 秒。普通蛛弹对盾兵无效，对灭霸仅造成 52% 的伤害并缠绕 0.68 秒。',
   frogLauncher: '自动发射远程奶蛙炮弹，射程 '+UNITS.frogLauncher.range+'，溅射半径 83，中心伤害 96，边缘伤害减半。无需场上有奶蛙。可手动指定下一发落点，与自动射击共用 4.5 秒装填，只打击敌方地面单位和建筑。',
-  silo: '需 '+UNITS.silo.cost[0]+' 金币和 '+UNITS.silo.cost[1]+' 点 67 才能建造。我方可建一座，完工后装填 25 秒。花 16 点 67 手动指定落点，棍母导弹约 '+SILO_FLIGHT_TIME+' 秒后命中，清除半径 212 内的敌方地面部队、空军和建筑，友军安全。灭霸失去 80% 当前血量，之后受伤增加 50%。发射后冷却 57 秒，再装填 25 秒。',
-};
-
-const enemyGuide = {
-  base: '开局自带，持续训练建筑师。摧毁基地可切断这条产线。',
-  architect: '能重建工厂，按 AI 计划建采矿机或哨戒塔。敌方没有基地和工厂后，还要清除幸存的建筑师。',
-  factory: '敌军消耗金币在这里生产地面和空中单位。金币充足时可能扩建第二座。',
-  miner: '完工后每秒为敌方增加 '+MINE_RATE+' 金币。中等及以上的 AI 会择机升级采矿机。攻破矿机可拖慢敌军补充兵力。',
-  indexMiner: '敌方建筑师在敌方中路 67矿建造。攻击这座矿机可切断敌方的额外 67 产出。',
-  sentry: '被动向附近我方地面部队和建筑发射炮弹，不能攻击空中。奶蛙火炮射程更远。',
+  silo: '每座需 '+UNITS.silo.cost[0]+' 金币和 '+UNITS.silo.cost[1]+' 点 67，可建多座。每座独立施工、装填和发射。完工后装填 25 秒，花 16 点 67 指定落点，约 '+SILO_FLIGHT_TIME+' 秒后清除半径 '+NUKE_RADIUS+' 内的敌人。灭霸失去 80% 当前血量，之后受伤增加 50%。发射后该井冷却 57 秒，再装填 25 秒。',
+  sentry: '自动向附近的敌方地面部队和建筑发射炮弹，射速快。奶蛙火炮射程更远。',
   foot: '普通弹丸对奶蛙额外增伤，也会受到奶蛙的额外反击伤害。成群出现时可以用机甲喷火或火炮溅射。',
   shield: '刀盾狗拥有 63% 装甲，近战不会被激光拦截。免疫普通蛛丝和小蜘蛛的攻击，捕网仍能定身。可以用机甲、老鼠滚动或棍母导弹应对，也能被苦行山变成王警卫。',
   archer: '用箭矢远程攻击，优先打建筑，见到蓄力中的美团老鼠会后撤。集火、机甲压近或远程火炮都可逼退。',
@@ -3985,7 +4104,7 @@ const enemyGuide = {
   airFoot: '机动快，优先突袭建筑。靠防空炮塔、机械师、MJ 或蛛丝重机枪拦截。',
   airBow: '在外围盘旋发射箭矢，优先攻击防空炮塔，也会瞄准聚集的地面部队。',
   airShield: '空中重甲，能用正面替后方空军挡防空导弹并承伤。免疫普通蛛丝和蜘蛛伤害，捕网可以控制，防空导弹和棍母导弹可以打击它。',
-  boss: '敌方金币和产线允许时生产的重型地面单位。拳铠弹无视激光拦截，进入战斗后约每 17 秒用抽象波偷取最多 18 点 67。免疫苦行山，雨爱有效，蛛丝和捕网控制时间缩短；棍母导弹可重创并标记易伤。',
+  boss: '双方均可用 L2 工厂生产，每方同一时间最多一名，包含生产和排队中的订单。拳铠弹无视激光拦截，有敌人进入 '+BOSS_PULSE_RADIUS+' 范围时，约每 17 秒发动抽象波，偷取对方至多 18 点 67。免疫苦行山，蛛丝和捕网控制时间缩短。雨爱与棍母导弹可重创它。',
 };
 
 function costText([gold, index = 0]) {
@@ -3997,7 +4116,7 @@ function upgradeBenefit(type) {
   switch (type) {
     case 'miner': return '产速 '+stats.income+' 金币/秒';
     case 'indexMiner': return '每秒额外 +'+stats.indexIncome+' 点 67';
-    case 'factory': return '解锁奶蛙机甲与 MJ';
+    case 'factory': return '解锁奶蛙机甲、MJ 和灭霸';
     case 'frogLauncher': return '射程 '+stats.range+'，单发 '+stats.damage+'，每 '+stats.every+' 秒发射';
     case 'webTower': return '射程 '+stats.range+'，每发 '+stats.damage+'，三连发间隔 '+stats.every+' 秒，定身 '+stats.web+' 秒';
     case 'airDefense': return '射程 '+stats.range+'，单发 '+stats.damage+'，每 '+stats.every+' 秒发射';
@@ -4032,7 +4151,7 @@ function renderUnitGuide(id, types, specs, descriptions) {
     stats.hidden = !meta.length;
     facts.textContent = descriptions[type];
     details.append(stats, facts);
-    if (specs === UNITS && spec.upgrade) {
+    if (spec.upgrade) {
       const upgrade = document.createElement('p');
       upgrade.className = 'guide-upgrade';
       upgrade.textContent = 'L2 升级　'+costText(spec.upgrade.cost)+' · '+spec.upgrade.time+' 秒。'+upgradeBenefit(type)+'。';
@@ -4595,20 +4714,20 @@ function handleEvents() {
     } else if (event.type === 'musicUpdate') {
       audio.playStone();
     } else if (event.type === 'launch') {
-      note('棍母导弹已发射 · '+SILO_FLIGHT_TIME+' 秒后命中。');
+      note((event.player ? '我方' : '敌方')+'棍母导弹已发射 · '+event.flightTime+' 秒后命中。', !event.player);
       audio.tone([[140,.16],[206,.16],[292,.25]], 'triangle');
     } else if (event.type === 'frogShell') {
       if (event.manual) note('奶蛙炮弹已发射。');
       audio.tone([[186,.07],[112,.10]],'triangle',.045);
     } else if (event.type === 'impact') {
-      note('棍母导弹命中 · 清除 '+event.removed+' 个敌方目标'+
-        (event.bossHit ? ' · 灭霸失去 80% 当前血量' : ''));
+      note('棍母导弹命中 · '+(event.player ? '敌方' : '我方')+'损失 '+event.removed+' 个目标'+
+        (event.bossHit ? ' · 灭霸失去 80% 当前血量' : ''), !event.player);
       audio.tone([[94,.25],[61,.36]], 'triangle', .15);
     } else if (event.type === 'boss') {
       banner('敌方高阶单位', '灭霸入场', '抽象波会周期性偷取我方 67 指数。');
       audio.tone([[105,.22],[155,.3],[191,.26]]);
     } else if (event.type === 'pulse') {
-      note('抽象波 · 失去 ' + event.stolen + ' 点 67 指数。', true);
+      note('抽象波 · '+(event.player ? '夺取 ' : '失去 ')+event.stolen+' 点 67 指数。', !event.player);
       audio.tone([[221,.15],[140,.2],[85,.17]], 'sine');
     } else if (event.type === 'note') {
       note(event.message, event.danger);
@@ -4622,7 +4741,7 @@ function handleEvents() {
 const cards = new Map();
 const portraits = new Map();
 function getIcon(type, player = true) {
-  const spec = (player ? UNITS : ENEMIES)[type];
+  const spec = UNITS[type];
   const key = type + '-' + player + '-' + imageReady(spec.art);
   if (!portraits.has(key)) portraits.set(key, iconArt(type, player));
   return portraits.get(key);
@@ -4641,7 +4760,8 @@ function createCards() {
     portrait.draggable = false;
     portrait.src = getIcon(type);
     const hotkey = document.createElement('kbd');
-    hotkey.textContent = shortcuts[i];
+    hotkey.textContent = shortcuts[i] || '';
+    hotkey.hidden = !shortcuts[i];
     const name = document.createElement('span');
     name.className = 'card-name';
     name.textContent = spec.name;
@@ -4780,7 +4900,7 @@ function updateCards() {
       (blueprint ? !!game.fieldTechnologyProblem(type) : !targets.length);
     const enabled = !techLocked && game.actionAllowed && !paused && (blueprint ?
       game.constructionCrew(type,true,crew).length &&
-      game.canPay(spec.cost) && (type !== 'silo' || !game.silo) :
+      game.canPay(spec.cost) :
       !game.trainingProblem(type, targets));
     let caption = '', fill = 0;
     if (spec.fixed) card.button.hidden = isMJ ? spec.builtBy !== 'mj' :
@@ -4796,19 +4916,20 @@ function updateCards() {
         caption = seconds(end - game.time) + (total > 1 ? ' · '+total+' 个' : '');
         fill = (game.time-start)/(end-start);
       } else if (pending) caption = '排队 '+pending+' 个';
+      else if (type === 'boss' && game.hasBoss(true)) caption = '我方已有灭霸';
       const tags = targets.length > 1 ? ' × '+targets.length+' 座' : '';
       const price = '⬢ '+spec.cost[0]+tags;
       if (card.price.textContent !== price) card.price.textContent = price;
     } else {
       if (!spec.fixed) card.price.textContent = '⬢ '+spec.cost[0];
-      const building = game.friends.find(u => alive(u) && u.type === type && !completed(u, game.time));
-      if (building) {
+      const structures = game.friends.filter(u => alive(u) && u.type === type);
+      const building = structures.find(u => !completed(u, game.time));
+      if (type === 'silo' && structures.length) {
+        const ready = structures.filter(u => completed(u, game.time) && !active(u.loadedAt, game.time)).length;
+        caption = ready ? ready+' 座可发射' : structures.length+' 座备战中';
+      } else if (building) {
         fill = game.progress(building);
         caption = Math.floor(fill*100) + '%';
-      } else if (type === 'silo' && game.silo) {
-        const stage = game.siloState(game.silo);
-        caption = stage.name;
-        fill = stage.until > game.time ? (game.time-stage.from)/(stage.until-stage.from) : 1;
       }
     }
     if (techLocked && !caption) caption = '需 L2 工厂';
@@ -4937,7 +5058,7 @@ function updateDockCommand() {
 }
 
 function canWorkOrder(unit) {
-  return alive(unit) && completed(unit,game.time) && (unit.spec.builder || unit.spec.repairRate);
+  return alive(unit) && unit.player && completed(unit,game.time) && (unit.spec.builder || unit.spec.repairRate);
 }
 
 function selectedRecyclers() {
@@ -5129,12 +5250,6 @@ function chooseCard(type) {
   const spec = UNITS[type];
   const mechanics = selectedMechanics();
   if (ui.mode?.type==='build' && ui.mode.unitType===type) { setMode(null); return; }
-  if (type==='silo' && game.silo) {
-    ui.selected = new Set([game.silo]);ui.inspected=null;setMode(null);
-    note('已选中棍母发射井。');
-    updateHud();
-    return;
-  }
   if (spec.fixed || mechanics.length) {
     const techProblem = game.fieldTechnologyProblem(type);
     if (techProblem) { note(techProblem,true); return; }
@@ -5198,6 +5313,16 @@ function workOnTarget(target, selected) {
   note((count>1 ? count+' 个单位协同维修 · ' : '已下令维修')+target.spec.name+'。');
   return true;
 }
+function workTargetAt(point, selected, touch) {
+  const crew = selected.filter(canWorkOrder);
+  if (!crew.length) return null;
+  return hitTest(point, true, touch, target => {
+    if (completed(target, game.time)) return crew.some(unit => game.canRepair(unit, target));
+    if (game.constructionCrew(target.type, true, crew).length) return true;
+    return target.spec.fixed && crew.some(unit => unit.spec.buildAssist && distance(unit, target) <= unit.spec.repairRadius) &&
+      game.constructionCrew(target.type, true).some(unit => unit.blueprints.includes(target));
+  });
+}
 function issue(point, moveOnly = false, touch = touchScreen) {
   const target=moveOnly ? null : hitTest(point, false, touch);
   const selected = [...ui.selected].filter(alive);
@@ -5207,7 +5332,7 @@ function issue(point, moveOnly = false, touch = touchScreen) {
     updateHud();
     return;
   }
-  if (selected.length && workOnTarget(friend,selected)) { updateHud(); return; }
+  if (!moveOnly && workOnTarget(workTargetAt(point,selected,touch),selected)) { updateHud(); return; }
   const team=selected.filter(u=>completed(u,game.time)&&!u.spec.fixed);
   const locks = moveOnly || (friend && !target) ? 0 : game.lockTarget(selected,target);
   if (!team.length && locks) {
@@ -5246,7 +5371,7 @@ function commit(point, touch = touchScreen) {
     // Leave the builder selected for the next blueprint.
     if (!game.constructionCrew(mode.unitType,true,selected).length) { ui.selected=new Set([unit]);ui.inspected=null; }
   } else if (mode.type==='repair') {
-    const target = hitTest(point,true,touch);
+    const target = workTargetAt(point,[...ui.selected],touch);
     if (!ui.selected.size || !workOnTarget(target,[...ui.selected])) {
       note('该目标未受损、超出范围，或当前选择无法维修或协助。',true);
       return;
@@ -5369,9 +5494,11 @@ canvas.addEventListener('contextmenu',ev=>{
   if (ev.pointerType === 'touch' || ev.sourceCapabilities?.firesTouchEvents || ui.touches.size) return;
   audio.unlock();
   if (paused || !game.actionAllowed) return;
-  if (ui.mode) {setMode(null);return;}
   const point=fieldPoint(ev);
-  if (onMap(point)) issue(point,false,false);
+  if (ui.mode?.type === 'build') {
+    if (onMap(point)) commit(point,false);
+  } else if (ui.mode) setMode(null);
+  else if (onMap(point)) issue(point,false,false);
 });
 
 function focusOverview(ev) {
@@ -5798,12 +5925,11 @@ setText('rule-recycle-time', RECYCLE_TIME);
 setText('rule-recycle-rate', RECYCLE_REFUND * 100);
 setText('rule-silo-flight', SILO_FLIGHT_TIME);
 setText('rule-rain-cost', SKILLS.stone.cost);
-renderUnitGuide('rule-troops', [...troopTypes,'spider'], UNITS, friendlyGuide);
-renderUnitGuide('rule-structures', ['base',...structureTypes], UNITS, friendlyGuide);
-renderUnitGuide('rule-enemy-units',
-  ['base','architect','factory','miner','indexMiner','sentry','foot','shield','archer','zombie','airFoot','airBow','airShield','boss','guard','dragon'],
-  { ...ENEMIES, guard: { name: '王警卫' }, dragon: { name: '奶龙' } },
-  { ...enemyGuide,
+renderUnitGuide('rule-troops', [...troopTypes,'spider'], UNITS, unitGuide);
+renderUnitGuide('rule-structures', ['base',...structureTypes], UNITS, unitGuide);
+renderUnitGuide('rule-enemy-units', ['guard','dragon'],
+  { guard: { name: '王警卫' }, dragon: { name: '奶龙' } },
+  {
     guard: '苦行山临时变身的地面敌人，仍属于敌方。变身开头短暂定格，之后移速降低 60%、攻击力降低 70%。铃铛倒计时结束后恢复原来的单位。',
     dragon: '战败动画中的角色，会被奶蛙围住逗笑。' });
 showScreen(screen,false);
