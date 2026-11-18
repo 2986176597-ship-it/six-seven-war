@@ -77,7 +77,7 @@ kbd { font: 10px var(--mono); letter-spacing: 0; }
 .live i { width: 6px; height: 6px; border-radius: 100%; background: #f29d79; box-shadow: 0 0 9px #f29d7990; }
 .live strong { color: #f3be96; font: 700 16px var(--mono); }
 .board { position: relative; aspect-ratio: 2.5; overflow: hidden; isolation: isolate; background: #343a28; }
-#map { width: 100%; height: 100%; display: block; touch-action: none; user-select: none; }
+#map { width: 100%; height: 100%; display: block; touch-action: none; user-select: none; -webkit-touch-callout: none; }
 .board[data-cursor="target"] #map { cursor: crosshair; }
 .board[data-cursor="select"] #map { cursor: pointer; }
 .map-hud { position: absolute; top: 13px; z-index: 1; pointer-events: none; }
@@ -216,6 +216,8 @@ body { height: 100dvh; display: flex; flex-direction: column; overflow: hidden; 
 .close-window:hover { border-color: #9dab8e; }
 .command { border: 0; border-radius: 4px; min-height: 0; padding: 7px; flex-wrap: wrap; background: #24332a; }
 .command .selection { flex: 1 0 min(100%, 235px); }
+.command-buttons { flex-wrap: wrap; max-width: 100%; }
+.builder-actions { margin-bottom: 7px; }
 .abilities:not([hidden]) { padding-left: 0; border: 0; }
 .quick-units { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 7px; }
 .lock-hint { margin: 8px 2px; color: #b9cdb8; font-size: 11px; line-height: 1.5; }
@@ -293,8 +295,42 @@ body { height: 100dvh; display: flex; flex-direction: column; overflow: hidden; 
 .difficulty > span { color: #c2d1bb; margin-right: 2px; font-size: 10px; }
 .difficulty .minor { padding-inline: 8px; min-height: 28px; }
 .difficulty .minor[aria-pressed="true"] { color: #ffebbe; background: #514228; border-color: #c8ac6e; }
+.difficulty .minor:focus-visible { outline-offset: 1px; }
 @media (max-width: 620px) {
-  .difficulty .minor { padding-inline: 7px; min-height: 32px; }
+  .difficulty { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); }
+  .difficulty > span { grid-column: 1 / -1; }
+  .difficulty .minor { padding-inline: 4px; min-height: 38px; }
+  #difficulty-very-hard { grid-column: span 2; }
+}
+@media (pointer: coarse), (max-width: 620px) {
+  button { touch-action: manipulation; }
+  .top-inner { padding-left: max(9px, env(safe-area-inset-left)); padding-right: max(9px, env(safe-area-inset-right)); }
+  .mission { left: max(8px, calc(env(safe-area-inset-left) + 4px)); }
+  .mission .primary, .difficulty .minor, .dock button { min-height: 42px; }
+  .base-hud, .clock, .navigation, .float-window.draggable-window:not(.positioned) {
+    right: max(8px, calc(env(safe-area-inset-right) + 4px));
+  }
+  .dock { max-width: calc(100% - 16px); }
+  .float-window.draggable-window { max-height: min(48%, 325px); }
+  .float-window .minor { min-height: 39px; }
+  .close-window, .window-grip { width: 40px; height: 40px; flex: 0 0 40px; }
+  .rule-nav a { display: inline-flex; align-items: center; min-height: 40px; }
+  .float-window kbd { display: none; }
+}
+@media (max-width: 420px) {
+  .top-inner { gap: 6px; }
+  .brand h1 { font-size: 14px; max-width: 47px; }
+  .resources { justify-content: flex-start; gap: 5px; }
+  .amount { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 3px; }
+  .utilities .utility { min-width: 38px; min-height: 40px; padding-inline: 0; }
+  .troops, .structures { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .dock button { gap: 4px; padding-inline: 8px; }
+  .board[data-panel]:not([data-panel=""]) .field-note { top: auto; bottom: max(68px, calc(env(safe-area-inset-bottom) + 50px)); }
+}
+@media (pointer: coarse) and (orientation: landscape) and (max-height: 500px) {
+  .float-window.draggable-window { width: min(385px, 57vw); max-height: 66%; }
+  .difficulty .minor { min-height: 34px; }
+  .difficulty > span { flex-basis: 100%; }
 }
 
 .upgrade-row { display: flex; align-items: center; justify-content: space-between; gap: 7px; margin: 6px 0;
@@ -401,50 +437,69 @@ body { height: 100dvh; display: flex; flex-direction: column; overflow: hidden; 
     </section>
     <section class="rules-view" id="rules-view" aria-labelledby="rules-title">
       <h1 id="rules-title">《Six Seven War》规则</h1>
-      <p>开矿、建造和作战，摧毁敌军的生产与建造能力。</p>
+      <p>在实时对战中开矿扩产、编队作战，摧毁敌方所有产线并清除幸存的建造者。</p>
       <nav class="rule-nav" aria-label="规则目录">
-        <a href="#rule-start">开局与胜负</a><a href="#rule-control">操作指令</a><a href="#rule-resources">资源与施工</a>
-        <a href="#rule-levels">建筑升级</a><a href="#rule-friendly">我方单位</a><a href="#rule-buildings">我方建筑</a><a href="#rule-enemies">敌军图鉴</a>
-        <a href="#rule-combat">战斗与技能</a><a href="#rules-actions">进入试玩</a>
+        <a href="#rule-start">开局与胜负</a><a href="#rule-difficulty">五档难度</a><a href="#rule-control">电脑与手机操作</a>
+        <a href="#rule-resources">资源与生产</a><a href="#rule-recycle">回收</a><a href="#rule-levels">建筑升级</a>
+        <a href="#rule-friendly">机动单位</a><a href="#rule-buildings">建筑</a><a href="#rule-enemies">敌军</a><a href="#rule-combat">战斗与技能</a>
       </nav>
       <section class="rule-chapter" id="rule-start">
-        <h2>开局、难度与胜负</h2>
+        <h2>开局与胜负</h2>
         <ol>
-          <li>双方开局各在战场一端，拥有一座基地和一名建筑师。准备阶段可切换难度、放置蓝图和安排生产队列。点击「开始对战」后，时间、收入、施工和生产开始推进。</li>
-          <li>开局金币可以同时预订工厂、采矿机和第二名建筑师。优先建工厂就能尽早造兵，先开矿则能更快补充资金。准备好后派兵争夺中部梗矿。</li>
-          <li>敌方用自己的金币开矿、盖工厂和生产部队。进攻取决于难度、库存、战场压力和敌方战术。简单留出最长准备时间。中等可短暂集结两支部队一同出击，困难后期最多集结三支。AI 会根据我方火炮、蛛丝和讲解石调整配兵，守军会优先应对威胁产线的部队。中等和困难还会用金币升级矿机。</li>
-          <li>摧毁敌方所有可生产的基地和工厂，并清除所有还能建造的单位即可获胜。我方失去同样的能力即战败；两边在同一时刻失去这些能力判为平局。在场且完工的建筑师、机械师和 MJ 都计为建造者。</li>
-          <li>首次进入先打开这份规则。对战结束后，胜负、用时、难度与击破数写入当前浏览器，本机首页可查看战绩和最近 12 局。</li>
+          <li>双方各有一座基地和一名建筑师。我方初始资金可预订一座工厂、一台采矿机和第二名建筑师。准备阶段可以选难度、放蓝图、下生产订单。点「开始对战」后开始计时、收金和施工。</li>
+          <li>敌人靠开矿和工厂持续生产。击破敌军全部已完工的基地、工厂和建造者即可获胜。我方失去这三类产线与建造能力即战败，双方同时失去则判平局。建筑师、机械师与 MJ 都具备建造能力。</li>
+          <li>首次打开先进入规则页。之后可从首页直接开战或重看规则。胜负、用时、难度和击破数存在当前浏览器，首页显示统计与最近 12 局。</li>
         </ol>
+      </section>
+      <section class="rule-chapter" id="rule-difficulty">
+        <h2>五档难度</h2>
+        <ul>
+          <li><strong>简单</strong>　开局准备时间最长，敌人早期以单兵进攻。</li>
+          <li><strong>中等</strong>　中期开始两支部队一同推进，敌方会择机升级采矿机。</li>
+          <li><strong>困难</strong>　进攻更密，后期可集结三支地空混编部队，工厂和矿机遭遇威胁时留守兵力。</li>
+          <li><strong>非常困难</strong>　敌军更快扩产和成队进攻，更积极部署哨戒塔、调整兵种。</li>
+          <li><strong>地狱</strong>　敌方经济更强、集结最快，敌方机动兵种（含灭霸）攻击力提高 <span id="rule-hell-attack">10</span>%。哨戒塔按标准伤害射击。</li>
+        </ul>
+        <p>每局敌方战术和出击路线会变化。AI 会检查我方火炮的防空掩护、蛛丝和讲解石，再决定配兵。对战开始前可切换难度。</p>
       </section>
       <section class="rule-chapter" id="rule-control">
         <h2>电脑与触屏操作</h2>
         <ul>
-          <li><strong>选择与浮窗</strong>　点建筑师或 MJ 直接展开各自的建造窗口，MJ 可在窗内召唤小蜘蛛。点基地或工厂打开生产，点其他固定单位打开状态与可用操作。拖住标题栏或左侧抓手移动窗口；选其他单位可直接切换，点空地或右上角 × 可收起。</li>
-          <li><strong>多选</strong>　双击机动单位选中附近同类，双击工厂选中我方全部工厂。电脑可用 Shift 加点增减选择，拖空地框选机动单位。</li>
-          <li><strong>指挥</strong>　电脑右键空地下达直线移动，触屏点空地移动。移动中的部队会自动攻击射程内合适的敌人，并继续前往目的地。右键敌人或在触屏上点敌人会让全队推进集火，途中先集火遇到的目标，击破后继续前进。原目标被摧毁后，队伍继续向其最后位置推进，并自动攻击沿途敌人。</li>
-          <li><strong>炮塔锁定</strong>　选中防空炮塔、蛛丝重机枪或奶蛙火炮后，右键敌人锁定，触屏点敌人锁定。炮塔等待目标进入射程再攻击，锁定结束后自动索敌。右键空地或点击「解除锁定」可恢复自动。</li>
-          <li><strong>上下文指令</strong>　右键受损友军或施工蓝图可下达维修、协同施工指令；触屏使用「维修」后再选目标。部署蓝图时仍可点其他友军切换选择。Esc 可取消指令或关闭窗口。</li>
-          <li><strong>视角</strong>　小地图可点击或拖动查看战线其他位置，旁边可缩放和切换全图。电脑可用滚轮缩放、中键拖拽平移；触屏在战场上单指滑动平移、双指捏合缩放。</li>
+          <li><strong>选择</strong>　点建筑师、机械师或 MJ 打开建造，点基地或工厂打开生产，点其他建筑查看状态与可用指令。双击单位选择附近同类，双击工厂选择全图我方工厂。电脑可用 Shift 增减选择，也可从空地拖出选框。</li>
+          <li><strong>浮窗</strong>　拖标题栏或抓手移动窗口，在浮窗里上下滑动查看卡片。点空地或 × 收起窗口，选中的单位仍可接收命令。</li>
+          <li><strong>移动和集火</strong>　电脑右键空地下令移动，手机点「移动」再点目的地，也可收起浮窗后点空地。电脑右键敌人、手机直接点敌人可推进集火。部队边走边打，击破沿途敌人后继续推进。原目标被摧毁后，部队仍向它的最后位置移动并自动攻击沿途敌军。</li>
+          <li><strong>固定武器</strong>　选中防空炮塔、蛛丝重机枪或奶蛙火炮后，电脑右键敌人或在手机上点敌人即可锁定。炮塔在目标进入射程时开火，锁定解除后恢复自动索敌。「解除锁定」和电脑右键空地都可清除锁定。</li>
+          <li><strong>维修和接手</strong>　用「维修」选受损目标或待接手的蓝图。电脑也可直接右键目标。移动、维修、回收等选目标指令可用底部「取消」退出，电脑还可按 Esc。</li>
+          <li><strong>镜头</strong>　手机单指拖动战场可平移，双指捏合可缩放。电脑可用中键拖动和滚轮缩放。两端都可点小地图跳转视角。</li>
         </ul>
       </section>
       <section class="rule-chapter" id="rule-resources">
         <h2>资源、建造与生产</h2>
         <ul>
-          <li><strong>金币</strong>　我方开局 <span id="rule-opening-gold">2000</span> 金币，开始后每秒自动获得 <span id="rule-base-gold-rate">44</span> 金币。战场共有 6 处金矿，双方都可以在空置矿点建采矿机，每完工一座增加 <span id="rule-mine-gold-rate">41</span> 金币/秒。击破敌军也奖励金币。上方只显示我方余额和产速。</li>
-          <li><strong>67 指数</strong>　击破敌军或占领梗矿可获得，最多存 100 点。让地面机动单位在梗矿圈内推进占领 3 秒，双方同时进入会争夺。占领且未被敌方争夺时每秒获得 1.35 点。小蜘蛛与敌方空军不能占矿。</li>
-          <li><strong>放蓝图</strong>　选择建筑卡片，再点地图确定位置。常规建筑可在全战场选址，建筑轮廓须在战场边界内并与其他建筑留出间隔。采矿机须建在空置金矿上，其他建筑应避开矿点和梗矿。MJ 的蛛丝重机枪与机械师现场造兵须距对应建造者 260 以内。已付费的蓝图要等施工完成才能投入使用。</li>
-          <li><strong>并行施工和维修</strong>　选中多名合格建造者可给同一蓝图加速。多个维修者可协同修同一个目标。自动维修逐个处理受损目标，手动指定可集中维修。修复湾在范围内可为建筑师或机械师正在施工的蓝图助建。</li>
-          <li><strong>排队生产</strong>　每座基地和工厂最多容纳 10 个生产任务（含正在生产的一个），按入队顺序完成并在下单时扣款。选中多座完工工厂后，每点一次卡片，每座工厂各加一个任务。「设置集结点」是新兵出厂后的集合位置。</li>
+          <li><strong>金币</strong>　开局双方各有 <span id="rule-opening-gold">2000</span> 金币。我方每秒自动获得 <span id="rule-base-gold-rate">44</span> 金币，每台 L1 采矿机另加 <span id="rule-mine-gold-rate">41</span> 金币/秒。击破敌军也能赚金币。我方余额、产速和 67 指数在顶部显示。</li>
+          <li><strong>67 指数</strong>　击破敌军与占领中部梗矿都能积累，最多存 100 点。我方可让召唤物之外的地面部队驻矿 3 秒占领。双方在圈内会争夺，占领后每秒获得 1.35 点。</li>
+          <li><strong>建造</strong>　选卡片再点地图放蓝图，建造者会前往施工。两边都能抢占全图 6 处金矿。常规建筑可在战场内空地建造，须与建筑、金矿和梗矿留出空间。机械师现场造兵和 MJ 建蛛丝重机枪的蓝图须距对应建造者 260 以内。</li>
+          <li><strong>协同</strong>　多选合格建造者，让他们一起接手蓝图可缩短工期。修复湾可在范围内辅助建筑师或机械师。机械师和修复湾自动逐个修理受损友军，也可手动指定目标集中维修。</li>
+          <li><strong>排队</strong>　每座产线最多 10 个订单，包含正在生产的一项。下单立即扣款，按加入顺序完工。多座工厂同时选中时，每点一次卡片，各合格工厂同时排入一个订单。「设置集结点」指定战斗部队的出厂去向。</li>
+          <li><strong>定价</strong>　双方建造、造兵与升级的金币价格都是整百。需要 67 指数的项目会在金币之外标明额外花费。</li>
         </ul>
+      </section>
+      <section class="rule-chapter" id="rule-recycle">
+        <h2>回收建筑和部队</h2>
+        <ol>
+          <li>选中建筑师、机械师或修复湾，点浮窗里的「回收」。电脑也可按 X。接着点金色框标出的我方目标。</li>
+          <li>建筑师与机械师会走到目标旁回收。修复湾可在 240 范围内回收建筑。机械师还可回收有造价的机动部队，目标会先驻守。</li>
+          <li>单个单位到位后约需 <span id="rule-recycle-time">3</span> 秒。可多选合格单位同时作业。点「停止回收」可取消所选单位的回收，目标被摧毁也会终止作业。</li>
+          <li>完工返还原始金币造价的 <span id="rule-recycle-rate">80</span>%。施工蓝图、受损单位和 L2 建筑都按原价结算，升级、排队生产和 67 指数的支出独立计费。开局基地回收返还 0 金币。</li>
+          <li>采矿机回收后会腾出金矿。回收基地、工厂或建造者时，胜负按剩余产线和建造者计算。</li>
+        </ol>
       </section>
       <section class="rule-chapter" id="rule-levels">
         <h2>建筑升级与高级兵种</h2>
         <ul>
-          <li>选中已完工的可升级建筑，在浮窗里按「升级 L2」。费用在开始时扣除，倒计时结束后启用 L2 数值。升级期间照常采矿、生产或防御。多选建筑时可一次支付并行升级。</li>
-          <li>采矿机升级需 800 金币，L2 产量为 L1 的 1.5 倍。工厂升级需 1000 金币，完成后解锁奶蛙机甲与 MJ。多选工厂时，高级订单只加入 L2 的队列。机械师现场建造 MJ 也需要存活的 L2 工厂。</li>
-          <li>奶蛙火炮、防空炮塔和激光防御塔的升级消耗金币。蛛丝重机枪和讲解石还要消耗 67 指数。每种升级的数值在建筑图鉴里列出。棍母发射井与修复湾是单级建筑。</li>
-          <li>激光塔每次拦截都会增加负荷。达到上限后进入过热冷却，冷却条倒数结束才恢复防御。火力间歇足够长时，负荷会自行下降。</li>
+          <li>在完工建筑的浮窗点「升级 L2」，开始时扣费，倒计时归零后应用升级。工厂、矿机和武器在升级期间照常工作，多选时可并行升级。</li>
+          <li>采矿机花 800 金币升级，L2 收入为 L1 的 1.5 倍。工厂花 1000 金币升级，L2 可生产奶蛙机甲和 MJ。机械师要现场建造 MJ，也需要一座已升级的工厂。</li>
+          <li>奶蛙火炮、防空炮塔和激光防御塔用金币升级。讲解石与蛛丝重机枪还需要 67 指数。棍母发射井和修复湾按单级运行。各建筑的费用与升级收益可查图鉴。</li>
         </ul>
       </section>
       <section class="rule-chapter" id="rule-friendly">
@@ -462,11 +517,11 @@ body { height: 100dvh; display: flex; flex-direction: column; overflow: hidden; 
       <section class="rule-chapter" id="rule-combat">
         <h2>射程、弹药与技能</h2>
         <ul>
-          <li><strong>地面和空中</strong>　地面攻击覆盖敌方地面部队及建筑。防空炮塔与机械师的轻武器专打空军；MJ、蛛丝重机枪与小蜘蛛能攻击两个高度。棍母导弹的爆炸覆盖地面、建筑和空中。</li>
-          <li><strong>弹药和拦截</strong>　射击会发出弹丸、箭矢、蛛弹或导弹。激光防御塔用激光逐次拦截普通弹丸和箭矢；灭霸的拳铠弹可穿过拦截，刀盾狗的刀击属于近战。</li>
-          <li><strong>技能</strong>　在单位窗口点亮起的技能按钮。MJ 的召唤入口也在建造窗口。方向或落点类技能需再次点地图。67 指数在施放时扣除；每个单位或建筑有独立冷却，讲解石的两首歌共用同一冷却。</li>
-          <li><strong>讲解石与灭霸</strong>　苦行山会用声波攻击地面敌军并变身控场。雨爱声波更强，可打击空军和灭霸，并将其受到的常规伤害乘以 1.4，升级到 L2 后为 1.5 倍。棍母导弹命中的易伤可与雨爱同时生效。</li>
-          <li><strong>攻防搭配</strong>　用机甲和老鼠处理刀盾狗，用对空导弹处理飞行盾兵，捕网可控制两种盾兵。打灭霸可以用奶蛙火炮、机甲和蛛丝持续输出，或攒满 67 指数建井，等灭霸进入棍母导弹爆炸圈再发射。</li>
+          <li><strong>目标高度</strong>　奶蛙、老鼠、机甲和火炮攻击地面。防空炮塔与机械师攻击空中。MJ、蛛丝重机枪和小蜘蛛可以攻击两种高度，棍母导弹同时覆盖落点内的敌军建筑与空地部队。</li>
+          <li><strong>拦截</strong>　激光防御塔拦截普通炮弹和箭矢。每次拦截增加负荷，过热时等冷却条结束才能恢复。刀盾狗使用近战，灭霸的拳铠弹可以绕过拦截。</li>
+          <li><strong>施放技能</strong>　选中单位后点亮起的技能，方向类或落点类技能再点战场。施放时消耗 67 指数并开始冷却。每个单位各自计时，讲解石的两首歌共用 45 秒冷却。</li>
+          <li><strong>控场</strong>　苦行山让符合条件的地面敌人变身王警卫。雨爱声波覆盖空地，令敌军减速并受到更多伤害。僵尸免疫两首歌。普通蛛丝打盾兵无效，蜘蛛捕网仍可缠住两种盾兵和灭霸。</li>
+          <li><strong>灭霸</strong>　可用机甲、火炮、蛛丝与雨爱持续压制。棍母导弹飞行 <span id="rule-silo-flight">5.5</span> 秒后落地，只杀伤敌方。命中灭霸扣除其 80% 当前血量，并让他之后受到的伤害提高 50%。这一易伤能叠加雨爱的增伤。</li>
         </ul>
       </section>
       <div class="lobby-actions rules-actions" id="rules-actions">
@@ -514,6 +569,8 @@ body { height: 100dvh; display: flex; flex-direction: column; overflow: hidden; 
           <button class="minor" type="button" id="difficulty-easy" aria-pressed="false" title="准备时间最长，敌方进攻最疏">简单</button>
           <button class="minor" type="button" id="difficulty-medium" aria-pressed="true" title="准备时间适中，敌方可集结两支部队进攻">中等</button>
           <button class="minor" type="button" id="difficulty-hard" aria-pressed="false" title="敌方准备较快，后期最多集结三支部队并加强守家">困难</button>
+          <button class="minor" type="button" id="difficulty-very-hard" aria-pressed="false" title="敌方更早扩产，进攻更频繁">非常困难</button>
+          <button class="minor" type="button" id="difficulty-hell" aria-pressed="false" title="敌方进攻最密，机动兵种攻击力提高 10%">地狱</button>
         </div>
         <button class="primary" type="button" id="advance">开始对战 <span aria-hidden="true">▸</span></button>
         <div class="live" id="live" hidden><i></i><span id="difficulty-live">中等 · 对战中</span></div>
@@ -570,6 +627,7 @@ body { height: 100dvh; display: flex; flex-direction: column; overflow: hidden; 
               <button class="minor" type="button" id="select-all" title="全选战斗部队 [A]">全选 <kbd>A</kbd></button>
               <button class="minor" type="button" id="move-order" title="选择目的地 [M]" disabled>移动 <kbd>M</kbd></button>
               <button class="minor" type="button" id="repair-order" title="选择受损建筑或未完工蓝图 [R]" hidden>维修 <kbd>R</kbd></button>
+              <button class="minor" type="button" id="recycle-order" title="选择回收目标 [X]" hidden>回收</button>
               <button class="minor" type="button" id="field-train" hidden>现场造兵</button>
               <button class="minor" type="button" id="build-web" hidden>建造蛛丝重机枪</button>
               <button class="minor" type="button" id="unlock-order" hidden>解除锁定</button>
@@ -619,11 +677,17 @@ body { height: 100dvh; display: flex; flex-direction: column; overflow: hidden; 
         <div class="window-head">
           <button class="window-grip" type="button" aria-label="移动建造窗口，可用方向键" title="拖动窗口"></button>
           <h2 id="build-title">阵地建造</h2>
-          <button class="minor" type="button" id="build-repair" title="指定维修目标 [R]" hidden>维修 <kbd>R</kbd></button>
-          <button class="minor skill" type="button" id="build-ability" hidden>释放小蜘蛛</button>
           <button class="close-window" type="button" aria-label="关闭建造窗口" data-close-panel>×</button>
         </div>
-        <div class="window-content"><div class="cards structures" id="building-cards"></div></div>
+        <div class="window-content">
+          <div class="command-buttons builder-actions" id="builder-actions" hidden>
+            <button class="minor" type="button" id="build-repair" title="指定维修目标 [R]" hidden>维修 <kbd>R</kbd></button>
+            <button class="minor" type="button" id="build-recycle" title="选择回收目标 [X]" hidden>回收</button>
+            <button class="minor" type="button" id="build-train" hidden>现场造兵</button>
+            <button class="minor skill" type="button" id="build-ability" hidden>释放小蜘蛛</button>
+          </div>
+          <div class="cards structures" id="building-cards"></div>
+        </div>
       </section>
       <div id="end-layer" class="overlay" hidden aria-modal="true" role="dialog" aria-labelledby="overlay-title">
         <div class="outcome">
@@ -724,6 +788,9 @@ const STONE_MUSIC_L2 = {
 };
 const FIELD_BUILD_REACH = 260;
 const MECHANIC_UNITS = new Set(['frog','rat','mj']);
+const RECYCLERS = new Set(['architect','mechanic','repair']);
+const RECYCLE_TIME = 3;
+const RECYCLE_REFUND = .8;
 const NET_RADIUS = 82;
 const BOSS_BLAST_LOSS = .8;
 const MECH_LAUGH_DURATION = 3;
@@ -751,6 +818,22 @@ const DIFFICULTIES = {
     packAfter: 57, tripleAfter: 115, packWait: 5, defenseReach: 545, homeGuard: 3, counterWeight: 1.2,
     mineUpgradeAt: 78, mineUpgradeLimit: 2,
   },
+  'very-hard': {
+    label: '非常困难', firstAttack: 35, dispatchGap: 7, variation: 2.8, recovery: 9,
+    attackLimit: 10, reserve: 6, baseIncome: 64,
+    garrisonEvery: 3, defenseThreshold: 1, sentryLimit: 3, sentryBudget: 2300,
+    secondFactoryBudget: 1900, extraArchitectAt: 28, bossSavingsAt: 66, bossRaidFloor: 6,
+    packAfter: 49, tripleAfter: 91, packWait: 4.4, defenseReach: 590, homeGuard: 3, counterWeight: 1.4,
+    mineUpgradeAt: 68, mineUpgradeLimit: 2,
+  },
+  hell: {
+    label: '地狱', firstAttack: 31, dispatchGap: 6.4, variation: 2.5, recovery: 8,
+    attackLimit: 12, reserve: 7, baseIncome: 74, attackMultiplier: 1.1,
+    garrisonEvery: 3, defenseThreshold: 1, sentryLimit: 3, sentryBudget: 2100,
+    secondFactoryBudget: 1700, extraArchitectAt: 24, bossSavingsAt: 60, bossRaidFloor: 8,
+    packAfter: 39, tripleAfter: 68, packWait: 4, defenseReach: 620, homeGuard: 4, counterWeight: 1.55,
+    mineUpgradeAt: 62, mineUpgradeLimit: 3,
+  },
 };
 const ENEMY_TACTICS = [
   { lane: 204, weight: { foot: 1.48, archer: 1.23, airFoot: .64, zombie: 1.13 } },
@@ -765,7 +848,7 @@ const GOLD_MINES = [
 
 const ARCHITECT = { name: '建筑师', hp: 145, armor: .08, radius: 16, speed: 75, cost: [200], build: 3.2,
   height: 40, art: 'architect', builder: true, repairRate: 31,
-  info: '建造建筑和采矿机。用「维修」选受损建筑，或在电脑端右键该建筑。' };
+  info: '可建造、维修及回收建筑。' };
 const BASE = { name: '基地', hp: 1400, armor: .16, radius: 49, fixed: true, production: true,
   height: 92, art: 'base', info: '开局自带，可排队生产建筑师。' };
 const FACTORY = { name: '工厂', hp: 1560, armor: .15, radius: 55, fixed: true, cost: [1200], build: 8.5,
@@ -778,40 +861,40 @@ const MINER = { name: '采矿机', hp: 366, armor: .13, radius: 28, fixed: true,
 
 const UNITS = {
   architect: ARCHITECT,
-  mechanic: { name: '机械师', hp: 211, armor: .14, radius: 18, speed: 63, cost: [980], build: 5.2,
+  mechanic: { name: '机械师', hp: 211, armor: .14, radius: 18, speed: 63, cost: [1000], build: 5.2,
     height: 49, art: 'mechanic', builder: true, buildRate: 1.15, repairRate: 38, autoRepair: 24, repairRadius: 144,
     range: 157, damage: 8, every: 1.35, aa: true, onlyAir: true, projectile: 'bullet',
-    info: '可建建筑、采矿机和三种机动单位，修理友军，并以轻武器防空。' },
+    info: '可建建筑和三种部队，修理或回收友军建筑及部队，并以轻武器防空。' },
   base: BASE,
   factory: FACTORY,
   miner: MINER,
-  frog:   { name: '奶蛙', hp: 104, armor: .06, radius: 17, speed: 78, range: 30, damage: 28, every: .95, cost: [420], build: 2.2, height: 61, art: 'frog', info: '蛙跳撞击对普通步兵增伤。地面近战。' },
-  rat:    { name: '美团老鼠', hp: 359, armor: .29, radius: 23, speed: 45, range: 29, damage: 51, every: 1.65, cost: [1320], build: 5.9, height: 68, art: 'rat', info: '高血中甲。近战撞击对建筑增伤。滚动碰盾时造成冲击并停下。' },
+  frog:   { name: '奶蛙', hp: 104, armor: .06, radius: 17, speed: 78, range: 30, damage: 28, every: .95, cost: [400], build: 2.2, height: 61, art: 'frog', info: '蛙跳撞击对普通步兵增伤。地面近战。' },
+  rat:    { name: '美团老鼠', hp: 359, armor: .29, radius: 23, speed: 45, range: 29, damage: 51, every: 1.65, cost: [1300], build: 5.9, height: 68, art: 'rat', info: '高血中甲。近战撞击对建筑增伤。滚动碰盾时造成冲击并停下。' },
   frogMech: { name: '奶蛙机甲', hp: 420, armor: .18, radius: 30, speed: 56, range: 165, damage: 66, every: 1.55,
-    cost: [2380], factoryLevel: 2, build: 7.7, height: 88, art: 'frogMech', flameHalfAngle: .61, armorScale: .5,
+    cost: [2400], factoryLevel: 2, build: 7.7, height: 88, art: 'frogMech', flameHalfAngle: .61, armorScale: .5,
     barrier: 125, barrierDelay: 6, barrierRate: 22,
     info: 'L2 工厂高级兵种。大范围喷火并削弱装甲，护盾脱战后恢复，击破敌军时播放 3 秒捧腹大笑。' },
-  mj:     { name: 'MJ', hp: 184, armor: .08, radius: 18, speed: 45, range: 248, damage: 16, every: 1.72, cost: [1480], factoryLevel: 2, build: 4.8, height: 67, art: 'mj', aa: true,
+  mj:     { name: 'MJ', hp: 184, armor: .08, radius: 18, speed: 45, range: 248, damage: 16, every: 1.72, cost: [1500], factoryLevel: 2, build: 4.8, height: 67, art: 'mj', aa: true,
     builder: true, projectile: 'web', web: 1.35, bossWeb: .85,
     info: 'L2 工厂高级兵种。可建蛛丝重机枪，普攻自动缠绕敌人 1.35 秒，可对空。盾兵免疫普通蛛丝。' },
   stone:  { name: '讲解石', hp: 475, armor: .15, fixed: true, radius: 34, cost: [1400], build: 7.8,
     height: 82, art: 'stone', music: STONE_MUSIC,
-    upgrade: { cost: [1650, 32], time: 8.5, stats: { music: STONE_MUSIC_L2 } },
+    upgrade: { cost: [1700, 32], time: 8.5, stats: { music: STONE_MUSIC_L2 } },
     info: '两首歌都会发出声波，自动苦行山控地面，手动雨爱可打空军。L2 加强范围、控制、杀伤和持续时间。' },
-  laser:  { name: '激光防御塔', hp: 450, armor: .16, fixed: true, radius: 28, cost: [1270], build: 6.7,
+  laser:  { name: '激光防御塔', hp: 450, armor: .16, fixed: true, radius: 28, cost: [1300], build: 6.7,
     height: 78, art: 'laser', interceptRadius: 150, interceptEvery: 1.05,
     heatCapacity: 4, heatDelay: 2.6, heatDecay: .8, overheatTime: 5.5,
     upgrade: { cost: [1300], time: 7, stats: {
       interceptRadius: 225, interceptEvery: .75, heatCapacity: 6, heatDelay: 2.2, heatDecay: 1.25, overheatTime: 3.8,
     } },
     info: '拦截普通弹丸与箭矢，每次拦截会增加热量。热量满后暂停防御，冷却完成后恢复。' },
-  repair: { name: '修复湾', hp: 510, armor: .13, fixed: true, radius: 33, cost: [1450], build: 7.2,
+  repair: { name: '修复湾', hp: 510, armor: .13, fixed: true, radius: 33, cost: [1500], build: 7.2,
     height: 75, art: 'repair', autoRepair: 29, repairRate: 29, repairRadius: 240, buildAssist: .55,
-    info: '修复范围内的友军和建筑，也可协助建筑师或机械师施工。' },
-  webTower: { name: '蛛丝重机枪', hp: 425, armor: .14, fixed: true, radius: 27, cost: [1510], build: 6.8,
+    info: '修复范围内的友军，可助建并回收范围内的我方建筑。' },
+  webTower: { name: '蛛丝重机枪', hp: 425, armor: .14, fixed: true, radius: 27, cost: [1500], build: 6.8,
     height: 81, art: 'webTower', range: 285, damage: 10, every: 1.3, burst: 3, burstGap: .11,
     aa: true, projectile: 'web', web: 1.72, bossWeb: .68, bossWebDamage: .52,
-    upgrade: { cost: [1320, 20], time: 7, stats: {
+    upgrade: { cost: [1300, 20], time: 7, stats: {
       range: 335, damage: 12, every: 1.12, burstGap: .1, web: 2.1, bossWeb: .8, bossWebDamage: .56,
     } },
     builtBy: 'mj', info: '由 MJ 施工。三连发强化蛛丝，可对空。盾兵免疫，灭霸受到的伤害和缠绕时间较短。' },
@@ -820,7 +903,7 @@ const UNITS = {
     upgrade: { cost: [1200], time: 7.5, stats: { range: ARTILLERY_L2_RANGE, damage: 108, every: 3.8 } },
     info: '远程火炮，自动发射奶蛙炮弹，溅射敌方地面部队和建筑。可手动指定落点。' },
   airDefense: { name: '防空炮塔', hp: 472, armor: .21, fixed: true, radius: 27, range: 330, damage: 62,
-    every: 1.65, aa: true, onlyAir: true, cost: [1280], build: 5.8, height: 77, art: 'airDefense',
+    every: 1.65, aa: true, onlyAir: true, cost: [1300], build: 5.8, height: 77, art: 'airDefense',
     upgrade: { cost: [1400], time: 7.5, stats: { range: 495, damage: 74, every: 1.5 } },
     info: '自动向空军发射棍母防空导弹。飞行盾兵正面可替身后空军挡弹，并承担伤害。' },
   silo:   { name: '棍母发射井', hp: 678, armor: .22, fixed: true, radius: 38, cost: [5400, 100], build: 19, height: 85, art: 'silo', info: '装填 25 秒后可手动发射棍母导弹。爆炸清除圈内敌方单位和建筑，灭霸失去 80% 当前血量。' },
@@ -833,14 +916,14 @@ const ENEMIES = {
   base: BASE,
   factory: FACTORY,
   miner: MINER,
-  sentry:    { name: '哨戒塔', hp: 355, armor: .18, fixed: true, radius: 25, range: 233, damage: 24, every: .98, cost: [1150], build: 5.7, height: 63, art: 'sentry', projectile: 'bullet', info: '向射程内的地面部队和建筑发射炮弹。' },
-  foot:      { name: '普通步兵', hp: 108, armor: .11, radius: 17, speed: 72, range: 121, damage: 12, every: 1.15, reward: [110, 6], cost: [520], build: 2.65, height: 58, art: 'foot', projectile: 'bullet', info: '对奶蛙增伤。' },
-  shield:    { name: '刀盾狗', hp: 220, armor: .63, radius: 24, speed: 46, range: 31, damage: 26, every: 1.3, reward: [220, 11], cost: [1430], build: 6.9, height: 67, art: 'shield', heavy: true, shield: true, bypassIntercept: true, info: '高装甲近战，免疫普通蛛丝和蜘蛛弹药。捕网可缠住，喷火和滚动可破其防御。' },
-  archer:    { name: '弓兵', hp: 102, armor: .08, radius: 17, speed: 64, range: 271, damage: 22, every: 1.52, reward: [150, 7], cost: [860], build: 4.4, height: 62, art: 'archer', projectile: 'arrow', info: '优先攻击建筑，会拉开与蓄力老鼠的距离。' },
-  zombie:    { name: '僵尸', hp: 211, armor: .16, radius: 21, speed: 56, range: 29, damage: 29, every: 1.12, reward: [180, 9], cost: [1060], build: 5, height: 67, art: 'zombie', info: '完全免疫讲解石。' },
-  airFoot:   { name: '飞行步兵', hp: 104, armor: .09, radius: 18, speed: 101, range: 142, damage: 16, every: .98, reward: [150, 7], cost: [1020], build: 4.7, height: 63, art: 'airFoot', air: true, projectile: 'bullet', info: '直冲我方建筑。' },
-  airBow:    { name: '飞行弓兵', hp: 133, armor: .13, radius: 19, speed: 71, range: 282, damage: 25, every: 1.55, reward: [210, 9], cost: [1530], build: 6.6, height: 70, art: 'airBow', air: true, projectile: 'arrow', info: '外围盘旋，优先攻击防空炮塔和地面集群。' },
-  airShield: { name: '飞行盾兵', hp: 164, armor: .34, radius: 26, speed: 57, range: 128, damage: 17, every: 1.4, reward: [250, 11], cost: [1920], build: 8.4, height: 75, art: 'shield', air: true, heavy: true, shield: true, projectile: 'bullet', info: '用正面的盾替身后空军承受防空弹。免疫普通蛛丝和蜘蛛伤害，捕网可缠住。' },
+  sentry:    { name: '哨戒塔', hp: 355, armor: .18, fixed: true, radius: 25, range: 233, damage: 24, every: .98, cost: [1200], build: 5.7, height: 63, art: 'sentry', projectile: 'bullet', info: '向射程内的地面部队和建筑发射炮弹。' },
+  foot:      { name: '普通步兵', hp: 108, armor: .11, radius: 17, speed: 72, range: 121, damage: 12, every: 1.15, reward: [110, 6], cost: [500], build: 2.65, height: 58, art: 'foot', projectile: 'bullet', info: '对奶蛙增伤。' },
+  shield:    { name: '刀盾狗', hp: 220, armor: .63, radius: 24, speed: 46, range: 31, damage: 26, every: 1.3, reward: [220, 11], cost: [1400], build: 6.9, height: 67, art: 'shield', heavy: true, shield: true, bypassIntercept: true, info: '高装甲近战，免疫普通蛛丝和蜘蛛弹药。捕网可缠住，喷火和滚动可破其防御。' },
+  archer:    { name: '弓兵', hp: 102, armor: .08, radius: 17, speed: 64, range: 271, damage: 22, every: 1.52, reward: [150, 7], cost: [900], build: 4.4, height: 62, art: 'archer', projectile: 'arrow', info: '优先攻击建筑，会拉开与蓄力老鼠的距离。' },
+  zombie:    { name: '僵尸', hp: 211, armor: .16, radius: 21, speed: 56, range: 29, damage: 29, every: 1.12, reward: [180, 9], cost: [1100], build: 5, height: 67, art: 'zombie', info: '完全免疫讲解石。' },
+  airFoot:   { name: '飞行步兵', hp: 104, armor: .09, radius: 18, speed: 101, range: 142, damage: 16, every: .98, reward: [150, 7], cost: [1000], build: 4.7, height: 63, art: 'airFoot', air: true, projectile: 'bullet', info: '直冲我方建筑。' },
+  airBow:    { name: '飞行弓兵', hp: 133, armor: .13, radius: 19, speed: 71, range: 282, damage: 25, every: 1.55, reward: [210, 9], cost: [1500], build: 6.6, height: 70, art: 'airBow', air: true, projectile: 'arrow', info: '外围盘旋，优先攻击防空炮塔和地面集群。' },
+  airShield: { name: '飞行盾兵', hp: 164, armor: .34, radius: 26, speed: 57, range: 128, damage: 17, every: 1.4, reward: [250, 11], cost: [1900], build: 8.4, height: 75, art: 'shield', air: true, heavy: true, shield: true, projectile: 'bullet', info: '用正面的盾替身后空军承受防空弹。免疫普通蛛丝和蜘蛛伤害，捕网可缠住。' },
   boss:      { name: '灭霸', hp: 2600, armor: .15, radius: 40, speed: 39, range: 169, damage: 72, every: 1.9, reward: [1000, 22], cost: [7900], build: 23, height: 121, art: 'boss', heavy: true, aa: true, projectile: 'bossRound', bypassIntercept: true, info: '拳铠投弹可绕过激光拦截。抽象波偷取 67 指数。棍母导弹命中后会持续易伤。' },
 };
 
@@ -1163,7 +1246,7 @@ class Battle {
         unit.order = null;
         unit.blueprints.unshift(blueprint);
       } else {
-        if (unit.order?.type !== 'repair') unit.order = null;
+        if (!['repair', 'recycle'].includes(unit.order?.type)) unit.order = null;
         unit.blueprints.push(blueprint);
       }
     }
@@ -1273,6 +1356,58 @@ class Battle {
     if (!target) return;
     target.passiveRepairAt = this.time;
     this.repairUnit(unit, target, unit.spec.autoRepair, dt);
+  }
+
+  isRecycler(unit) {
+    return unit.player && RECYCLERS.has(unit.type) && alive(unit) && completed(unit, this.time);
+  }
+
+  canRecycle(unit, target) {
+    return this.isRecycler(unit) && !!target && target !== unit && target.player && alive(target) &&
+      (target.spec.fixed || (unit.type === 'mechanic' && !!target.spec.cost)) &&
+      (!unit.spec.fixed || distance(unit, target) <= unit.spec.repairRadius);
+  }
+
+  recycleValue(target) {
+    return Math.round((target.spec.cost?.[0] ?? 0) * RECYCLE_REFUND);
+  }
+
+  assignRecycle(target, selected) {
+    if (!this.actionAllowed) return 0;
+    const crew = [...new Set(selected)].filter(unit => this.canRecycle(unit, target));
+    if (!crew.length) return 0;
+    if (!target.spec.fixed) this.hold([target]);
+    for (const unit of crew) unit.order = { type: 'recycle', target };
+    return crew.length;
+  }
+
+  recycleWork(unit, dt, speed) {
+    if (unit.order?.type !== 'recycle') return false;
+    const { target } = unit.order;
+    if (!this.canRecycle(unit, target)) {
+      unit.order = null;
+      return false;
+    }
+    if (!unit.spec.fixed && distance(unit, target) > target.spec.radius + 29) {
+      if (speed > 0) this.move(unit, target, speed, dt);
+      return true;
+    }
+    if (!unit.spec.fixed) unit.angle = angleTo(unit, target);
+    const t = this.time;
+    target.recycleWork = (active(target.recycleUntil, t) ? target.recycleWork : 0) + dt;
+    target.recycleUntil = t + .15;
+    unit.repairUntil = t + .14;
+    unit.repairBeam = target;
+    if (target.recycleWork + .0001 >= RECYCLE_TIME) {
+      const gold = this.recycleValue(target);
+      target.hp = 0;
+      unit.order = null;
+      this.gold += gold;
+      this.effect('ring', { x: target.x, y: target.y, color: '#f2cc79', radius: target.spec.radius + 24 }, .65);
+      if (gold) this.effect('float', { x: target.x, y: target.y - 22, color: '#ffe3a1', label: '+' + gold }, .85);
+      this.event('recycled', { unit: target, gold });
+    }
+    return true;
   }
 
   progress(unit) {
@@ -1450,7 +1585,9 @@ class Battle {
       return;
     }
     // A healthy force can save for a Titan. Falling back to regular production answers a push.
-    const saving = !this.boss && !waiting && this.goldRate(false) >= 120 &&
+    const raidStrength = combat.filter(unit => !unit.defender && !this.enemyReserve.has(unit)).length;
+    const canBank = raidStrength >= (pace.bossRaidFloor ?? 0) || this.time >= pace.bossSavingsAt + 85;
+    const saving = canBank && !this.boss && !waiting && this.goldRate(false) >= 120 &&
       this.time >= pace.bossSavingsAt && !underAttack && (combat.length >= 2 || pressure === 0);
     if (saving) return;
 
@@ -1986,6 +2123,7 @@ class Battle {
     }
     const weak = active(unit.guardUntil, t);
     let damage = spec.damage * (weak ? (unit.guardAttack ?? STONE_MUSIC.guardAttack) : 1);
+    if (!unit.player && !spec.fixed) damage *= this.pace.attackMultiplier ?? 1;
     const webSlow = active(unit.netUntil, t) ? unit.type === 'boss' ? 1.1 : 1.3 : 1;
     let gap = spec.every;
     if (spec.burst) {
@@ -2253,6 +2391,7 @@ class Battle {
       return;
     }
     if (spec.onlyAir) this.shootNearby(unit);
+    if (this.recycleWork(unit, dt, workSpeed)) return;
     if (this.repairWork(unit, dt, workSpeed)) return;
     if (spec.buildAssist && this.assistBuild(unit, dt)) return;
     if (spec.builder && !orderType && this.buildWork(unit, dt, workSpeed)) {
@@ -3050,13 +3189,19 @@ class BattlefieldView {
     if (active(unit.repairUntil,t) && alive(unit.repairBeam)) {
       const target=unit.repairBeam;
       const targetY=this.bounds(target,game,at).y-target.spec.height*.4;
-      for (let i=0;i<4;i++) {
-        const progress=(at*1.9+i*.25)%1;
-        ellipse(ctx,lerp(x,target.x,progress),lerp(y-h*.45,targetY,progress),2.2,2.2,'#abe6bf');
+      const recycling = unit.order?.type === 'recycle';
+      const color = recycling ? '#f2cc79' : '#abe6bf';
+      for (let index=0;index<4;index++) {
+        const progress=(at*1.9+index*.25)%1;
+        const beam = recycling ? 1-progress : progress;
+        ellipse(ctx,lerp(x,target.x,beam),lerp(y-h*.45,targetY,beam),2.2,2.2,color);
       }
-      ctx.fillStyle='#c1f2ce';
+      ctx.fillStyle=color;
       ctx.fillRect(target.x-4,targetY-1,8,2);
-      ctx.fillRect(target.x-1,targetY-4,2,8);
+      if (!recycling) ctx.fillRect(target.x-1,targetY-4,2,8);
+    }
+    if (active(unit.recycleUntil,t)) {
+      this.text('回收 '+Math.floor(unit.recycleWork/RECYCLE_TIME*100)+'%',x,footY+24,'#ffdf98',13);
     }
     if(unit.rained) {
       for(let i=0;i<4;i++) {
@@ -3351,7 +3496,19 @@ class BattlefieldView {
         for (const u of crew) ellipse(ctx,u.x,u.y,FIELD_BUILD_REACH,FIELD_BUILD_REACH,'#b6d8a215','#d3e6a79c',1.4);
       }
     }
-    if(mode && ui.pointer) {
+    if (mode?.type === 'recycle') {
+      const crew = [...ui.selected];
+      const canRecover = target => crew.some(unit => game.canRecycle(unit, target));
+      const hovered = ui.pointer && hitTest(ui.pointer, true, touchScreen, canRecover);
+      for (const target of game.friends) {
+        if (!canRecover(target)) continue;
+        const { x, y, h } = this.bounds(target, game);
+        const focused = target === hovered;
+        corners(ctx,x,y-h*.37,target.spec.radius*2+16,h+6,9,focused?'#ffe6ac':'#e5c07eaa',focused?2.6:1.6);
+        if (focused) this.text('返还 '+game.recycleValue(target)+' 金币',x,y+22,'#ffe6ac',14);
+      }
+    }
+    if(mode && ui.pointer && mode.type!=='recycle') {
       const point=ui.pointer;
       if(mode.type==='build') {
         const position=game.placementPoint(mode.unitType,point);
@@ -3490,12 +3647,12 @@ const stoneMusicOffset = { guardSong: .72, rainSong: .40 };
 let unitChipsStamp = '';
 
 const friendlyGuide = {
-  architect: '基地和工厂都能生产。可建多数建筑与采矿机，手动修理受损建筑。维修速率 31 HP/s。多名建筑师可接手同一蓝图。',
+  architect: '基地和工厂都能生产。可建通用建筑和采矿机，也可手动回收建筑或维修受损建筑。维修速率为每秒 31 HP，多名建筑师可接手同一蓝图。',
   frog: '廉价近战，蛙跳撞击普通步兵时有额外伤害，也更容易被步兵击倒。捧腹大笑消耗 16 点 67，冷却 20 秒，选定方向后让扇形内地面敌人失控 2 秒，自己蹲下 1 秒。',
   rat: '高血量高装甲，普攻撞击建筑时伤害提高 55%。肥嘟嘟滚动消耗 22 点 67，冷却 24 秒，选方向蓄力 2 秒后碾压轻型地面单位；撞上盾兵或灭霸会造成伤害并停下，结束后喘气 3 秒。弓兵会在它蓄力时后撤。',
   frogMech: '由 L2 工厂生产的重装机甲。每 1.55 秒喷一次火，同时灼烧前方扇形内的地面敌军和建筑，火焰按一半装甲计算减伤。125 点护盾先承伤，6 秒未受击后每秒恢复 22 点。维修恢复机体血量，护盾自行充能。击破敌方目标时播放 3 秒捧腹大笑。',
   mj: '由 L2 工厂生产。自动攻击地面和空中目标，蛛弹命中后缠绕 1.35 秒。盾兵免疫蛛弹，灭霸定身 0.85 秒。可在身边建蛛丝重机枪。释放小蜘蛛消耗 23 点 67，冷却 25 秒。',
-  mechanic: '可建建筑、采矿机和现场造兵。拥有 L2 工厂后可现场建造 MJ。附近 144 范围内逐个自动修理，每秒恢复 24 HP；手动指定为每秒 38 HP。自带轻型防空武器。',
+  mechanic: '可建通用建筑并在前线建造奶蛙、美团老鼠或 MJ，现场建造 MJ 需要 L2 工厂。范围 144 内自动维修，每秒恢复 24 HP，手动维修每秒恢复 38 HP。可回收建筑和有造价的我方机动部队，并以轻武器防空。',
   spider: '每次由 MJ 召唤 3 只，存活 15 秒，可攻击地面和空中。捕网冷却 4.6 秒，波及目标附近 82 范围的敌军，定身 1.65 秒，灭霸缩短至 0.52 秒。普通攻击对盾兵无效，捕网仍可命中。',
   base: '双方开局各有一座基地，维持基础生产能力，可排队补充建筑师。',
   factory: 'L1 可排队生产建筑师、奶蛙、美团老鼠和机械师，L2 解锁奶蛙机甲与 MJ。升级期间工厂继续处理队列。多选时，高级订单只发给 L2 工厂，完工单位前往集结点。基地和工厂被破坏后，仍可用幸存建造者恢复产线。',
@@ -3506,7 +3663,7 @@ const friendlyGuide = {
     '《雨爱司凤版》手动消耗 24 点 67，L1 持续 10 秒，声波基础伤害 '+STONE_MUSIC.damage[1]+'，可打空军、建筑和灭霸，减速 50%、受伤提高 40%。'+
     '僵尸免疫两首歌，灭霸免疫苦行山。两首歌共享 45 秒冷却。音频可循环，声波随战斗效果结束。',
   laser: '用激光拦截普通弹丸和箭矢。L1 拦截半径 150，单次间隔 1.05 秒，连续拦截 4 发后过热 5.5 秒。空闲时热量逐步消退，过热期间暂停拦截。灭霸拳铠弹和刀盾狗近战可绕过拦截。',
-  repair: '半径 '+UNITS.repair.repairRadius+'，逐个修复范围内其他友军或建筑，每秒恢复 29 HP。可手动指定范围内目标或协助建筑师、机械师施工，不能独自建造，也不参与 MJ 的专属重机枪施工。',
+  repair: '逐个维修半径 '+UNITS.repair.repairRadius+' 内的其他友军和建筑，每秒恢复 29 HP。可手动指定维修，辅助建筑师和机械师施工，或回收半径内我方建筑。',
   webTower: '仅 MJ 可施工。每轮打出三发蛛弹，命中后可对地对空定身 1.72 秒。普通蛛弹对盾兵无效，对灭霸仅造成 52% 的伤害并缠绕 0.68 秒。',
   frogLauncher: '自动发射远程奶蛙炮弹，射程 '+UNITS.frogLauncher.range+'，溅射半径 83，中心伤害 96，边缘伤害减半。无需场上有奶蛙。可手动指定下一发落点，与自动射击共用 4.5 秒装填，只打击敌方地面单位和建筑。',
   silo: '需 '+UNITS.silo.cost[0]+' 金币和 '+UNITS.silo.cost[1]+' 点 67 才能建造。我方可建一座，完工后装填 25 秒。花 16 点 67 手动指定落点，棍母导弹约 '+SILO_FLIGHT_TIME+' 秒后命中，清除半径 212 内的敌方地面部队、空军和建筑，友军安全。灭霸失去 80% 当前血量，之后受伤增加 50%。发射后冷却 57 秒，再装填 25 秒。',
@@ -3516,7 +3673,7 @@ const enemyGuide = {
   base: '开局自带，持续训练建筑师。摧毁基地可切断这条产线。',
   architect: '能重建工厂，按 AI 计划建采矿机或哨戒塔。敌方没有基地和工厂后，还要清除幸存的建筑师。',
   factory: '敌军消耗金币在这里生产地面和空中单位。金币充足时可能扩建第二座。',
-  miner: '完工后每秒替敌方增加 '+MINE_RATE+' 金币。中等和困难的 AI 会择机升级采矿机。袭击矿机可以拖慢敌军补充兵力。',
+  miner: '完工后每秒为敌方增加 '+MINE_RATE+' 金币。中等及以上的 AI 会择机升级采矿机。攻破矿机可拖慢敌军补充兵力。',
   sentry: '被动向附近我方地面部队和建筑发射炮弹，不能攻击空中。奶蛙火炮射程更远。',
   foot: '普通弹丸对奶蛙额外增伤，也会受到奶蛙的额外反击伤害。成群出现时可以用机甲喷火或火炮溅射。',
   shield: '刀盾狗拥有 63% 装甲，近战不会被激光拦截。免疫普通蛛丝和小蜘蛛的攻击，捕网仍能定身。可以用机甲、老鼠滚动或棍母导弹应对，也能被苦行山变成王警卫。',
@@ -4002,6 +4159,10 @@ function handleEvents() {
       audio.tone([[410,.09]], 'sine', .06);
     } else if (event.type === 'trained') {
       note(event.unit.spec.name + '已就绪。');
+    } else if (event.type === 'recycled') {
+      note('已回收'+event.unit.spec.name+' · 返还 '+event.gold+' 金币。');
+      if (event.unit.type === 'stone') audio.playStone();
+      audio.tone([[440,.08],[660,.12]],'triangle',.06);
     } else if (event.type === 'frogClip') {
       frogClip();
       note('捧腹大笑 · 地面敌人失控 2 秒。');
@@ -4106,8 +4267,8 @@ function selectedStations() {
 
 function selectedBuilders() {
   const selected = [...ui.selected].filter(alive);
-  const type = selected[0]?.type;
-  return (type === 'architect' || type === 'mj') && selected.every(u => u.type === type) ? selected : [];
+  const first = selected[0];
+  return first?.spec.builder && selected.every(u => u.type === first.type) ? selected : [];
 }
 
 function selectedMechanics() {
@@ -4175,12 +4336,17 @@ function updateCards() {
   const isMJ = builders[0]?.type === 'mj';
   const baseOnly = selected.length > 0 && selected.every(u => u.type === 'base');
   if (ui.panel === 'build') {
-    const title = isMJ ? 'MJ 建造' : builders.length ? '建筑师建造' : '阵地建造';
-    setText('build-title', builders.length > 1 ? title+' · '+builders.length+' 名' : title);
+    const title = builders.length ? builders[0].spec.name+'建造' : '阵地建造';
+    const label = isMJ ? 'MJ 建造' : title;
+    setText('build-title', builders.length > 1 ? label+' · '+builders.length+' 名' : label);
     updateSkillButton($('build-ability'), isMJ && builders.length === 1 ? builders[0] : null);
     const repair = $('build-repair');
     repair.hidden = ![...ui.selected].some(u => canWorkOrder(u) && u.spec.repairRate);
     repair.disabled = paused || !game.actionAllowed;
+    updateRecycleControl($('build-recycle'));
+    $('build-train').hidden = !mechanics.length;
+    $('build-train').disabled = paused || !game.actionAllowed;
+    $('builder-actions').hidden = repair.hidden && $('build-recycle').hidden && $('build-train').hidden && $('build-ability').hidden;
   }
   updateProductionPanel(selected, allStations, mechanics);
   for (const [type,card] of cards) {
@@ -4261,7 +4427,18 @@ function setButton(button, value, key) {
 function unitStatus(unit) {
   const t = game.time;
   const hp = Math.ceil(unit.hp) + ' / ' + unit.spec.hp + ' HP';
-  if (!unit.player) return { value: hp + ' · ' + unit.spec.info, progress: unit.hp / unit.spec.hp };
+  if (!unit.player) {
+    const bonus = !unit.spec.fixed && unit.spec.damage && game.pace.attackMultiplier;
+    const attack = bonus ? ' · 攻击力 +' + Math.round((bonus-1)*100) + '%' : '';
+    return { value: hp + attack + ' · ' + unit.spec.info, progress: unit.hp / unit.spec.hp };
+  }
+  const reclaiming = unit.order?.type === 'recycle' && alive(unit.order.target);
+  const target = reclaiming ? unit.order.target : unit;
+  if (reclaiming || active(target.recycleUntil,t)) {
+    const progress = active(target.recycleUntil,t) ? target.recycleWork/RECYCLE_TIME : 0;
+    return { value: (reclaiming ? '回收' + target.spec.name : '正在回收') + ' · ' + Math.floor(progress*100) +
+      '% · 完成返还 ' + game.recycleValue(target) + ' 金币', progress };
+  }
   if (!completed(unit, t)) {
     const work = active(unit.workUntil,t);
     const state = work ? '施工中' : '等待建造者';
@@ -4339,6 +4516,19 @@ function canWorkOrder(unit) {
   return alive(unit) && completed(unit,game.time) && (unit.spec.builder || unit.spec.repairRate);
 }
 
+function selectedRecyclers() {
+  return [...ui.selected].filter(unit => game.isRecycler(unit));
+}
+
+function updateRecycleControl(button) {
+  const crew = selectedRecyclers();
+  const working = crew.some(unit => unit.order?.type === 'recycle' && alive(unit.order.target));
+  button.hidden = !crew.length;
+  button.disabled = paused || !game.actionAllowed;
+  setText(button.id, working ? '停止回收' : '回收');
+  button.title = working ? '停止回收 [X]' : '选择回收目标 [X]';
+}
+
 function updateSelection() {
   const unit = currentUnit();
   const group = [...ui.selected];
@@ -4367,6 +4557,7 @@ function updateSelection() {
   repair.hidden = !workers.some(u => u.spec.repairRate);
   repair.disabled = paused || !game.actionAllowed;
   repair.classList.toggle('armed', ui.mode?.type === 'repair');
+  updateRecycleControl($('recycle-order'));
   $('field-train').hidden = !selectedMechanics().length;
   $('build-web').hidden = !workers.some(u=>u.type==='mj');
   $('rally').classList.toggle('armed', ui.mode?.type === 'rally');
@@ -4471,7 +4662,7 @@ function updateHud() {
   if (clipEnd && game.time >= clipEnd) closeClip();
   if (!ui.mode && game.time > message.end) {
     const lastProducer = game.time > 25 && game.producers(true) === 1;
-    const controls = touchScreen ? '双击队员圈选同类，点空地收起窗口。' : '双击圈选同类，右键移动，点空地收起窗口。';
+    const controls = touchScreen ? '双击同类多选。点「移动」再点目的地。' : '双击圈选同类，右键移动，点空地收起窗口。';
     const fallback = lastProducer ? '我方只剩一个生产者。' : controls;
     setText('field-message', fallback);
     $('field-note').classList.toggle('danger', lastProducer);
@@ -4493,6 +4684,7 @@ function setMode(mode, announce = true) {
     '在战场内为'+blueprint.name+'选址。') :
     mode?.type==='rally' ? '点击战场设置集结点。' :
     mode?.type==='repair' ? '点受损友军或我方蓝图。建筑师维修建筑，修复湾需在范围内。' :
+    mode?.type==='recycle' ? '点金色标记的目标。回收完成后返还造价的 80%。' :
     mode?.type==='move' ? '点地图选择部队的目的地。沿途自动攻击射程内的敌人。' :
     mode?.type==='skill' ? (mode.unit.type==='silo'?'选择棍母导弹落点，圆圈内只打击敌方。':
       mode.unit.type==='frogLauncher'?'点射程圈内的落点，内圈显示炮弹溅射范围。':'点击确定技能方向。') :
@@ -4569,10 +4761,10 @@ function workOnTarget(target, selected) {
   note((count>1 ? count+' 个单位协同维修 · ' : '已下令维修')+target.spec.name+'。');
   return true;
 }
-function issue(point, moveOnly = false) {
-  const target=moveOnly ? null : hitTest(point, false);
+function issue(point, moveOnly = false, touch = touchScreen) {
+  const target=moveOnly ? null : hitTest(point, false, touch);
   const selected = [...ui.selected].filter(alive);
-  const friend = moveOnly ? null : hitTest(point,true);
+  const friend = moveOnly ? null : hitTest(point,true,touch);
   if (selected.length && workOnTarget(friend,selected)) { updateHud(); return; }
   const team=selected.filter(u=>completed(u,game.time)&&!u.spec.fixed);
   const locks = moveOnly || (friend && !target) ? 0 : game.lockTarget(selected,target);
@@ -4592,7 +4784,7 @@ function issue(point, moveOnly = false) {
     count > 1 ? '已下令 ' + count + ' 个单位前往目标点。' : '已下达移动指令。');
   audio.tone([[520,.085]],'sine',.065);
 }
-function commit(point) {
+function commit(point, touch = touchScreen) {
   const mode=ui.mode;
   if (mode.type==='build') {
     const location=game.placementPoint(mode.unitType,point);
@@ -4605,12 +4797,22 @@ function commit(point) {
     // Leave the builder selected for the next blueprint.
     if (!game.constructionCrew(mode.unitType,true,selected).length) { ui.selected=new Set([unit]);ui.inspected=null; }
   } else if (mode.type==='repair') {
-    const target = hitTest(point,true);
+    const target = hitTest(point,true,touch);
     if (!ui.selected.size || !workOnTarget(target,[...ui.selected])) {
       note('该目标未受损、超出范围，或当前选择无法维修或协助。',true);
       return;
     }
     setMode(null, false);
+  } else if (mode.type==='recycle') {
+    const crew = selectedRecyclers();
+    const target = hitTest(point,true,touch,unit => crew.some(worker => game.canRecycle(worker, unit)));
+    const count = game.assignRecycle(target,crew);
+    if (!count) {
+      note('请选择高亮的我方目标。修复湾只能回收范围内的建筑。',true);
+      return;
+    }
+    setMode(null, false);
+    note((count>1 ? count+' 个单位协同回收' : '已下令回收')+target.spec.name+' · 完成返还 '+game.recycleValue(target)+' 金币。');
   } else if (mode.type==='skill') {
     if (mode.unit.type==='frogLauncher') {
       const problem = game.artilleryProblem(mode.unit,point);
@@ -4667,6 +4869,20 @@ function repairOrder() {
   if (paused || !game.actionAllowed || ![...ui.selected].some(canWorkOrder)) return;
   setMode(ui.mode?.type==='repair' ? null : {type:'repair'});
 }
+function recycleOrder() {
+  if (paused || !game.actionAllowed) return;
+  const crew = selectedRecyclers();
+  if (!crew.length) return;
+  const working = crew.filter(unit => unit.order?.type === 'recycle' && alive(unit.order.target));
+  if (working.length) {
+    for (const unit of working) unit.order = null;
+    setMode(null, false);
+    note('已停止所选单位的回收指令。');
+    updateHud();
+    return;
+  }
+  setMode(ui.mode?.type==='recycle' ? null : {type:'recycle'});
+}
 function hold() {
   if (paused || !game.actionAllowed) return;
   game.hold([...ui.selected]);
@@ -4677,16 +4893,16 @@ function fieldPoint(ev) {
   const bounds=canvas.getBoundingClientRect();
   return view.screenPoint(ev.clientX-bounds.left,ev.clientY-bounds.top);
 }
-function hitTest(point, player) {
+function hitTest(point, player, touch = touchScreen, eligible = null) {
   let best=null, bestScore=Infinity;
   const units=game.units(player);
-  const touch=clamp((canvas.clientWidth<650 ? 10 : 5)/view.camera.scale,4,33);
+  const padding=clamp((touch ? 12 : 5)/view.camera.scale,4,36);
   for(const u of units) {
-    if (!alive(u)) continue;
+    if (!alive(u) || (eligible && !eligible(u))) continue;
     const {x,y,h}=view.bounds(u,game,artAt);
-    const width = Math.max(u.spec.radius + touch,h*.32);
+    const width = Math.max(u.spec.radius + padding,h*.32);
     const center = y - h*.34;
-    const height = h*.54 + touch;
+    const height = h*.54 + padding;
     if (Math.abs(point.x-x)>width || Math.abs(point.y-center)>height) continue;
     const score=Math.hypot((point.x-x)/width,(point.y-center)/height);
     if (score<bestScore) {best=u;bestScore=score;}
@@ -4700,11 +4916,12 @@ function onMap(point) {
 
 canvas.addEventListener('contextmenu',ev=>{
   ev.preventDefault();
+  if (ev.pointerType === 'touch' || ev.sourceCapabilities?.firesTouchEvents || ui.touches.size) return;
   audio.unlock();
   if (paused || !game.actionAllowed) return;
   if (ui.mode) {setMode(null);return;}
   const point=fieldPoint(ev);
-  if (onMap(point)) issue(point);
+  if (onMap(point)) issue(point,false,false);
 });
 
 function focusOverview(ev) {
@@ -4807,13 +5024,16 @@ function finishPan(ev) {
   if(ui.pan?.id===ev.pointerId) {ui.pan=null;fieldCursor();return true;}
   return false;
 }
-canvas.addEventListener('pointercancel',ev=>{
+function cancelPointer(ev) {
+  if (!ui.touches.has(ev.pointerId) && ui.drag?.id !== ev.pointerId && ui.pan?.id !== ev.pointerId) return;
   finishPan(ev);
   if(ui.drag?.id===ev.pointerId) ui.drag=null;
   ui.unitTap=null;
   ui.pointer=null;
   fieldCursor();
-});
+}
+canvas.addEventListener('pointercancel',cancelPointer);
+canvas.addEventListener('lostpointercapture',cancelPointer);
 canvas.addEventListener('pointerup',ev=>{
   if(finishPan(ev)) return;
   const drag=ui.drag;
@@ -4826,9 +5046,10 @@ canvas.addEventListener('pointerup',ev=>{
     if (ui.panel && !ui.mode && !drag.moved) setPanel(null);
     return;
   }
-  const friend = drag.moved ? null : hitTest(point,true);
+  const touch=ev.pointerType==='touch';
+  const friend = drag.moved ? null : hitTest(point,true,touch);
   if (ui.mode) {
-    if (ui.mode.type!=='build' || !friend) {commit(point);return;}
+    if (ui.mode.type!=='build' || !friend) {commit(point,touch);return;}
     setMode(null, false);
   }
   if(drag.moved) {
@@ -4840,15 +5061,14 @@ canvas.addEventListener('pointerup',ev=>{
     selection(ev.shiftKey ? [...ui.selected,...selected] : selected);
     return;
   }
-  const touch=ev.pointerType==='touch';
   if(friend) {
     const tap = ui.unitTap;
     const repeated = tap?.unit === friend && tap.kind === ev.pointerType &&
       ev.timeStamp - tap.time <= (touch ? touchDoubleClickWindow : doubleClickWindow);
     if(repeated) {
       selectNearby(friend);
-    } else if(touch&&!completed(friend,game.time)&&[...ui.selected].some(canWorkOrder)) {
-      issue(point);
+    } else if(touch&&!completed(friend,game.time)&&workOnTarget(friend,[...ui.selected])) {
+      updateHud();
     } else if(ev.shiftKey) {
       const team = new Set(ui.selected);
       if(team.has(friend)) team.delete(friend);
@@ -4861,14 +5081,13 @@ canvas.addEventListener('pointerup',ev=>{
     return;
   }
   ui.unitTap=null;
-  const enemy=hitTest(point,false);
+  const enemy=hitTest(point,false,touch);
   if (!enemy && ui.panel) {
-    const closeOnly = !touch || ui.panel!=='unit';
     setPanel(null);
-    if (closeOnly) return;
+    return;
   }
   if (touch && [...ui.selected].some(u => alive(u) && (!u.spec.fixed || enemy && game.canLock(u)))) {
-    issue(point);
+    issue(point,false,true);
   } else {
     selection([],enemy);
   }
@@ -5006,9 +5225,13 @@ $('unlock-order').addEventListener('click',()=>{
 });
 $('repair-order').addEventListener('click',repairOrder);
 $('build-repair').addEventListener('click',repairOrder);
-$('field-train').addEventListener('click',()=>{
-  if (!paused && game.actionAllowed && selectedMechanics().length) setPanel('train');
-});
+$('recycle-order').addEventListener('click',recycleOrder);
+$('build-recycle').addEventListener('click',recycleOrder);
+for (const id of ['field-train','build-train']) {
+  $(id).addEventListener('click',()=>{
+    if (!paused && game.actionAllowed && selectedMechanics().length) setPanel('train');
+  });
+}
 $('build-web').addEventListener('click',()=>chooseCard('webTower'));
 $('select-all').addEventListener('click',selectAll);
 $('move-order').addEventListener('click',orderMode);
@@ -5044,6 +5267,7 @@ document.addEventListener('keydown',ev=>{
   else if (key==='h') hold();
   else if (key==='q') chooseSkill();
   else if (key==='r') repairOrder();
+  else if (key==='x') recycleOrder();
   else if (key==='enter' && game.phase==='ready' && ev.target===document.body) start();
 });
 
@@ -5058,6 +5282,10 @@ createCards();
 setText('rule-opening-gold', OPENING_GOLD);
 setText('rule-base-gold-rate', GOLD_RATE);
 setText('rule-mine-gold-rate', MINE_RATE);
+setText('rule-hell-attack', Math.round((DIFFICULTIES.hell.attackMultiplier - 1) * 100));
+setText('rule-recycle-time', RECYCLE_TIME);
+setText('rule-recycle-rate', RECYCLE_REFUND * 100);
+setText('rule-silo-flight', SILO_FLIGHT_TIME);
 renderUnitGuide('rule-troops', [...troopTypes,'spider'], UNITS, friendlyGuide);
 renderUnitGuide('rule-structures', ['base',...structureTypes], UNITS, friendlyGuide);
 renderUnitGuide('rule-enemy-units',
