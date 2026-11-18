@@ -529,7 +529,8 @@ body { height: 100dvh; display: flex; flex-direction: column; overflow: hidden; 
         <ul>
           <li><strong>目标高度</strong>　奶蛙、老鼠、机甲和火炮攻击地面。防空炮塔与机械师攻击空中。MJ、蛛丝重机枪和小蜘蛛可以攻击两种高度，棍母导弹同时覆盖落点内的敌军建筑与空地部队。</li>
           <li><strong>拦截</strong>　激光防御塔拦截普通炮弹和箭矢。每次拦截增加负荷，过热时等冷却条结束才能恢复。刀盾狗使用近战，灭霸的拳铠弹可以绕过拦截。</li>
-          <li><strong>施放技能</strong>　选中单位后点亮起的技能，方向类或落点类技能再点战场。施放时消耗 67 指数并开始冷却。每个单位各自计时，讲解石的两首歌共用 45 秒冷却。</li>
+          <li><strong>施放技能</strong>　选中单位后点亮起的技能，方向类或落点类技能再点战场。技能所需的 67 指数和冷却时间可在单位面板查看。</li>
+          <li><strong>讲解石切歌</strong>　完工后循环播放《东南苦行山》。选中讲解石，花 <span id="rule-rain-cost">24</span> 点 67 手动播放《雨爱司凤版》，立即打断苦行山。雨爱生效期间无法重复施放，结束后自动切回苦行山。苦行山的自动控场单独计时。</li>
           <li><strong>控场</strong>　苦行山让符合条件的地面敌人变身王警卫。雨爱声波覆盖空地，令敌军减速并受到更多伤害。僵尸免疫两首歌。普通蛛丝打盾兵无效，蜘蛛捕网仍可缠住两种盾兵和灭霸。</li>
           <li><strong>灭霸</strong>　可用机甲、火炮、蛛丝与雨爱持续压制。棍母导弹飞行 <span id="rule-silo-flight">5.5</span> 秒后落地，只杀伤敌方。命中灭霸扣除其 80% 当前血量，并让他之后受到的伤害提高 50%。这一易伤能叠加雨爱的增伤。</li>
         </ul>
@@ -792,6 +793,7 @@ const QUEUE_LIMIT = 10;
 const DEFAULT_RALLY = { x: 375, y: 355 };
 const RAIN_SLOW = .5;
 const RAIN_DAMAGE = 1.4;
+const STONE_GUARD_COOLDOWN = 45;
 const STONE_MUSIC = {
   radius: ARTILLERY_RANGE, duration: [5, 10], waveEvery: 1.6, damage: [10, 20],
   guardSpeed: .4, guardAttack: .3, rainSpeed: RAIN_SLOW, rainDamage: RAIN_DAMAGE,
@@ -945,7 +947,7 @@ const SKILLS = {
   frog:   { label: '捧腹大笑', cost: 16, cool: 20, target: true, hint: '选择方向。地面敌人失控 2 秒，奶蛙蹲下 1 秒。' },
   rat:    { label: '肥嘟嘟滚动', cost: 22, cool: 24, target: true, hint: '蓄力 2 秒后滚动碾压轻型地面敌人。碰盾停下，之后喘气 3 秒。' },
   mj:     { label: '释放小蜘蛛', cost: 23, cool: 25, hint: '召来 3 只小蜘蛛，存活 15 秒。范围捕网可缠住盾兵和灭霸，灭霸的缠绕更短。' },
-  stone:  { label: '播放雨爱', cost: 24, cool: 45, hint: '用雨爱声波打击范围内的敌军，同时减速并提高其受伤量。可对空，与苦行山共享冷却。' },
+  stone:  { label: '播放雨爱', cost: 24, hint: '立即切到雨爱，声波可对空，并让敌军减速、受到更多伤害。效果结束后自动切回苦行山。' },
   airDefense: { label: '快速装填', cost: 18, cool: 30, hint: '棍母防空导弹发射速度提高 50%，持续 8 秒。' },
   silo:   { label: '发射棍母导弹', cost: 16, target: true, hint: '只打击落点范围内的敌方单位和建筑。灭霸失去 80% 当前血量，并获得持续易伤。' },
   frogLauncher: { label: '指定落点', cost: 0, target: true, hint: '指定下一发奶蛙炮弹的落点。落地时溅射敌方地面目标。' },
@@ -1325,7 +1327,7 @@ class Battle {
     this.effect('ring', { x: blueprint.x, y: blueprint.y, color: blueprint.player ? '#a9f5cd' : '#fbc09b',
       radius: blueprint.spec.radius + 24 }, .58);
     if (blueprint.player) this.event('built', { unit: blueprint });
-    if (blueprint.type === 'stone') this.startStoneSong(blueprint, 0, true);
+    if (blueprint.type === 'stone') this.startStoneSong(blueprint, 0);
   }
 
   buildWork(unit, dt, speed) {
@@ -1777,6 +1779,10 @@ class Battle {
     return active(tower.songUntil, this.time) ? tower.songMusic : tower.spec.music;
   }
 
+  stoneRainActive(tower) {
+    return tower.playingMode === 1 && active(tower.songUntil, this.time);
+  }
+
   soundTargets(tower, mode, music = tower.spec.music) {
     return this.enemies.filter(enemy => alive(enemy) && enemy.type !== 'zombie' &&
       (mode === 1 || !enemy.spec.air && !enemy.spec.fixed && enemy.type !== 'boss') &&
@@ -1787,12 +1793,9 @@ class Battle {
     return this.soundTargets(tower, 0).filter(enemy => !active(enemy.guardUntil, this.time));
   }
 
-  startStoneSong(tower, mode, opening = false, guards = mode ? [] : this.guardTargets(tower)) {
+  startStoneSong(tower, mode, guards = mode ? [] : this.guardTargets(tower)) {
     const t = this.time;
-    if (!opening || guards.length) {
-      tower.cooldown = t + SKILLS.stone.cool;
-      tower.silenced = t + 10;
-    }
+    if (mode === 0 && guards.length) tower.guardReadyAt = t + STONE_GUARD_COOLDOWN;
     const music = tower.spec.music;
     tower.songMusic = music;
     tower.songStartedAt = t;
@@ -1832,7 +1835,9 @@ class Battle {
     if (!this.running || !unit?.player || !alive(unit) || !skill) return '战斗开始后可释放技能。';
     if (!completed(unit, this.time)) return '建造尚未完成。';
     if (active(unit.restUntil, this.time) || active(unit.crouchUntil, this.time) || unit.roll) return '单位暂时无法行动。';
-    if (active(unit.cooldown, this.time) || active(unit.silenced, this.time)) return '技能冷却中。';
+    if (unit.type === 'stone') {
+      if (this.stoneRainActive(unit)) return '雨爱司凤版正在播放。';
+    } else if (active(unit.cooldown, this.time)) return '技能冷却中。';
     if (unit.type === 'silo' && active(unit.loadedAt, this.time)) return '发射井尚未装填完成。';
     if (this.index + .0001 < skill.cost) return '67 指数不足。';
     return '';
@@ -1937,8 +1942,7 @@ class Battle {
   }
 
   updateRain() {
-    const towers = this.friends.filter(u => u.type === 'stone' && alive(u) &&
-      u.playingMode === 1 && active(u.songUntil, this.time))
+    const towers = this.friends.filter(u => u.type === 'stone' && alive(u) && this.stoneRainActive(u))
       .sort((a,b) => b.songMusic.rainDamage - a.songMusic.rainDamage);
     for (const enemy of this.enemies) {
       const cover = enemy.type === 'zombie' ? null :
@@ -2410,10 +2414,16 @@ class Battle {
       unit.pulseAt = t + 17;
     }
     if (unit.type === 'stone') {
-      if (!active(unit.cooldown, t) && !active(unit.songUntil, t) && !active(unit.nextGuardCheck, t)) {
+      const songActive = active(unit.songUntil, t);
+      if (unit.playingMode === 1 && !songActive) {
+        unit.playingMode = 0;
+        unit.songStartedAt = t;
+        this.event('musicUpdate');
+      }
+      if (!songActive && !active(unit.guardReadyAt ?? unit.cooldown, t) && !active(unit.nextGuardCheck, t)) {
         unit.nextGuardCheck = t + .18;
         const guards = this.guardTargets(unit);
-        if (guards.length) this.startStoneSong(unit, 0, false, guards);
+        if (guards.length) this.startStoneSong(unit, 0, guards);
       }
       if (active(unit.songUntil, t) && unit.nextWaveAt <= t) this.pulseStone(unit);
     }
@@ -3836,9 +3846,9 @@ const friendlyGuide = {
   miner: '放在任意空置金矿上，L1 完工后每秒增加 '+MINE_RATE+' 金币，升级后产量为 L1 的 1.5 倍。',
   airDefense: '自动向 330 射程内的空军发射棍母防空导弹，单发 62 伤害，每 1.65 秒发射一枚。飞行盾兵会用正面替后方空军承受导弹。快速装填消耗 18 点 67，冷却 30 秒，发射速度提高 50%，持续 8 秒。',
   stone: 'L1 半径 '+STONE_MUSIC.radius+'，与同级奶蛙火炮射程一致。歌曲生效期间每 '+STONE_MUSIC.waveEvery+' 秒发一次声波。'+
-    '《东南苦行山》自动播放，使圈内合格敌军变为王警卫，L1 持续 5 秒，声波基础伤害 '+STONE_MUSIC.damage[0]+'。'+
-    '《雨爱司凤版》手动消耗 24 点 67，L1 持续 10 秒，声波基础伤害 '+STONE_MUSIC.damage[1]+'，可打空军、建筑和灭霸，减速 50%、受伤提高 40%。'+
-    '僵尸免疫两首歌，灭霸免疫苦行山。两首歌共享 45 秒冷却。音频可循环，声波随战斗效果结束。',
+    '《东南苦行山》完工后循环播放，使圈内合格敌军变为王警卫。L1 控场持续 5 秒，声波基础伤害 '+STONE_MUSIC.damage[0]+'，自动控场冷却 '+STONE_GUARD_COOLDOWN+' 秒。'+
+    '《雨爱司凤版》消耗 '+SKILLS.stone.cost+' 点 67，可手动打断苦行山。L1 生效 10 秒，声波基础伤害 '+STONE_MUSIC.damage[1]+'，可打空军、建筑和灭霸，减速 50%、受伤提高 40%。'+
+    '雨爱结束后会切回苦行山，已变身的王警卫按原倒计时恢复。僵尸免疫两首歌，灭霸免疫苦行山。',
   laser: '用激光拦截普通弹丸和箭矢。L1 拦截半径 150，单次间隔 1.05 秒，连续拦截 4 发后过热 5.5 秒。空闲时热量逐步消退，过热期间暂停拦截。灭霸拳铠弹和刀盾狗近战可绕过拦截。',
   repair: '逐个维修半径 '+UNITS.repair.repairRadius+' 内的其他友军和建筑，每秒恢复 29 HP。可手动指定维修，辅助建筑师和机械师施工，或回收半径内我方建筑。',
   webTower: '仅 MJ 可施工。每轮打出三发蛛弹，命中后可对地对空定身 1.72 秒。普通蛛弹对盾兵无效，对灭霸仅造成 52% 的伤害并缠绕 0.68 秒。',
@@ -4327,19 +4337,20 @@ const audio = {
   playStone() {
     if (!this.enabled || paused || screen !== 'game' || !game.running) return;
     const towers = game.friends.filter(u => u.type === 'stone' && alive(u) && Number.isFinite(u.songStartedAt));
-    const rain = u => Number(u.playingMode === 1 && active(u.songUntil,game.time));
+    const rain = u => Number(game.stoneRainActive(u));
     const tower = towers.sort((a,b) => rain(b)-rain(a) || b.songStartedAt-a.songStartedAt)[0];
     if (!tower) { this.stop('music'); return; }
+    const mode = rain(tower), key = stoneTracks[mode];
+    const started = !mode && tower.playingMode === 1 ? tower.songUntil : tower.songStartedAt;
     const current = this.layers.get('music');
-    if (current?.tower === tower && current.started === tower.songStartedAt) return;
-    const key = stoneTracks[tower.playingMode];
-    if (!MEDIA_ASSETS[key]) return;
+    if (!MEDIA_ASSETS[key] || current?.key === key && (!mode || current.tower === tower && current.started === started)) return;
     this.stop('music');
     this.playElement(this.stoneSong(key), 'music', .72, 0,
-      stoneMusicOffset[key] + Math.max(0, game.time - tower.songStartedAt));
+      stoneMusicOffset[key] + Math.max(0, game.time - started));
     const layer = this.layers.get('music');
+    layer.key = key;
     layer.tower = tower;
-    layer.started = tower.songStartedAt;
+    layer.started = started;
   },
   tone(notes, kind = 'triangle', volume = .1) {
     if (!this.enabled || paused || !this.context || this.context.state !== 'running') return;
@@ -4782,7 +4793,7 @@ function unitStatus(unit) {
   }
   if (unit.type === 'stone') {
     const playing = active(unit.songUntil,t) ? SONGS[unit.playingMode]+' · '+seconds(unit.songUntil-t) :
-      active(unit.silenced,t) ? '沉默 '+seconds(unit.silenced-t) : '苦行山自动待命';
+      SONGS[0]+' · 循环播放';
     return { value: hp+' · '+playing, progress: unit.hp/unit.spec.hp };
   }
   if (active(unit.restUntil,t)) return { value: '休息中 · ' + seconds(unit.restUntil-t), progress: unit.hp / unit.spec.hp };
@@ -4894,13 +4905,18 @@ function updateSkillButton(action, unit) {
   const hint = unit.type === 'stone' ?
     '雨爱 '+unit.spec.music.duration[1]+' 秒，每波 '+unit.spec.music.damage[1]+' 基础伤害。'+skill.hint : skill.hint;
   action.title = hint + (reason ? '\n' + reason : '');
+  if (unit.type === 'stone') {
+    const rain = game.stoneRainActive(unit);
+    setButton(action, rain ? '雨爱播放中 · '+seconds(unit.songUntil-t) : skill.label+' · 67 '+skill.cost, rain ? '' : 'Q');
+    return;
+  }
   if (unit.type==='frogLauncher') {
     const reload = unit.fireAt > t ? ' · 装填 '+seconds(unit.fireAt-t) : '';
     setButton(action, (unit.aimPoint ? '重定落点' : skill.label)+reload, 'Q');
     return;
   }
   const stage = unit.type==='silo' ? game.siloState(unit) : null;
-  const cd = Math.max(unit.cooldown || 0, unit.silenced || 0) - t;
+  const cd = (unit.cooldown || 0) - t;
   const label = stage && stage.until>t ? stage.name + ' ' + seconds(stage.until-t) :
     cd > 0 ? skill.label + ' ' + seconds(cd) : skill.label + (skill.cost ? ' · 67 '+skill.cost : '');
   setButton(action, label, cd<=0 && !(stage?.until>t) ? 'Q' : '');
@@ -5651,6 +5667,7 @@ setText('rule-hell-attack', Math.round((DIFFICULTIES.hell.attackMultiplier - 1) 
 setText('rule-recycle-time', RECYCLE_TIME);
 setText('rule-recycle-rate', RECYCLE_REFUND * 100);
 setText('rule-silo-flight', SILO_FLIGHT_TIME);
+setText('rule-rain-cost', SKILLS.stone.cost);
 renderUnitGuide('rule-troops', [...troopTypes,'spider'], UNITS, friendlyGuide);
 renderUnitGuide('rule-structures', ['base',...structureTypes], UNITS, friendlyGuide);
 renderUnitGuide('rule-enemy-units',
