@@ -540,7 +540,7 @@ body { height: 100dvh; display: flex; flex-direction: column; overflow: hidden; 
           <li><strong>讲解石切歌</strong>　完工后自动播放《东南苦行山》。消耗 67 可手动播放《雨爱司凤版》，也可打断正在播放的苦行山。歌曲播完后进入冷却，冷却结束后自动播放苦行山。两级的播放时长、冷却和费用可查下方说明与建筑图鉴。</li>
           <li id="rule-stone-l1"></li>
           <li id="rule-stone-l2"></li>
-          <li><strong>控场</strong>　苦行山让符合条件的地面敌人变身王警卫。雨爱声波覆盖空地，令敌军减速并受到更多伤害。僵尸免疫两首歌。普通蛛丝打盾兵无效，蜘蛛捕网仍可缠住两种盾兵和灭霸。</li>
+          <li><strong>控场</strong>　苦行山播放期间，走进范围的地面敌军会变成王警卫，离开覆盖范围或歌曲停止后恢复。建筑、空军和灭霸免疫变身。雨爱声波覆盖空地，令敌军减速并受到更多伤害。僵尸免疫两首歌。普通蛛丝打盾兵无效，蜘蛛捕网仍可缠住两种盾兵和灭霸。</li>
           <li><strong>灭霸与棍母导弹</strong>　每方同时最多生产或部署一名灭霸。可用机甲、火炮、蛛丝与雨爱压制敌方灭霸。棍母发射井可建多座，每座独立装填。导弹飞行 <span id="rule-silo-flight">5.5</span> 秒后落地，只杀伤敌方。命中灭霸扣除其 80% 当前血量，并让他之后受到的伤害提高 50%。这一易伤能叠加雨爱的增伤。</li>
         </ul>
       </section>
@@ -822,15 +822,14 @@ const ENEMY_THINK_INTERVAL = 1.17;
 const QUEUE_LIMIT = 10;
 const RAIN_SLOW = .5;
 const RAIN_DAMAGE = 1.4;
-const STONE_GUARD_COOLDOWN = 45;
 const STONE_MUSIC = {
   duration: [60, 45], cooldown: [25, 40], rainCost: 24,
-  radius: ARTILLERY_RANGE, guardDuration: 5, waveEvery: 1.6, damage: [10, 20],
+  radius: ARTILLERY_RANGE, waveEvery: 1.6, damage: [10, 20],
   guardSpeed: .4, guardAttack: .3, rainSpeed: RAIN_SLOW, rainDamage: RAIN_DAMAGE,
 };
 const STONE_MUSIC_L2 = {
   ...STONE_MUSIC, duration: [75, 60], cooldown: [20, 20], rainCost: 36,
-  radius: ARTILLERY_L2_RANGE, guardDuration: 7, damage: [14, 28],
+  radius: ARTILLERY_L2_RANGE, damage: [14, 28],
   guardSpeed: .28, guardAttack: .22, rainSpeed: .38, rainDamage: 1.5,
 };
 const FIELD_BUILD_REACH = 260;
@@ -995,6 +994,8 @@ const angleTo = (a, b) => Math.atan2(b.y - a.y, b.x - a.x);
 const angleGap = (a, b) => Math.atan2(Math.sin(a - b), Math.cos(a - b));
 const active = (until, time) => (until || 0) > time;
 const alive = unit => unit?.hp > 0;
+const songAffects = (unit, mode) => alive(unit) && unit.type !== 'zombie' &&
+  (mode === 1 || !unit.spec.air && !unit.spec.fixed && unit.type !== 'boss');
 const completed = (unit, time) => unit.readyAt <= time;
 const lerp = (a, b, t) => a + (b - a) * t;
 const localConstruction = spec => !spec.fixed || spec.builtBy === 'mj';
@@ -2003,8 +2004,7 @@ class Battle {
   }
 
   soundTargets(tower, mode, music = tower.spec.music) {
-    return this.units(!tower.player).filter(enemy => alive(enemy) && enemy.type !== 'zombie' &&
-      (mode === 1 || !enemy.spec.air && !enemy.spec.fixed && enemy.type !== 'boss') &&
+    return this.units(!tower.player).filter(enemy => songAffects(enemy, mode) &&
       distance(tower, enemy) <= music.radius);
   }
 
@@ -2017,25 +2017,8 @@ class Battle {
     tower.songReadyAt = tower.songUntil + music.cooldown[mode];
     tower.playingMode = mode;
     tower.nextWaveAt = t;
-    if (mode) this.updateRain();
-    else this.tryStoneGuard(tower);
+    this.updateStoneEffects();
     if (tower.player) this.event('song', { mode, name: SONGS[mode].name, tower, music });
-  }
-
-  tryStoneGuard(tower) {
-    const t = this.time;
-    if (active(tower.guardReadyAt ?? tower.cooldown, t) || active(tower.nextGuardCheck, t)) return;
-    tower.nextGuardCheck = t + .18;
-    const music = tower.songMusic;
-    const guards = this.soundTargets(tower, 0, music).filter(enemy => !active(enemy.guardUntil, t));
-    if (guards.length) tower.guardReadyAt = t + STONE_GUARD_COOLDOWN;
-    for (const enemy of guards) {
-      enemy.guardUntil = t + music.guardDuration;
-      enemy.guardSpeed = music.guardSpeed;
-      enemy.guardAttack = music.guardAttack;
-      enemy.guardFlash = t + .43;
-      this.effect('guardFlash', { unit: enemy }, .76);
-    }
   }
 
   tickStone(tower) {
@@ -2047,7 +2030,6 @@ class Battle {
       if (this.stoneCooldown(tower)) return;
       this.startStoneSong(tower, 0);
     }
-    if (tower.playingMode === 0) this.tryStoneGuard(tower);
     if (tower.nextWaveAt <= this.time) this.pulseStone(tower);
   }
 
@@ -2186,16 +2168,37 @@ class Battle {
     return true;
   }
 
-  updateRain() {
+  updateStoneEffects() {
+    const t = this.time;
     for (const player of [true, false]) {
-      const towers = this.units(player).filter(u => u.type === 'stone' && alive(u) && this.stoneRainActive(u))
-        .sort((a,b) => b.songMusic.rainDamage - a.songMusic.rainDamage);
+      const towers = this.units(player).filter(u => u.type === 'stone' && alive(u) && active(u.songUntil, t));
       for (const enemy of this.units(!player)) {
-        const cover = enemy.type === 'zombie' ? null :
-          towers.find(tower => distance(tower, enemy) <= tower.songMusic.radius);
-        enemy.rained = !!cover;
-        enemy.rainDamage = cover?.songMusic.rainDamage;
-        enemy.rainSpeed = cover?.songMusic.rainSpeed;
+        let guard = null, guardUntil = 0, rain = null;
+        for (const tower of towers) {
+          const { playingMode, songMusic } = tower;
+          if (!songAffects(enemy, playingMode) || distance(tower, enemy) > songMusic.radius) continue;
+          if (playingMode === 0) {
+            guardUntil = Math.max(guardUntil, tower.songUntil);
+            if (!guard || songMusic.guardSpeed < guard.guardSpeed) guard = songMusic;
+          } else if (!rain || songMusic.rainDamage > rain.rainDamage) {
+            rain = songMusic;
+          }
+        }
+        if (guard) {
+          if (!active(enemy.guardUntil, t)) {
+            enemy.guardFlash = t + .43;
+            this.effect('guardFlash', { unit: enemy }, .76);
+          }
+          enemy.guardUntil = guardUntil;
+          enemy.guardSpeed = guard.guardSpeed;
+          enemy.guardAttack = guard.guardAttack;
+        } else if (enemy.guardUntil) {
+          enemy.guardUntil = 0;
+          enemy.guardFlash = 0;
+        }
+        enemy.rained = !!rain;
+        enemy.rainDamage = rain?.rainDamage;
+        enemy.rainSpeed = rain?.rainSpeed;
       }
     }
   }
@@ -2875,7 +2878,7 @@ class Battle {
       else if (missile.kind === 'antiAir') this.airMissileImpact(missile);
       else this.impact(missile);
     }
-    this.updateRain();
+    this.updateStoneEffects();
 
     const units = [...this.friends, ...this.enemies];
     for (const unit of units) if (alive(unit) && !unit.spec.buildAssist) this.act(unit, dt);
@@ -2986,7 +2989,9 @@ function restoreBattle(records) {
     tower.songReadyAt = tower.songUntil + music.cooldown[mode];
     tower.songMusic = music;
   }
-  return Object.assign(Object.create(Battle.prototype), state, { mapId, pace: DIFFICULTIES[state.difficulty], events: [] });
+  const battle = Object.assign(Object.create(Battle.prototype), state, { mapId, pace: DIFFICULTIES[state.difficulty], events: [] });
+  battle.updateStoneEffects();
+  return battle;
 }
 
 'use strict';
@@ -3729,7 +3734,7 @@ class BattlefieldView {
         ellipse(ctx,f.x,endY,5+p*15,5+p*15,'#a3faff36','#b9fff4',1.7);
       } else if(f.type==='float') {
         ctx.globalAlpha=1-p*.92;this.text(f.label,f.x,f.y-28*p,f.color,17);
-      } else if(f.type==='guardFlash') {
+      } else if(f.type==='guardFlash' && active(f.unit.guardUntil, t)) {
         ctx.globalAlpha=(1-p)*.87;
         if ('filter' in ctx) ctx.filter='brightness(0) invert(1)';
         drawImageArt(ctx,'guard',f.unit.x,f.unit.y,f.unit.spec.height*1.15*(1+p*.23));
@@ -4135,8 +4140,7 @@ const unitGuide = {
   indexMiner: '建筑师消耗 '+INDEX_MINER.cost[1]+' 点 67 在己方中路矿点建造。完工后每秒在基础产速上额外增加 '+INDEX_MINER.indexIncome+' 点 67。',
   airDefense: '自动向 330 射程内的空军发射棍母防空导弹，单发 62 伤害，每 1.65 秒发射一枚。飞行盾兵会用正面替后方空军承受导弹。快速装填消耗 18 点 67，冷却 30 秒，发射速度提高 50%，持续 8 秒。',
   stone: 'L1 半径 '+STONE_MUSIC.radius+'，与同级奶蛙火炮射程一致。'+stoneSchedule(STONE_MUSIC)+
-    '播放期间每 '+STONE_MUSIC.waveEvery+' 秒发一次声波。苦行山让地面敌军变身 '+STONE_MUSIC.guardDuration+
-    ' 秒，每次变身间隔 '+STONE_GUARD_COOLDOWN+' 秒，声波基础伤害 '+STONE_MUSIC.damage[0]+'。'+
+    '播放期间每 '+STONE_MUSIC.waveEvery+' 秒发一次声波。苦行山让范围内的地面敌军持续变身，声波基础伤害 '+STONE_MUSIC.damage[0]+'。'+
     '雨爱可打断苦行山，声波基础伤害 '+STONE_MUSIC.damage[1]+'，可打空军、建筑和灭霸，减速 50%、受伤提高 40%。'+
     '音乐冷却时暂停放歌。僵尸免疫两首歌，灭霸免疫苦行山。',
   laser: '用激光拦截普通弹丸和箭矢。L1 拦截半径 150，单次间隔 1.05 秒，连续拦截 4 发后过热 5.5 秒。空闲时热量逐步消退，过热期间暂停拦截。灭霸拳铠弹和刀盾狗近战可绕过拦截。',
@@ -4176,8 +4180,9 @@ function upgradeBenefit(type) {
     case 'laser': return '拦截半径 '+stats.interceptRadius+'，单次间隔 '+stats.interceptEvery+' 秒，连续拦截 '+stats.heatCapacity+' 发后冷却 '+stats.overheatTime+' 秒';
     case 'stone': {
       const music = stats.music;
-      return '半径 '+music.radius+'。'+stoneSchedule(music)+'变身 '+music.guardDuration+
-        ' 秒，苦行山每波 '+music.damage[0]+' 伤害，雨爱每波 '+music.damage[1]+' 伤害';
+      return '半径 '+music.radius+'。'+stoneSchedule(music)+'苦行山使王警卫速度降低 '+
+        Math.round((1-music.guardSpeed)*100)+'%、攻击力降低 '+Math.round((1-music.guardAttack)*100)+
+        '%，苦行山每波 '+music.damage[0]+' 伤害，雨爱每波 '+music.damage[1]+' 伤害';
     }
     default: return '';
   }
@@ -4759,7 +4764,7 @@ function handleEvents() {
     } else if (event.type === 'song') {
       const { music, mode } = event;
       const control = mode ? '减速 '+Math.round((1-music.rainSpeed)*100)+'% / 受伤 +'+
-        Math.round((music.rainDamage-1)*100)+'%' : '圈内地面敌军变身 '+music.guardDuration+' 秒';
+        Math.round((music.rainDamage-1)*100)+'%' : '圈内地面敌军持续变身';
       note('♪ '+event.name+' · '+music.duration[mode]+' 秒 · '+control);
       audio.playStone();
     } else if (event.type === 'musicUpdate') {
@@ -5988,7 +5993,7 @@ renderUnitGuide('rule-structures', ['base',...structureTypes], UNITS, unitGuide)
 renderUnitGuide('rule-enemy-units', ['guard','dragon'],
   { guard: { name: '王警卫' }, dragon: { name: '奶龙' } },
   {
-    guard: '苦行山临时变身的地面敌人，仍属于敌方。变身开头短暂定格，之后移速降低 60%、攻击力降低 70%。铃铛倒计时结束后恢复原来的单位。',
+    guard: '苦行山范围内变身的地面单位，归原阵营。入圈时短暂定格，之后移速和攻击力降低。铃铛显示剩余覆盖时间。离开范围或歌曲结束后恢复。',
     dragon: '战败动画中的角色，会被奶蛙围住逗笑。' });
 showScreen(screen,false);
 function recoverMatch(error) {
